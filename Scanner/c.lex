@@ -1,29 +1,30 @@
-D			[0-9]
-L			[a-zA-Z_]
-H			[a-fA-F0-9]
-E			([Ee][+-]?{D}+)
-P                       ([Pp][+-]?{D}+)
-FS			(f|F|l|L)
-IS                      ((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
-
 %{
+/*C Declarations: */
 #include <stdio.h>
 #include "y.tab.h"
 
 void count(void);
 %}
 
+/*Lex Definitions: */
+D			[0-9]
+L			[a-zA-Z_]
+H			[a-fA-F0-9]
+E			([Ee][+-]?{D}+)
+P           ([Pp][+-]?{D}+)
+FS			(f|F|l|L)
+IS			((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
+
+/*Regular Expressions and Actions: */
 %%
 "/*"			{ comment(); }
 "//"[^\n]*              { /* consume //-comment */ }
 
 
-"auto"			{ count(); return(AUTO); }
-"_Bool"			{ count(); return(BOOL); }
+"bool"			{ count(); return(BOOL); }
 "break"			{ count(); return(BREAK); }
 "case"			{ count(); return(CASE); }
 "char"			{ count(); return(CHAR); }
-"_Complex"		{ count(); return(COMPLEX); }
 "const"			{ count(); return(CONST); }
 "continue"		{ count(); return(CONTINUE); }
 "default"		{ count(); return(DEFAULT); }
@@ -31,17 +32,12 @@ void count(void);
 "double"		{ count(); return(DOUBLE); }
 "else"			{ count(); return(ELSE); }
 "enum"			{ count(); return(ENUM); }
-"extern"		{ count(); return(EXTERN); }
 "float"			{ count(); return(FLOAT); }
 "for"			{ count(); return(FOR); }
 "goto"			{ count(); return(GOTO); }
 "if"			{ count(); return(IF); }
-"_Imaginary"		{ count(); return(IMAGINARY); }
-"inline"		{ count(); return(INLINE); }
 "int"			{ count(); return(INT); }
 "long"			{ count(); return(LONG); }
-"register"		{ count(); return(REGISTER); }
-"restrict"		{ count(); return(RESTRICT); }
 "return"		{ count(); return(RETURN); }
 "short"			{ count(); return(SHORT); }
 "signed"		{ count(); return(SIGNED); }
@@ -53,7 +49,6 @@ void count(void);
 "union"			{ count(); return(UNION); }
 "unsigned"		{ count(); return(UNSIGNED); }
 "void"			{ count(); return(VOID); }
-"volatile"		{ count(); return(VOLATILE); }
 "while"			{ count(); return(WHILE); }
 
 {L}({L}|{D})*		{ count(); return(check_type()); }
@@ -95,30 +90,30 @@ L?\"(\\.|[^\\"\n])*\"	{ count(); return(STRING_LITERAL); }
 ">="			{ count(); return(GE_OP); }
 "=="			{ count(); return(EQ_OP); }
 "!="			{ count(); return(NE_OP); }
-";"			{ count(); return(';'); }
+";"				{ count(); return(';'); }
 ("{"|"<%")		{ count(); return('{'); }
 ("}"|"%>")		{ count(); return('}'); }
-","			{ count(); return(','); }
-":"			{ count(); return(':'); }
-"="			{ count(); return('='); }
-"("			{ count(); return('('); }
-")"			{ count(); return(')'); }
+","				{ count(); return(','); }
+":"				{ count(); return(':'); }
+"="				{ count(); return('='); }
+"("				{ count(); return('('); }
+")"				{ count(); return(')'); }
 ("["|"<:")		{ count(); return('['); }
 ("]"|":>")		{ count(); return(']'); }
-"."			{ count(); return('.'); }
-"&"			{ count(); return('&'); }
-"!"			{ count(); return('!'); }
-"~"			{ count(); return('~'); }
-"-"			{ count(); return('-'); }
-"+"			{ count(); return('+'); }
-"*"			{ count(); return('*'); }
-"/"			{ count(); return('/'); }
-"%"			{ count(); return('%'); }
-"<"			{ count(); return('<'); }
-">"			{ count(); return('>'); }
-"^"			{ count(); return('^'); }
-"|"			{ count(); return('|'); }
-"?"			{ count(); return('?'); }
+"."				{ count(); return('.'); }
+"&"				{ count(); return('&'); }
+"!"				{ count(); return('!'); }
+"~"				{ count(); return('~'); }
+"-"				{ count(); return('-'); }
+"+"				{ count(); return('+'); }
+"*"				{ count(); return('*'); }
+"/"				{ count(); return('/'); }
+"%"				{ count(); return('%'); }
+"<"				{ count(); return('<'); }
+">"				{ count(); return('>'); }
+"^"				{ count(); return('^'); }
+"|"				{ count(); return('|'); }
+"?"				{ count(); return('?'); }
 
 [ \t\v\n\f]		{ count(); }
 .			{ /* Add code to complain about unmatched characters */ }
@@ -146,6 +141,7 @@ void comment(void)
 
 
 int column = 0;
+int line = 0;
 
 void count(void)
 {
@@ -153,9 +149,12 @@ void count(void)
 
 	for (i = 0; yytext[i] != '\0'; i++)
 		if (yytext[i] == '\n')
+		{
 			column = 0;
+			line++;
+		}
 		else if (yytext[i] == '\t')
-			column += 8 - (column % 8);
+			column += 4 - (column % 4);
 		else
 			column++;
 
