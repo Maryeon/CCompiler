@@ -48,14 +48,15 @@ typedef struct A_iterationStatement_ *A_iterationStatement;
 typedef struct A_jumpStatement_ *A_jumpStatement;
 typedef struct A_functionDefinition_ *A_functionDefinition;
 typedef struct A_declarationList_ *A_declarationList;
-typedef struct A_var_ *A_var;
-typedef struct A_exp_ *A_exp;
-typedef struct A_dec_ *A_dec;
-typedef struct A_fundec_ *A_fundec;
-typedef struct A_fundecList_ *A_fundecList;
-typedef struct A_nametyList_ *A_nametyList;
-typedef struct A_expList_ *A_expList;
 
+
+typedef struct A_declaration_ *A_declaration;
+typedef struct A_declaration_specifiers_ *A_declaration_specifiers;
+typedef struct A_init_declarator_list_ *A_init_declarator_list;
+typedef struct A_init_declarator_ *A_init_declarator;
+typedef struct A_type_specifier_ *A_type_specifier;
+typedef struct A_specifier_qualifier_list_ *A_specifier_qualifier_list;
+typedef struct A_declarator_ *A_declarator;
 
 
 
@@ -261,6 +262,9 @@ struct A_assignment_operator_{
 	A_pos pos;
 };
 
+
+
+/******************example*************/
 struct A_translationUnit_{
 	A_externalDeclaration *head;
 	A_pos pos;
@@ -268,12 +272,92 @@ struct A_translationUnit_{
 
 struct A_externalDeclaration_{
 	int grammer;
+	enum{A_FUNCTIONDEFINITION, A_DECLARATION}kind;
 	A_pos pos;
 	union{
 		A_functionDefinition functiondefinition;
 		A_declaration declaration;
 	}u;
 };
+
+
+//Liu===============================================================
+struct A_declaration_{
+	enum{Fenhao} kind;
+	A_pos pos;
+	union{
+		A_declaration_specifiers declaration_specifiers;
+		struct{A_declaration_specifiers declaration_specifiers;A_init_declarator_list init_declarator_list;}dec2;
+	}u;
+}
+
+struct A_declaration_specifiers_{
+	int kind;
+	A_pos pos;
+	union{
+		//storage_class_specifier
+		//storage_class_specifier declaration_specifiers
+		A_type_specifier type_specifier;
+		struct{A_type_specifier type_specifier;A_declaration_specifiers declaration_specifiers;}type_s_dec;
+		//A_type_qualifier type_qualifier;
+		//struct{A_type_qualifier type_qualifier;A_declaration_specifiers declaration_specifiers;}type_q_dec;
+		//function_specifier
+		//function_specifier declaration_specifiers
+	}u;
+}
+
+struct A_init_declarator_list_{
+	enum{Douhao} kind;
+	A_pos pos;
+	union{
+		A_init_declarator init_declarator;
+		struct{A_init_declarator_list init_declarator_list;A_init_declarator init_declarator;}init_dec_list;
+	
+	}u;
+}
+
+struct A_init_declarator_{
+	enum{Equal} kind;
+	A_pos pos;
+	union{
+		A_declarator declarator;
+		struct{A_declarator declarator;A_initializer initializer;}init_dec2;
+	}u;
+}
+
+struct A_type_specifier_{
+	enum{eVOID,eCHAR,eINT,eLONG,eSHORT,eFLOAT,eDOUBLE,eSIGHED,eUNSIGNED,eBOOL}kind;
+	A_pos pos;
+	union{
+		A_struct_or_union_specifier struct_or_union_specifier;
+		//enum_specifier
+	}u;
+}
+
+
+struct A_specifier_qualifier_list_{
+	int kind;
+	A_pos pos;
+	union{
+		struct{A_type_specifier type_specifier;A_specifier_qualifier_list specifier_qualifier_list;}sql;
+		A_type_specifier type_specifier;
+		//type_qualifier specifier_qualifier_list
+		//type_qualifier
+	}u;
+}
+
+struct A_declarator_{
+	int kind;
+	A_pos pos;
+	union{
+		struct{A_pointer pointer; A_direct_declarator direct_declarator;}dec;
+		A_direct_declarator direct_declarator;
+	}u;
+}
+
+
+//end===============================================================
+
 
 struct A_directDeclarator_{
 	int grammer;
