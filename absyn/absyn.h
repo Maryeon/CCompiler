@@ -2,9 +2,6 @@ typedef int A_pos;
 typedef struct A_fundec_ *A_fundec;
 typedef struct A_fundecList_ *A_fundecList;
 typedef struct A_nametyList_ *A_nametyList;
-A_dec A_FunctionDec(A_pos pos, A_fundecList function);
-A_dec A_VarDec(A_pos pos, S_symbol var, A_exp init);
-A_dec A_arrVarDec(A_pos pos, S_symbol var, A_exp init);
 
 typedef enum {A_addOp, A_subOp, A_mulOp, A_divOp,
             A_add_assignOp, A_sub_assignOp, A_mul_assignOp,A_div_assignOp,
@@ -32,7 +29,6 @@ struct A_dec_
 	 
         /* escape may change after the initial declaration */
         struct {S_symbol var; S_symbol typ; A_exp init; bool escape;} var;
-        A_nametyList type;
       } u;
    };
 
@@ -76,13 +72,19 @@ struct A_exp_
 		  struct {A_exp init, test, last, body;} forr;
 		  struct {A_exp test, then;} iff;	
 		  int intt;
-		  struct {A_exp exp;} returnn;
+		  struct {A_exp ret;} returnn;
+		  struct {A_exp type) signedd;
 		  struct {string type} sizeoff;
 		  struct {A_exp test, body;} whilee;	
 	    } u;
      };
 
 /* Function Prototypes */
+A_var A_SimpleVar(A_pos pos, S_symbol sym);
+A_var A_SubscriptVar(A_pos pos, A_var var, A_exp exp);
+A_dec A_FunctionDec(A_pos pos, A_fundecList function);
+A_dec A_VarDec(A_pos pos, S_symbol var, A_exp init);
+A_dec A_arrVarDec(A_pos pos, S_symbol var, A_exp init);
 A_exp A_VarExp(A_pos pos, A_var var);
 A_exp A_NilExp(A_pos pos); 
 A_exp A_CallExp(A_pos pos, S_symbol func, A_expList args); 
