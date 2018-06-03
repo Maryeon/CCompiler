@@ -2,21 +2,39 @@ typedef int A_pos;
 typedef struct A_translationUnit_ *A_translationUnit;
 typedef struct A_externalDeclaration_ *A_externalDeclaration;
 typedef struct A_directDeclarator_ *A_directDeclarator;
-typedef struct A_var_ *A_var;
-typedef struct A_exp_ *A_exp;
-typedef struct A_dec_ *A_dec;
-typedef struct A_fundec_ *A_fundec;
-typedef struct A_fundecList_ *A_fundecList;
-typedef struct A_nametyList_ *A_nametyList;
-typedef struct A_expList_ *A_expList;
+typedef struct A_pointer_ *A_pointer;
+typedef struct A_typeQualifierList_ *A_typeQualifierList;
+typedef struct A_parameterTypeList_ *A_parameterTypeList;
+typedef struct A_parameterList_ *A_parameterList;
+typedef struct A_parameterDeclaration_ *A_parameterDeclaration;
+typedef struct A_identifierList_ *A_identifierList;
+typedef struct A_typeName_ *A_typeName;
+typedef struct A_abstractDeclarator_ *A_abstractDeclarator;
+typedef struct A_directAbstractDeclarator_ *A_directAbstractDeclarator;
+typedef struct A_initializer_ *A_initializer;
+typedef struct A_initializerList_ *A_initializerList;
+typedef struct A_designation_ *A_designation;
+typedef struct A_designationList_ *A_designationList;
+typedef struct A_designator_ *A_designator;
+typedef struct A_statement_ *A_statement;
+typedef struct A_labeledStatement_ *A_labeledStatement;
+typedef struct A_compoundStatement_ *A_compoundStatement;
+typedef struct A_blockItemList_ *A_blockItemList;
+typedef struct A_blockItem_ *A_blockItem;
+typedef struct A_expressionStatement_ *A_expressionStatement;
+typedef struct A_selectionStatement_ *A_selectionStatement;
+typedef struct A_iterationStatement_ *A_iterationStatement;
+typedef struct A_jumpStatement_ *A_jumpStatement;
+typedef struct A_functionDefinition_ *A_functionDefinition;
+typedef struct A_declarationList_ *A_declarationList;
 
-/******************example*************/
+
 struct A_translationUnit_{
 	A_externalDeclaration *head;
 };
 
 struct A_externalDeclaration_{
-	enum{A_FUNCTIONDEFINITION, A_DECLARATION}kind;
+	int grammer;
 	union{
 		A_functionDefinition functiondefinition;
 		A_declaration declaration;
@@ -24,112 +42,303 @@ struct A_externalDeclaration_{
 };
 
 struct A_directDeclarator_{
-	
-}
-
-typedef enum {A_addOp, A_subOp, A_mulOp, A_divOp,
-            A_add_assignOp, A_sub_assignOp, A_mul_assignOp,A_div_assignOp,
-            A_mod_assignOp,A_or_assignOp, A_and_assignOp,A_xor_assignOp,
-            A_incOp, A_decOp,A_ptrOp, A_andOp, A_orOp, A_leOp, A_geOp,
-            A_eqOp,A_neOp, A_equal_sign_Op,A_ltOp,A_gtOp,
-            A_single_andOp,A_single_orOp,A_exclamatoryOp,A_single_neOp,
-            A_modOp, A_single_xorOp
-             } A_oper;
-
-typedef struct A_var_ *A_var;
-struct A_var_{
-	enum{A_simpleVar, A_subscriptVar} kind;
-	A_pos pos;
-	union{	S_symbol simple;
-			struct{	A_var var;
-					A_exp exp;} subscript;
-    }u;
+	int grammer;
+	union{
+		S_symbol u1;
+	}u;
 };
 
-struct A_dec_ 
-    {enum {A_functionDec, A_varDec} kind;
-     A_pos pos;
-     union {A_fundecList function;
-        /* escape may change after the initial declaration */
-        struct {S_symbol var;  A_expList_ init; bool escape;} var;
-      } u;
-   };
+struct A_pointer_{
+	int grammer;
+	union{
+		A_typeQualifierList u1;
+		A_pointer u2;
+		struct{
+			A_typeQualifierList typequalifierlist;
+			A_pointer pointer;
+		}u3;
+	}u;
+};
 
-struct A_exp_
-      {enum {A_varExp, 
-	    A_nilExp, 
-		A_callExp, 
-		A_opExp, 
-		A_seqExp, 
-		A_assignExp,
-		A_boolExp,			
-		A_breakExp,				
-		A_charExp,		
-		A_continueExp,		
-		A_dowhileExp,	
-		A_doubleExp,		
-		A_ifelseExp,				
-		A_floatExp,		
-		A_forExp,		
-		A_ifExp,			
-		A_intExp,		
-		A_returnExp,			
-		A_sizeofExp,			
-		A_whileExp
-		   } kind;
-       A_pos pos;
-       union {A_var var;
-	      /* nil; - needs only the pos */
-		  struct {S_symbol func; A_expList args;} call;
-		  struct {A_oper oper; A_exp left; A_exp right;} op;
-		  A_expList seq;
-		  struct {A_var var; A_exp exp;} assign;
-		  bool booll;
-		  /* breakk; - need only the pos */
-		  char charr;
-		  /* continue; - need only the pos */
-		  struct {A_exp test, body;} dowhile;
-		  double doublee;
-		  struct {A_exp test, then, elsee;} ifelse;
-		  float floatt;
-		  struct {A_exp init, test, last, body;} forr;
-		  struct {A_exp test, then;} iff;	
-		  int intt;
-		  struct {A_exp ret;} returnn;
-		  struct {S_symbol typ;} sizeoff;
-		  struct {A_exp test, body;} whilee;	
-	    } u;
-     };
+struct A_typeQualifierList_{
+	int grammer;
+	union{
+		A_typeQualifier u1;
+		struct{
+			A_typeQualifierList u1;
+			A_typeQualifier u2;
+		}u2;
+	}u;
+};
 
-struct A_expList_ {A_exp head; A_expList tail;};
-struct A_fundecList_ {A_fundec head; A_fundecList tail;};
+struct A_parameterTypeList_{
+	A_parameterList u;
+};
 
-/* Function Prototypes */
-A_var A_SimpleVar(A_pos pos, S_symbol sym);
-A_var A_SubscriptVar(A_pos pos, A_var var, A_exp exp);
+struct A_parameterList_{
+	int grammer;
+	union{
+		A_parameterDeclaration u1;
+		struct{
+			A_parameterList u1;
+			A_parameterDeclaration u2;
+		}u2;
+	}u;
+};
 
-A_dec A_FunctionDec(A_pos pos, A_fundecList function);
-A_dec A_VarDec(A_pos pos, S_symbol var, A_expList init);
+struct A_parameterDeclaration_{
+	int grammer;
+	union{
+		struct{
+			A_declarationSpecifiers u1;
+			A_declarator u2;
+		}u1;
+		struct{
+			A_declarationSpecifiers u1;
+			A_abstractDeclarator u2;
+		}u2;
+		struct{
+			A_declarationSpecifiers u;
+		}u3;
+	}u;
+};
 
-A_exp A_VarExp(A_pos pos, A_var var);
-A_exp A_NilExp(A_pos pos); 
-A_exp A_CallExp(A_pos pos, S_symbol func, A_expList args); 
-A_exp A_OpExp(A_pos pos, A_oper oper, A_exp left, A_exp right); 
-A_exp A_SeqExp(A_pos pos); 
-A_exp A_AssignExp(A_pos pos, A_var var, A_exp exp);
-A_exp A_BoolExp(A_pos pos, bool booll);			
-A_exp A_BreakExp(A_pos pos);				
-A_exp A_CharExp(A_pos pos, char charr);		
-A_exp A_ContinueExp(A_pos pos);		
-A_exp A_DowhileExp(A_pos pos, A_exp test, A_exp body);	
-A_exp A_DoubleExp(A_pos pos, double doublee);		
-A_exp A_IfelseExp(A_pos pos, A_exp test, A_exp then, A_exp elsee);				
-A_exp A_FloatExp(A_pos pos, float floatt);		
-A_exp A_ForExp(A_pos pos, A_exp init, A_exp test, A_exp last, A_exp body);		
-A_exp A_IfExp(A_pos pos, A_exp test, A_exp then);			
-A_exp A_IntExp(A_pos pos, int intt);				
-A_exp A_ReturnExp(A_pos pos, A_exp ret);			
-A_exp A_SizeofExp(A_pos pos, S_symbol typ);	 			
-A_exp A_WhileExp(A_pos pos, A_exp test, A_exp body);	
+struct A_identifierList_{
+	int grammer;
+	union{
+		A_var u1;
+		struct{
+			A_identifierList u1;
+			S_symbol u2;
+		}u2;
+	}u;
+};
 
-A_fundecList A_FundecList(A_fundec head, A_fundecList tail);
+struct A_typeName_{
+	int grammer;
+	union{
+		A_specifierQualifierList u1;
+		struct{
+			A_specifierQualifierList u1;
+			A_abstractDeclarator u2;
+		}u2;
+	}u;
+};
+
+struct A_abstractDeclarator_{
+	int grammer;
+	union{
+		A_pointer u1;
+		A_directAbstractDeclarator u2;
+		struct{
+			A_pointer u1;
+			A_directAbstractDeclarator u2;
+		}u3;
+	}u;
+};
+
+struct A_directAbstractDeclarator_{
+	int grammer;
+	union{
+		A_abstractDeclarator u1;
+	}u;
+};
+
+struct A_initializer_{
+	int grammer;
+	union{
+		A_assignExpression u1;
+		A_initializerList u2;
+		A_initializerList u3;
+	}u;
+};
+
+struct A_initializerList_{
+	int grammer;
+	union{
+		A_initializer u1;
+		struct{
+			A_designation u1;
+			A_initializer u2;
+		}u2;
+		struct{
+			A_initializerList u1;
+			A_initializer u2;
+		}u3;
+		struct{
+			A_initializerList u1;
+			A_designation u2;
+			A_initializer u3;
+		}u4;
+	}u;
+};
+
+struct A_designation_{
+	A_designatorList u;
+};
+
+struct A_designationList_{
+	int grammer;
+	union{
+		A_designator u1;
+		struct{
+			A_designatorList u1;
+			A_designator u2;
+		}u2;
+	}u;
+};
+
+struct A_designator_{
+	int grammer;
+	union{
+		A_constantExpression u1;
+		S_symbol u2;
+	}u;
+};
+
+struct A_statement_{
+	int grammer;
+	union{
+		A_labeledStatement u1;
+		A_compoundStatement u2;
+		A_expressionStatement u3;
+		A_selectionStatement u4;
+		A_iterationStatement u5;
+		A_jumpStatement u6;
+	}u;
+};
+
+struct A_labeledStatement_{
+	int grammer;
+	union{
+		struct{
+			S_symbol u1;
+			A_statement u2;
+		}u1;
+		struct{
+			A_constantExpression u1;
+			A_statement u2;
+		}u2;
+		A_statement u3;
+	}u;
+};
+
+struct A_compoundStatement_{
+	int grammer;
+	A_blockItemList u;
+};
+
+struct A_blockItemList_{
+	int grammer;
+	union{
+		A_blockItem u1;
+		struct{
+			A_blockItemList u1;
+			A_blockItem u2;
+		}u2;
+	}u;
+};
+
+struct A_blockItem_{
+	int grammer;
+	union{
+		A_declaration u1;
+		A_statement u2;
+	}u;
+};
+
+struct A_expressionStatement_{
+	int grammer;
+	A_expression u;
+};
+
+struct A_selectionStatement_{
+	int grammer;
+	union{
+		struct{
+			A_expression u1;
+			A_statement u2;
+		}u1;
+		struct{
+			A_expression u1;
+			A_statement u2;
+			A_statement u3;
+		}u2;
+		struct{
+			A_expression u1;
+			A_statement u2;
+		}u3;
+	}u;
+};
+
+struct A_iterationStatement_{
+	int grammer;
+	union{
+		struct{
+			A_expression u1;
+			A_statement u2;
+		}u1;
+		struct{
+			A_statement u1;
+			A_expression u2;
+		}u2;
+		struct{
+			A_expressionStatement u1;
+			A_expressionStatement u2;
+			A_statement u3;
+		}u3;
+		struct{
+			A_expressionStatement u1;
+			A_expressionStatement u2;
+			A_expression u3;
+			A_statement u4;
+		}u4;
+		struct{
+			A_declaration u1;
+			A_expressionStatement u2;
+			A_statement u3;
+		}u5;
+		struct{
+			A_declaration u1;
+			A_expressionStatement u2;
+			A_expression u3;
+			A_statement u4;
+		}u6;
+	}u;
+};
+
+struct A_jumpStatement_{
+	int grammer;
+	union{
+		S_symbol u1;
+		A_expression u5;
+	}u;
+};
+
+struct A_functionDefinition_{
+	int grammer;
+	union{
+		struct{
+			A_declarationSpecifiers u1;
+			A_declarator u2;
+			A_declarationList u3;
+			A_compoundStatement u4;
+		}u1;
+		struct{
+			A_declarationSpecifiers u1;
+			A_declarator u2;
+			A_compoundStatement u3;
+		}u2;
+	}u;
+};
+
+struct A_declarationList_{
+	int grammer;
+	union{
+		A_declaration u1;
+		struct{
+			A_declarationList u1;
+			A_declaration u2;
+		}u2;
+	}u;
+};
