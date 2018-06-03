@@ -2,6 +2,24 @@ typedef int A_pos;
 typedef struct A_translation_unit_ *A_translation_unit;
 typedef struct A_external_declaration_ *A_external_declaration;
 typedef struct A_direct_declarator_ *A_direct_declarator;
+typedef struct A_primary_expression_ *A_primary_expression;
+typedef struct A_argument_expression_list_ *A_argument_expression_list;
+typedef struct A_unary_expression_ *A_unary_expression;
+typedef struct A_unary_operator_ *A_unary_operator;
+typedef struct A_cast_expression_ *A_cast_expression;
+typedef struct A_multiplicative_expression_ *A_multiplicative_expression;
+typedef struct A_additive_expression_ *A_additive_expression;
+typedef struct A_shift_expression_ *A_shift_expression;
+typedef struct A_relational_expression_ *A_relational_expression;
+typedef struct A_equality_expression_ *A_equality_expression;
+typedef struct A_and_expression_ *A_and_expression;
+typedef struct A_exclusive_or_expression_ *A_exclusive_or_expression;
+typedef struct A_inclusive_or_expression_ *A_inclusive_or_expression;
+typedef struct A_logical_and_expression_ *A_logical_and_expression;
+typedef struct A_logical_or_expression_ *A_logical_or_expression;
+typedef struct A_conditional_expression_ *A_conditional_expression;
+typedef struct A_assignment_expression_ *A_assignment_expression;
+typedef struct A_assignment_operator_ *A_assignment_operator;
 typedef struct A_pointer_ *A_pointer;
 typedef struct A_type_qualifier_list_ *A_type_qualifier_list;
 typedef struct A_parameter_type_list_ *A_parameter_type_list;
@@ -38,7 +56,8 @@ typedef struct A_specifier_qualifier_list_ *A_specifier_qualifier_list;
 typedef struct A_declarator_ *A_declarator;
 
 
-struct A_primaryExpression_{
+
+struct A_primary_expression_{
 	enum{IDENTIFIER, CONSTANT_INT, CONSTANT_DOUBLE, STRING_LITERAL, LP_expression_RP}kind;
 	A_pos pos;
 	union{
