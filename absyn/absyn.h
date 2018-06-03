@@ -37,6 +37,7 @@ typedef struct A_type_specifier_ *A_type_specifier;
 typedef struct A_specifier_qualifier_list_ *A_specifier_qualifier_list;
 typedef struct A_declarator_ *A_declarator;
 
+
 struct A_primaryExpression_{
 	enum{IDENTIFIER, CONSTANT_INT, CONSTANT_DOUBLE, STRING_LITERAL, LP_expression_RP}kind;
 	A_pos pos;
@@ -338,6 +339,7 @@ struct A_declarator_{
 
 struct A_directDeclarator_{
 	int grammer;
+	A_pos pos;
 	union{
 		S_symbol u1;
 	}u;
@@ -345,6 +347,7 @@ struct A_directDeclarator_{
 
 struct A_pointer_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_typeQualifierList u1;
 		A_pointer u2;
@@ -357,6 +360,7 @@ struct A_pointer_{
 
 struct A_typeQualifierList_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_typeQualifier u1;
 		struct{
@@ -368,10 +372,12 @@ struct A_typeQualifierList_{
 
 struct A_parameterTypeList_{
 	A_parameterList u;
+	A_pos pos;
 };
 
 struct A_parameterList_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_parameterDeclaration u1;
 		struct{
@@ -383,6 +389,7 @@ struct A_parameterList_{
 
 struct A_parameterDeclaration_{
 	int grammer;
+	A_pos pos;
 	union{
 		struct{
 			A_declarationSpecifiers u1;
@@ -400,6 +407,7 @@ struct A_parameterDeclaration_{
 
 struct A_identifierList_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_var u1;
 		struct{
@@ -411,6 +419,7 @@ struct A_identifierList_{
 
 struct A_typeName_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_specifierQualifierList u1;
 		struct{
@@ -422,6 +431,7 @@ struct A_typeName_{
 
 struct A_abstractDeclarator_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_pointer u1;
 		A_directAbstractDeclarator u2;
@@ -434,6 +444,7 @@ struct A_abstractDeclarator_{
 
 struct A_directAbstractDeclarator_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_abstractDeclarator u1;
 	}u;
@@ -441,6 +452,7 @@ struct A_directAbstractDeclarator_{
 
 struct A_initializer_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_assignExpression u1;
 		A_initializerList u2;
@@ -450,6 +462,7 @@ struct A_initializer_{
 
 struct A_initializerList_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_initializer u1;
 		struct{
@@ -470,10 +483,12 @@ struct A_initializerList_{
 
 struct A_designation_{
 	A_designatorList u;
+	A_pos pos;
 };
 
 struct A_designationList_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_designator u1;
 		struct{
@@ -485,6 +500,7 @@ struct A_designationList_{
 
 struct A_designator_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_constantExpression u1;
 		S_symbol u2;
@@ -493,6 +509,7 @@ struct A_designator_{
 
 struct A_statement_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_labeledStatement u1;
 		A_compoundStatement u2;
@@ -505,6 +522,7 @@ struct A_statement_{
 
 struct A_labeledStatement_{
 	int grammer;
+	A_pos pos;
 	union{
 		struct{
 			S_symbol u1;
@@ -521,10 +539,12 @@ struct A_labeledStatement_{
 struct A_compoundStatement_{
 	int grammer;
 	A_blockItemList u;
+	A_pos pos;
 };
 
 struct A_blockItemList_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_blockItem u1;
 		struct{
@@ -536,6 +556,7 @@ struct A_blockItemList_{
 
 struct A_blockItem_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_declaration u1;
 		A_statement u2;
@@ -544,11 +565,13 @@ struct A_blockItem_{
 
 struct A_expressionStatement_{
 	int grammer;
+	A_pos pos;
 	A_expression u;
 };
 
 struct A_selectionStatement_{
 	int grammer;
+	A_pos pos;
 	union{
 		struct{
 			A_expression u1;
@@ -568,6 +591,7 @@ struct A_selectionStatement_{
 
 struct A_iterationStatement_{
 	int grammer;
+	A_pos pos;
 	union{
 		struct{
 			A_expression u1;
@@ -604,6 +628,7 @@ struct A_iterationStatement_{
 
 struct A_jumpStatement_{
 	int grammer;
+	A_pos pos;
 	union{
 		S_symbol u1;
 		A_expression u5;
@@ -612,6 +637,7 @@ struct A_jumpStatement_{
 
 struct A_functionDefinition_{
 	int grammer;
+	A_pos pos;
 	union{
 		struct{
 			A_declarationSpecifiers u1;
@@ -629,6 +655,7 @@ struct A_functionDefinition_{
 
 struct A_declarationList_{
 	int grammer;
+	A_pos pos;
 	union{
 		A_declaration u1;
 		struct{
