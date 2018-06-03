@@ -25,7 +25,6 @@ struct A_var_{
     }u;
 };
 
-<<<<<<< HEAD
 struct A_dec_ 
     {enum {A_functionDec, A_varDec, A_arrvarDec} kind;
      A_pos pos;
@@ -35,7 +34,7 @@ struct A_dec_
         A_nametyList type;
       } u;
    };
-=======
+   
 struct A_exp_
       {enum {A_varExp, 
 	    A_nilExp, 
@@ -81,7 +80,6 @@ struct A_exp_
 		  struct {A_exp test, body;} whilee;	
 	    } u;
      };
->>>>>>> 7bcaefa5a49b8d6bffa4cf4f52ec0856f4106294
 
 /* Function Prototypes */
 A_exp A_VarExp(A_pos pos, A_var var);
