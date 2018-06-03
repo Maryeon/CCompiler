@@ -49,7 +49,7 @@ A_exp A_IntExp(A_pos pos, int intt)
 	return p;
 }
 
-A_exp A_returnExp(A_pos pos, A_exp ret)
+A_exp A_ReturnExp(A_pos pos, A_exp ret)
 {
 	A_exp p = checked_malloc(sizeof(*p));
 	p->kind = A_returnExp;
@@ -57,7 +57,7 @@ A_exp A_returnExp(A_pos pos, A_exp ret)
 	return p;
 }
 
-A_exp A_whileExp(A_pos pos, A_exp test, A_exp body)
+A_exp A_WhileExp(A_pos pos, A_exp test, A_exp body)
 {
 	A_exp p = checked_malloc(sizeof(*p));
 	p->kind = A_whileExp;
