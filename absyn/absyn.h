@@ -2,6 +2,7 @@ typedef int A_pos;
 typedef struct A_translation_unit_ *A_translation_unit;
 typedef struct A_external_declaration_ *A_external_declaration;
 typedef struct A_direct_declarator_ *A_direct_declarator;
+
 typedef struct A_primary_expression_ *A_primary_expression;
 typedef struct A_argument_expression_list_ *A_argument_expression_list;
 typedef struct A_unary_expression_ *A_unary_expression;
@@ -19,6 +20,7 @@ typedef struct A_logical_and_expression_ *A_logical_and_expression;
 typedef struct A_logical_or_expression_ *A_logical_or_expression;
 typedef struct A_conditional_expression_ *A_conditional_expression;
 typedef struct A_assignment_expression_ *A_assignment_expression;
+
 typedef struct A_assignment_operator_ *A_assignment_operator;
 typedef struct A_pointer_ *A_pointer;
 typedef struct A_type_qualifier_list_ *A_type_qualifier_list;
