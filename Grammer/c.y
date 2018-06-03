@@ -25,11 +25,6 @@ int yylex(void);
 %start translation_unit
 %%
 
-translation_unit
-	: external_declaration
-	| translation_unit external_declaration
-	;
-
 primary_expression
 	: IDENTIFIER
 	| CONSTANT_INT
@@ -464,6 +459,10 @@ declaration_list
 	| declaration_list declaration
 	;
 
+translation_unit
+	: external_declaration
+	| translation_unit external_declaration
+	;
 
 %%
 void yyerror(char const *s)
