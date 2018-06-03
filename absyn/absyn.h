@@ -24,17 +24,16 @@ struct A_var_{
     }u;
 };
 
-<<<<<<< HEAD
+
 struct A_dec_ 
     {enum {A_functionDec, A_varDec} kind;
      A_pos pos;
      union {A_fundecList function;
         /* escape may change after the initial declaration */
         struct {S_symbol var; S_symbol typ; A_exp init; bool escape;} var;
-        A_nametyList type;
       } u;
    };
-=======
+
 struct A_exp_
       {enum {A_varExp, A_nilExp, A_callExp, A_opExp, A_seqExp, 
 		A_assignExp,
@@ -81,6 +80,7 @@ struct A_exp_
 		  long longg;
 		  /* return; - need only the pos */
 		  short shortt;
+		  struct {A_exp ret;} returnn;
 		  struct {A_exp type) signedd;
 		  struct {string type} sizeoff;
 		  struct {string type, astype} typedeff;
@@ -89,4 +89,8 @@ struct A_exp_
 		  struct {S_symbol typ; A_exp size, init;} array;
 	    } u;
      };
->>>>>>> 7bcaefa5a49b8d6bffa4cf4f52ec0856f4106294
+
+A_var A_SimpleVar(A_pos pos, S_symbol sym);
+A_var A_SubscriptVar(A_pos pos, A_var var, A_exp exp);
+A_exp A_ReturnExp(A_pos pos, A_exp ret);
+A_exp A_ShortExp(A_pos pos, );
