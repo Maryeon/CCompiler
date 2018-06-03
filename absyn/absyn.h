@@ -1,4 +1,6 @@
 typedef int A_pos;
+typedef struct A_translationUnit_ *A_translationUnit;
+typedef struct A_externalDeclaration_ *A_externalDeclaration;
 typedef struct A_var_ *A_var;
 typedef struct A_exp_ *A_exp;
 typedef struct A_dec_ *A_dec;
@@ -6,6 +8,19 @@ typedef struct A_fundec_ *A_fundec;
 typedef struct A_fundecList_ *A_fundecList;
 typedef struct A_nametyList_ *A_nametyList;
 typedef struct A_expList_ *A_expList;
+
+/******************example*************/
+struct A_translationUnit_{
+	A_externalDeclaration *head;
+};
+
+struct A_externalDeclaration_{
+	enum{A_FUNCTIONDEFINITION, A_DECLARATION}kind;
+	union{
+		A_functionDefinition functiondefinition;
+		A_declaration declaration;
+	}u;
+};
 
 typedef enum {A_addOp, A_subOp, A_mulOp, A_divOp,
             A_add_assignOp, A_sub_assignOp, A_mul_assignOp,A_div_assignOp,
@@ -109,11 +124,7 @@ A_exp A_ForExp(A_pos pos, A_exp init, A_exp test, A_exp last, A_exp body);
 A_exp A_IfExp(A_pos pos, A_exp test, A_exp then);			
 A_exp A_IntExp(A_pos pos, int intt);				
 A_exp A_ReturnExp(A_pos pos, A_exp ret);			
-<<<<<<< HEAD
-A_exp A_SizeofExp(A_pos pos, string type);	 			
-=======
 A_exp A_SizeofExp(A_pos pos, S_symbol typ);	 			
->>>>>>> f0f62b00791a5328c88deb0e0a9eb84ff94c24ff
 A_exp A_WhileExp(A_pos pos, A_exp test, A_exp body);	
 
 A_fundecList A_FundecList(A_fundec head, A_fundecList tail);

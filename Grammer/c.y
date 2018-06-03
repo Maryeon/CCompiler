@@ -25,9 +25,9 @@ int yylex(void);
 %start translation_unit
 %%
 
-Program
-	:translation_unit{
-	}
+translation_unit
+	: external_declaration
+	| translation_unit external_declaration
 	;
 
 primary_expression
@@ -446,11 +446,6 @@ jump_statement
 	| BREAK ';'
 	| RETURN ';'
 	| RETURN expression ';'
-	;
-
-translation_unit
-	: external_declaration
-	| translation_unit external_declaration
 	;
 
 external_declaration
