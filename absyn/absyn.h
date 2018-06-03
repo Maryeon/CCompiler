@@ -1,6 +1,7 @@
 typedef int A_pos;
 typedef struct A_translationUnit_ *A_translationUnit;
 typedef struct A_externalDeclaration_ *A_externalDeclaration;
+typedef struct A_directDeclarator_ *A_directDeclarator;
 typedef struct A_var_ *A_var;
 typedef struct A_exp_ *A_exp;
 typedef struct A_dec_ *A_dec;
@@ -21,6 +22,10 @@ struct A_externalDeclaration_{
 		A_declaration declaration;
 	}u;
 };
+
+struct A_directDeclarator_{
+	
+}
 
 typedef enum {A_addOp, A_subOp, A_mulOp, A_divOp,
             A_add_assignOp, A_sub_assignOp, A_mul_assignOp,A_div_assignOp,

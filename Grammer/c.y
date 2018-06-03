@@ -25,11 +25,6 @@ int yylex(void);
 %start translation_unit
 %%
 
-translation_unit
-	: external_declaration
-	| translation_unit external_declaration
-	;
-
 primary_expression
 	: IDENTIFIER
 	| CONSTANT
@@ -177,8 +172,6 @@ declaration_specifiers
 	| type_specifier declaration_specifiers
 	| type_qualifier
 	| type_qualifier declaration_specifiers
-	| function_specifier
-	| function_specifier declaration_specifiers
 	;
 
 init_declarator_list
@@ -279,10 +272,6 @@ type_qualifier
 	| VOLATILE
 	;
 
-function_specifier
-	: INLINE
-	;
-
 declarator
 	: pointer direct_declarator
 	| direct_declarator
@@ -292,13 +281,6 @@ declarator
 direct_declarator
 	: IDENTIFIER
 	| '(' declarator ')'
-	| direct_declarator '[' type_qualifier_list assignment_expression ']'
-	| direct_declarator '[' type_qualifier_list ']'
-	| direct_declarator '[' assignment_expression ']'
-	| direct_declarator '[' STATIC type_qualifier_list assignment_expression ']'
-	| direct_declarator '[' type_qualifier_list STATIC assignment_expression ']'
-	| direct_declarator '[' type_qualifier_list '*' ']'
-	| direct_declarator '[' '*' ']'
 	| direct_declarator '[' ']'
 	| direct_declarator '(' parameter_type_list ')'
 	| direct_declarator '(' identifier_list ')'
@@ -463,6 +445,10 @@ declaration_list
 	| declaration_list declaration
 	;
 
+translation_unit
+	: external_declaration
+	| translation_unit external_declaration
+	;
 
 %%
 void yyerror(char const *s)
