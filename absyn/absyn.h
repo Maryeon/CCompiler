@@ -92,5 +92,3 @@ struct A_exp_
 
 A_var A_SimpleVar(A_pos pos, S_symbol sym);
 A_var A_SubscriptVar(A_pos pos, A_var var, A_exp exp);
-A_exp A_ReturnExp(A_pos pos, A_exp ret);
-A_exp A_ShortExp(A_pos pos, );
