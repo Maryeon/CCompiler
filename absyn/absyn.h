@@ -89,7 +89,7 @@ A_var A_SimpleVar(A_pos pos, S_symbol sym);
 A_var A_SubscriptVar(A_pos pos, A_var var, A_exp exp);
 
 A_dec A_FunctionDec(A_pos pos, A_fundecList function);
-A_dec A_VarDec(A_pos pos, S_symbol var, A_exp init);
+A_dec A_VarDec(A_pos pos, S_symbol var, A_expList init);
 
 A_exp A_VarExp(A_pos pos, A_var var);
 A_exp A_NilExp(A_pos pos); 
