@@ -37,7 +37,11 @@ struct A_dec_
    };
 =======
 struct A_exp_
-      {enum {A_varExp, A_nilExp, A_callExp, A_opExp, A_seqExp, 
+      {enum {A_varExp, 
+	    A_nilExp, 
+		A_callExp, 
+		A_opExp, 
+		A_seqExp, 
 		A_assignExp,
 		A_boolExp,			
 		A_breakExp,				
@@ -50,16 +54,9 @@ struct A_exp_
 		A_forExp,		
 		A_ifExp,			
 		A_intExp,		
-		A_longExp,		
-		A_returnExp,	
-		A_shortExp,			
-		A_signedExp,		
-		A_sizeofExp,	 		
-		A_typedefExp,		
-		A_unsignedExp,		
-		A_voidExp,			
-		A_whileExp,	
-		A_arrayExp
+		A_returnExp,			
+		A_sizeofExp,			
+		A_whileExp
 		   } kind;
        A_pos pos;
        union {A_var var;
@@ -79,15 +76,31 @@ struct A_exp_
 		  struct {A_exp init, test, last, body;} forr;
 		  struct {A_exp test, then;} iff;	
 		  int intt;
-		  long longg;
-		  /* return; - need only the pos */
-		  short shortt;
-		  struct {A_exp type) signedd;
+		  struct {A_exp exp;} returnn;
 		  struct {string type} sizeoff;
-		  struct {string type, astype} typedeff;
-		  struct {A_exp type) unsignedd;
 		  struct {A_exp test, body;} whilee;	
-		  struct {S_symbol typ; A_exp size, init;} array;
 	    } u;
      };
 >>>>>>> 7bcaefa5a49b8d6bffa4cf4f52ec0856f4106294
+
+/* Function Prototypes */
+A_exp A_VarExp(A_pos pos, A_var var);
+A_exp A_NilExp(A_pos pos); 
+A_exp A_CallExp(A_pos pos, S_symbol func, A_expList args); 
+A_exp A_OpExp(A_pos pos, A_oper oper, A_exp left, A_exp right); 
+A_exp A_SeqExp(A_pos pos); 
+A_exp A_AssignExp(A_pos pos, A_var var, A_exp exp);
+A_exp A_BoolExp(A_pos pos, bool booll);			
+A_exp A_BreakExp(A_pos pos);				
+A_exp A_CharExp(A_pos pos, char charr);		
+A_exp A_ContinueExp(A_pos pos);		
+A_exp A_DowhileExp(A_pos pos, A_exp test, A_exp body);	
+A_exp A_DoubleExp(A_pos pos, double doublee);		
+A_exp A_IfelseExp(A_pos pos, A_exp test, A_exp then, A_exp elsee);				
+A_exp A_FloatExp(A_pos pos, float floatt);		
+A_exp A_ForExp(A_pos pos, A_exp init, A_exp test, A_exp last, A_exp body);		
+A_exp A_IfExp(A_pos pos, A_exp test, A_exp then);			
+A_exp A_IntExp(A_pos pos, int intt);				
+A_exp A_returnExp(A_pos pos, A_exp exp);			
+A_exp A_sizeofExp(A_pos pos, string type);	 			
+A_exp A_whileExp(A_pos pos, A_exp test, A_exp body);	
