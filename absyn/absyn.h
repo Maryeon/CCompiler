@@ -3,7 +3,8 @@ typedef struct A_fundec_ *A_fundec;
 typedef struct A_fundecList_ *A_fundecList;
 typedef struct A_nametyList_ *A_nametyList;
 A_dec A_FunctionDec(A_pos pos, A_fundecList function);
-A_dec A_VarDec(A_pos pos, S_symbol var, S_symbol typ, A_exp init);
+A_dec A_VarDec(A_pos pos, S_symbol var, A_exp init);
+A_dec A_arrVarDec(A_pos pos, S_symbol var, A_exp init);
 
 typedef enum {A_addOp, A_subOp, A_mulOp, A_divOp,
             A_add_assignOp, A_sub_assignOp, A_mul_assignOp,A_div_assignOp,
@@ -26,7 +27,7 @@ struct A_var_{
 
 <<<<<<< HEAD
 struct A_dec_ 
-    {enum {A_functionDec, A_varDec} kind;
+    {enum {A_functionDec, A_varDec, A_arrvarDec} kind;
      A_pos pos;
      union {A_fundecList function;
         /* escape may change after the initial declaration */
