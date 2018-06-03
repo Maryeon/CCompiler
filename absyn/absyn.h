@@ -24,23 +24,77 @@ struct A_externalDeclaration_{
 
 //Liu===============================================================
 struct A_declaration_{
-
+	enum{Fenhao} kind;
+	A_pos pos;
+	union{
+		A_declaration_specifiers declaration_specifiers;
+		struct{A_declaration_specifiers declaration_specifiers;A_init_declarator_list init_declarator_list;}dec2;
+	}u;
 }
 
-struct_declaration_list
-	: struct_declaration
-	| struct_declaration_list struct_declaration
-	;
-
-struct A_struct_declaration_list_{
-	A_struct_declaration *head;
-}
-
-struct A_enumerator_{
+struct A_declaration_specifiers_{
 	int kind;
 	A_pos pos;
-	union{}u;
+	union{
+		//storage_class_specifier
+		//storage_class_specifier declaration_specifiers
+		A_type_specifier type_specifier;
+		struct{A_type_specifier type_specifier;A_declaration_specifiers declaration_specifiers;}type_s_dec;
+		//A_type_qualifier type_qualifier;
+		//struct{A_type_qualifier type_qualifier;A_declaration_specifiers declaration_specifiers;}type_q_dec;
+		//function_specifier
+		//function_specifier declaration_specifiers
+	}u;
 }
+
+struct A_init_declarator_list_{
+	enum{Douhao} kind;
+	A_pos pos;
+	union{
+		A_init_declarator init_declarator;
+		struct{A_init_declarator_list init_declarator_list;A_init_declarator init_declarator;}init_dec_list;
+	
+	}u;
+}
+
+struct A_init_declarator_{
+	enum{Equal} kind;
+	A_pos pos;
+	union{
+		A_declarator declarator;
+		struct{A_declarator declarator;A_initializer initializer;}init_dec2;
+	}u;
+}
+
+struct A_type_specifier_{
+	enum{eVOID,eCHAR,eINT,eLONG,eSHORT,eFLOAT,eDOUBLE,eSIGHED,eUNSIGNED,eBOOL}kind;
+	A_pos pos;
+	union{
+		A_struct_or_union_specifier struct_or_union_specifier;
+		//enum_specifier
+	}u;
+}
+
+struct A_specifier_qualifier_list_{
+	int kind;
+	A_pos pos;
+	union{
+		struct{A_type_specifier type_specifier;A_specifier_qualifier_list specifier_qualifier_list;}sql;
+		A_type_specifier type_specifier;
+		//type_qualifier specifier_qualifier_list
+		//type_qualifier
+	}u;
+}
+
+struct A_declarator_{
+	int kind;
+	A_pos pos;
+	union{
+		struct{A_pointer pointer; A_direct_declarator direct_declarator;}dec;
+		A_direct_declarator direct_declarator;
+	}u;
+}
+
 
 //end===============================================================
 typedef enum {A_addOp, A_subOp, A_mulOp, A_divOp,
