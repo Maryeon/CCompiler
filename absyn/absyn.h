@@ -22,6 +22,27 @@ struct A_externalDeclaration_{
 	}u;
 };
 
+//Liu===============================================================
+struct A_declaration_{
+
+}
+
+struct_declaration_list
+	: struct_declaration
+	| struct_declaration_list struct_declaration
+	;
+
+struct A_struct_declaration_list_{
+	A_struct_declaration *head;
+}
+
+struct A_enumerator_{
+	int kind;
+	A_pos pos;
+	union{}u;
+}
+
+//end===============================================================
 typedef enum {A_addOp, A_subOp, A_mulOp, A_divOp,
             A_add_assignOp, A_sub_assignOp, A_mul_assignOp,A_div_assignOp,
             A_mod_assignOp,A_or_assignOp, A_and_assignOp,A_xor_assignOp,
