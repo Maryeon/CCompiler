@@ -9,13 +9,221 @@ typedef struct A_fundecList_ *A_fundecList;
 typedef struct A_nametyList_ *A_nametyList;
 typedef struct A_expList_ *A_expList;
 
+
+
+struct A_primaryExpression_{
+	enum{IDENTIFIER, CONSTANT_INT, CONSTANT_DOUBLE, STRING_LITERAL, LP_expression_RP}kind;
+	A_pos pos;
+	union{
+		S_Symbol symbol;
+		int intt;
+		double doublee;
+		string stringg;
+		A_expression expression;
+	}u;
+};
+
+struct A_postfix_expression_{
+	enum{PRI_E, POST_E, POST_LP_RP, POST_LP_AEL_RP, POST_DOT_ID, //POST_PTR_OP_ID,
+	POST_INC_OP, POST_DEC_OP, LR_TN_RP_IL, LP_TN_RP_IL_SEMI}kind;
+	A_pos pos;
+	union{
+		A_primaryExpression primary_expression;
+		struct{A_postfix_expression postfix_expression; A_expression expression; }post_e;
+		A_postfix_expression postfix_expression;
+		struct{A_postfix_expression postfix_expression; A_argument_expression_list argument_expression_list; }post_lp_ael_rp;
+		struct{A_postfix_expression postfix_expression; S_Symbol symbol; }post_dot_id;
+		//postfix_expression PTR_OP IDENTIFIER,
+		A_postfix_expression postfix_expression;
+		A_postfix_expression postfix_expression;
+		struct{A_type_name type_name; A_initializer_list initializer_list; }lr_tn_rp_il;
+		struct{A_type_name type_name; A_initializer_list initializer_list; }lp_tn_rp_il_semi;
+	}u;
+};
+
+struct A_argument_expression_list_{
+	enum{ASS_E, AEL}kind;
+	A_pos pos;
+	union{
+		A_assignment_expression assignment_expression;
+		struct{A_argument_expression_list argument_expression_list; A_assignment_expression assignment_expression; }ael;
+	}u;
+};
+
+struct A_unary_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_postfix_expression postfix_expression;
+		A_unary_expression unary_expression;
+		A_unary_expression unary_expression;
+		struct{A_unary_operator unary_operator; A_cast_expression cast_expression; }lr_tn_rp_il;
+		A_unary_expression unary_expression;
+		A_type_name type_name;
+	}u;
+};
+
+struct A_unary_operator_{
+	int kind;
+	A_pos pos;
+		//'&'
+		//'*'
+		//'+'
+		//'-'
+		//'~'
+		//'!'
+};
+
+struct A_cast_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_unary_expression unary_expression;
+		struct{A_type_name type_name; A_cast_expression cast_expression; }tn_ce;
+	}u;
+};
+	
+
+struct A_multiplicative_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_cast_expression cast_expression; 
+		struct{A_multiplicative_expression multiplicative_expression; A_cast_expression cast_expression; }mul;
+		struct{A_multiplicative_expression multiplicative_expression; A_cast_expression cast_expression; }div;
+		struct{A_multiplicative_expression multiplicative_expression; A_cast_expression cast_expression; }mod;
+	}u;
+};
+
+struct A_additive_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_multiplicative_expression multiplicative_expression;
+		struct{A_additive_expression additive_expression; A_multiplicative_expression multiplicative_expression;}add;
+		struct{A_additive_expression additive_expression; A_multiplicative_expression multiplicative_expression;}minus;
+	}u;
+};
+
+struct A_shift_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_additive_expression additive_expression;
+	}u;
+};
+
+struct A_relational_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_shift_expression shift_expression;
+		struct{A_relational_expression relational_expression; A_shift_expression shift_expression;}lt;
+		struct{A_relational_expression relational_expression; A_shift_expression shift_expression;}gt;
+		struct{A_relational_expression relational_expression; A_shift_expression shift_expression;}le;
+		struct{A_relational_expression relational_expression; A_shift_expression shift_expression;}ge;
+	}u;
+};
+
+struct A_equality_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_relational_expression relational_expression;
+		struct{A_equality_expression equality_expression; A_relational_expression relational_expression;}eq;
+		struct{A_equality_expression equality_expression; A_relational_expression relational_expression;}neq;
+	}u;
+};
+
+struct A_and_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_equality_expression equality_expression; 
+		struct{A_and_expression and_expression; A_equality_expression equality_expression;}andd;
+	}u;
+};
+
+struct A_exclusive_or_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_and_expression and_expression;
+		struct{A_exclusive_or_expression exclusive_or_expression; A_and_expression and_expression;}xorr;
+	}u;
+};
+
+struct A_inclusive_or_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_exclusive_or_expression exclusive_or_expression;
+		struct{A_inclusive_or_expression inclusive_or_expression; A_exclusive_or_expression exclusive_or_expression;}orr;
+	}u;
+};
+
+struct A_logical_and_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_inclusive_or_expression inclusive_or_expression;
+		struct{A_logical_and_expression logical_and_expression; A_inclusive_or_expression inclusive_or_expression;}and_op;
+	}u;
+};
+
+struct A_logical_or_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_logical_and_expression logical_and_expression;
+		struct{A_logical_or_expression logical_or_expression; A_logical_and_expression logical_and_expression;}or_op;
+	}u;
+};
+
+struct A_conditional_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_logical_or_expression logical_or_expression;
+		struct{A_logical_or_expression logical_or_expression; A_expression expression; A_conditional_expression conditional_expression;}cond;
+	}u;
+};
+
+struct A_assignment_expression_{
+	int kind;
+	A_pos pos;
+	union{
+		A_conditional_expression conditional_expression;
+		struct{A_unary_expression unary_expression; A_assignment_operator assignment_operator; A_assignment_expression assignment_expression;}assignn;
+	}u;
+};
+
+struct A_assignment_operator_{
+	enum{
+		ASSIGN,//'='
+		MUL_ASSIGN,
+		DIV_ASSIGN,
+		MOD_ASSIGN,
+		ADD_ASSIGN,
+		SUB_ASSIGN,
+		AND_ASSIGN,
+		XOR_ASSIGN,
+		OR_ASSIGN
+	}kind;
+	A_pos pos;
+};
+
+
+
 /******************example*************/
 struct A_translationUnit_{
 	A_externalDeclaration *head;
+	A_pos pos;
 };
 
 struct A_externalDeclaration_{
 	enum{A_FUNCTIONDEFINITION, A_DECLARATION}kind;
+	A_pos pos;
 	union{
 		A_functionDefinition functiondefinition;
 		A_declaration declaration;
@@ -95,111 +303,4 @@ struct A_declarator_{
 	}u;
 }
 
-
 //end===============================================================
-typedef enum {A_addOp, A_subOp, A_mulOp, A_divOp,
-            A_add_assignOp, A_sub_assignOp, A_mul_assignOp,A_div_assignOp,
-            A_mod_assignOp,A_or_assignOp, A_and_assignOp,A_xor_assignOp,
-            A_incOp, A_decOp,A_ptrOp, A_andOp, A_orOp, A_leOp, A_geOp,
-            A_eqOp,A_neOp, A_equal_sign_Op,A_ltOp,A_gtOp,
-            A_single_andOp,A_single_orOp,A_exclamatoryOp,A_single_neOp,
-            A_modOp, A_single_xorOp
-             } A_oper;
-
-typedef struct A_var_ *A_var;
-struct A_var_{
-	enum{A_simpleVar, A_subscriptVar} kind;
-	A_pos pos;
-	union{	S_symbol simple;
-			struct{	A_var var;
-					A_exp exp;} subscript;
-    }u;
-};
-
-struct A_dec_ 
-    {enum {A_functionDec, A_varDec} kind;
-     A_pos pos;
-     union {A_fundecList function;
-        /* escape may change after the initial declaration */
-        struct {S_symbol var;  A_expList_ init; bool escape;} var;
-      } u;
-   };
-
-struct A_exp_
-      {enum {A_varExp, 
-	    A_nilExp, 
-		A_callExp, 
-		A_opExp, 
-		A_seqExp, 
-		A_assignExp,
-		A_boolExp,			
-		A_breakExp,				
-		A_charExp,		
-		A_continueExp,		
-		A_dowhileExp,	
-		A_doubleExp,		
-		A_ifelseExp,				
-		A_floatExp,		
-		A_forExp,		
-		A_ifExp,			
-		A_intExp,		
-		A_returnExp,			
-		A_sizeofExp,			
-		A_whileExp
-		   } kind;
-       A_pos pos;
-       union {A_var var;
-	      /* nil; - needs only the pos */
-		  struct {S_symbol func; A_expList args;} call;
-		  struct {A_oper oper; A_exp left; A_exp right;} op;
-		  A_expList seq;
-		  struct {A_var var; A_exp exp;} assign;
-		  bool booll;
-		  /* breakk; - need only the pos */
-		  char charr;
-		  /* continue; - need only the pos */
-		  struct {A_exp test, body;} dowhile;
-		  double doublee;
-		  struct {A_exp test, then, elsee;} ifelse;
-		  float floatt;
-		  struct {A_exp init, test, last, body;} forr;
-		  struct {A_exp test, then;} iff;	
-		  int intt;
-		  struct {A_exp ret;} returnn;
-		  struct {S_symbol typ;} sizeoff;
-		  struct {A_exp test, body;} whilee;	
-	    } u;
-     };
-
-struct A_expList_ {A_exp head; A_expList tail;};
-struct A_fundecList_ {A_fundec head; A_fundecList tail;};
-
-/* Function Prototypes */
-A_var A_SimpleVar(A_pos pos, S_symbol sym);
-A_var A_SubscriptVar(A_pos pos, A_var var, A_exp exp);
-
-A_dec A_FunctionDec(A_pos pos, A_fundecList function);
-A_dec A_VarDec(A_pos pos, S_symbol var, A_expList init);
-
-A_exp A_VarExp(A_pos pos, A_var var);
-A_exp A_NilExp(A_pos pos); 
-A_exp A_CallExp(A_pos pos, S_symbol func, A_expList args); 
-A_exp A_OpExp(A_pos pos, A_oper oper, A_exp left, A_exp right); 
-A_exp A_SeqExp(A_pos pos); 
-A_exp A_AssignExp(A_pos pos, A_var var, A_exp exp);
-A_exp A_BoolExp(A_pos pos, bool booll);			
-A_exp A_BreakExp(A_pos pos);				
-A_exp A_CharExp(A_pos pos, char charr);		
-A_exp A_ContinueExp(A_pos pos);		
-A_exp A_DowhileExp(A_pos pos, A_exp test, A_exp body);	
-A_exp A_DoubleExp(A_pos pos, double doublee);		
-A_exp A_IfelseExp(A_pos pos, A_exp test, A_exp then, A_exp elsee);				
-A_exp A_FloatExp(A_pos pos, float floatt);		
-A_exp A_ForExp(A_pos pos, A_exp init, A_exp test, A_exp last, A_exp body);		
-A_exp A_IfExp(A_pos pos, A_exp test, A_exp then);			
-A_exp A_IntExp(A_pos pos, int intt);				
-A_exp A_ReturnExp(A_pos pos, A_exp ret);			
-A_exp A_SizeofExp(A_pos pos, S_symbol typ);	 			
-A_exp A_WhileExp(A_pos pos, A_exp test, A_exp body);	
-
-A_fundecList A_FundecList(A_fundec head, A_fundecList tail);
