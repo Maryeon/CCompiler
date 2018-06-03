@@ -76,8 +76,7 @@ struct A_exp_
 		  struct {A_exp test, then;} iff;	
 		  int intt;
 		  struct {A_exp ret;} returnn;
-		  struct {A_exp type) signedd;
-		  struct {string type} sizeoff;
+		  struct {S_symbol typ;} sizeoff;
 		  struct {A_exp test, body;} whilee;	
 	    } u;
      };
@@ -88,8 +87,10 @@ struct A_fundecList_ {A_fundec head; A_fundecList tail;};
 /* Function Prototypes */
 A_var A_SimpleVar(A_pos pos, S_symbol sym);
 A_var A_SubscriptVar(A_pos pos, A_var var, A_exp exp);
+
 A_dec A_FunctionDec(A_pos pos, A_fundecList function);
-A_dec A_VarDec(A_pos pos, S_symbol var, A_exp init);
+A_dec A_VarDec(A_pos pos, S_symbol var, A_expList init);
+
 A_exp A_VarExp(A_pos pos, A_var var);
 A_exp A_NilExp(A_pos pos); 
 A_exp A_CallExp(A_pos pos, S_symbol func, A_expList args); 
@@ -108,7 +109,11 @@ A_exp A_ForExp(A_pos pos, A_exp init, A_exp test, A_exp last, A_exp body);
 A_exp A_IfExp(A_pos pos, A_exp test, A_exp then);			
 A_exp A_IntExp(A_pos pos, int intt);				
 A_exp A_ReturnExp(A_pos pos, A_exp ret);			
+<<<<<<< HEAD
 A_exp A_SizeofExp(A_pos pos, string type);	 			
+=======
+A_exp A_SizeofExp(A_pos pos, S_symbol typ);	 			
+>>>>>>> f0f62b00791a5328c88deb0e0a9eb84ff94c24ff
 A_exp A_WhileExp(A_pos pos, A_exp test, A_exp body);	
 
 A_fundecList A_FundecList(A_fundec head, A_fundecList tail);

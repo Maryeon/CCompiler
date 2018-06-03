@@ -6,6 +6,8 @@
 void count(void);
 %}
 
+%option yylineno
+
 /*Lex Definitions: */
 D			[0-9]
 L			[a-zA-Z_]
@@ -136,7 +138,6 @@ void comment(void)
 
 
 int column = 0;
-int line = 0;
 
 void count(void)
 {
@@ -146,7 +147,6 @@ void count(void)
 		if (yytext[i] == '\n')
 		{
 			column = 0;
-			line++;
 		}
 		else if (yytext[i] == '\t')
 			column += 4 - (column % 4);

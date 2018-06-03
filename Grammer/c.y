@@ -1,3 +1,14 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+
+extern FILE* yyin;
+extern char yytext[];
+extern int column;
+void yyerror(char *);
+int yylex(void);
+%}
+
 %token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF
 %token PTR_OP INC_OP DEC_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
@@ -13,6 +24,11 @@
 
 %start translation_unit
 %%
+
+Program
+	:translation_unit{
+	}
+	;
 
 primary_expression
 	: IDENTIFIER
@@ -454,13 +470,20 @@ declaration_list
 
 
 %%
-#include <stdio.h>
-
-extern char yytext[];
-extern int column;
-
 void yyerror(char const *s)
 {
 	fflush(stdout);
 	printf("\n%*s\n%*s\n", column, "^", column, s);
+}
+
+int main(int avgs, char *argv[])
+{
+	yyin = fopen(argv[1], "r");
+	if(!yyin)
+	{
+		printf("Cannot Open the File!\n");
+		exit(0);
+	}
+	yyparse();
+	return 0;
 }
