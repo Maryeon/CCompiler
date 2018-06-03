@@ -1,4 +1,5 @@
 typedef int A_pos;
+typedef char * S_symbol;
 typedef struct A_fundec_ *A_fundec;
 typedef struct A_fundecList_ *A_fundecList;
 typedef struct A_nametyList_ *A_nametyList;
@@ -102,6 +103,6 @@ A_exp A_FloatExp(A_pos pos, float floatt);
 A_exp A_ForExp(A_pos pos, A_exp init, A_exp test, A_exp last, A_exp body);		
 A_exp A_IfExp(A_pos pos, A_exp test, A_exp then);			
 A_exp A_IntExp(A_pos pos, int intt);				
-A_exp A_returnExp(A_pos pos, A_exp exp);			
+A_exp A_returnExp(A_pos pos, A_exp ret);			
 A_exp A_sizeofExp(A_pos pos, string type);	 			
-A_exp A_whileExp(A_pos pos, A_exp test, A_exp body);	
+A_exp A_whileExp(A_pos pos, A_exp test, A_exp body);
