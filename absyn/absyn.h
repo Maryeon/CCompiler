@@ -1,32 +1,32 @@
 typedef int A_pos;
-typedef struct A_translationUnit_ *A_translationUnit;
-typedef struct A_externalDeclaration_ *A_externalDeclaration;
-typedef struct A_directDeclarator_ *A_directDeclarator;
+typedef struct A_translation_unit_ *A_translation_unit;
+typedef struct A_external_declaration_ *A_external_declaration;
+typedef struct A_direct_declarator_ *A_direct_declarator;
 typedef struct A_pointer_ *A_pointer;
-typedef struct A_typeQualifierList_ *A_typeQualifierList;
-typedef struct A_parameterTypeList_ *A_parameterTypeList;
-typedef struct A_parameterList_ *A_parameterList;
-typedef struct A_parameterDeclaration_ *A_parameterDeclaration;
-typedef struct A_identifierList_ *A_identifierList;
-typedef struct A_typeName_ *A_typeName;
-typedef struct A_abstractDeclarator_ *A_abstractDeclarator;
-typedef struct A_directAbstractDeclarator_ *A_directAbstractDeclarator;
+typedef struct A_type_qualifier_list_ *A_type_qualifier_list;
+typedef struct A_parameter_type_list_ *A_parameter_type_list;
+typedef struct A_parameter_list_ *A_parameter_list;
+typedef struct A_parameter_declaration_ *A_parameter_declaration;
+typedef struct A_identifier_list_ *A_identifier_list;
+typedef struct A_type_name_ *A_type_name;
+typedef struct A_abstract_declarator_ *A_abstract_declarator;
+typedef struct A_direct_abstract_declarator_ *A_direct_abstract_declarator;
 typedef struct A_initializer_ *A_initializer;
-typedef struct A_initializerList_ *A_initializerList;
+typedef struct A_initializer_list_ *A_initializer_list;
 typedef struct A_designation_ *A_designation;
-typedef struct A_designationList_ *A_designationList;
+typedef struct A_designation_list_ *A_designation_list;
 typedef struct A_designator_ *A_designator;
 typedef struct A_statement_ *A_statement;
-typedef struct A_labeledStatement_ *A_labeledStatement;
-typedef struct A_compoundStatement_ *A_compoundStatement;
-typedef struct A_blockItemList_ *A_blockItemList;
-typedef struct A_blockItem_ *A_blockItem;
-typedef struct A_expressionStatement_ *A_expressionStatement;
-typedef struct A_selectionStatement_ *A_selectionStatement;
-typedef struct A_iterationStatement_ *A_iterationStatement;
-typedef struct A_jumpStatement_ *A_jumpStatement;
+typedef struct A_labeled_statement_ *A_labeled_statement;
+typedef struct A_compound_statement_ *A_compound_statement;
+typedef struct A_block_item_list_ *A_block_item_list;
+typedef struct A_block_item_ *A_block_item;
+typedef struct A_expression_statement_ *A_expression_statement;
+typedef struct A_selection_statement_ *A_selection_statement;
+typedef struct A_iteration_statement_ *A_iteration_statement;
+typedef struct A_jump_statement_ *A_jump_statement;
 typedef struct A_functionDefinition_ *A_functionDefinition;
-typedef struct A_declarationList_ *A_declarationList;
+typedef struct A_declaration_list_ *A_declaration_list;
 
 
 typedef struct A_declaration_ *A_declaration;
@@ -243,12 +243,12 @@ struct A_assignment_operator_{
 
 
 /******************example*************/
-struct A_translationUnit_{
-	A_externalDeclaration *head;
+struct A_translation_unit_{
+	A_external_declaration *head;
 	A_pos pos;
 };
 
-struct A_externalDeclaration_{
+struct A_external_declaration_{
 	int grammer;
 	enum{A_FUNCTIONDEFINITION, A_DECLARATION}kind;
 	A_pos pos;
@@ -337,7 +337,7 @@ struct A_declarator_{
 //end===============================================================
 
 
-struct A_directDeclarator_{
+struct A_direct_declarator_{
 	int grammer;
 	A_pos pos;
 	union{
@@ -349,45 +349,45 @@ struct A_pointer_{
 	int grammer;
 	A_pos pos;
 	union{
-		A_typeQualifierList u1;
+		A_type_qualifier_list u1;
 		A_pointer u2;
 		struct{
-			A_typeQualifierList typequalifierlist;
+			A_type_qualifier_list typequalifierlist;
 			A_pointer pointer;
 		}u3;
 	}u;
 };
 
-struct A_typeQualifierList_{
+struct A_type_qualifier_list_{
 	int grammer;
 	A_pos pos;
 	union{
 		A_typeQualifier u1;
 		struct{
-			A_typeQualifierList u1;
+			A_type_qualifier_list u1;
 			A_typeQualifier u2;
 		}u2;
 	}u;
 };
 
-struct A_parameterTypeList_{
-	A_parameterList u;
+struct A_parameter_type_list_{
+	A_parameter_list u;
 	A_pos pos;
 };
 
-struct A_parameterList_{
+struct A_parameter_list_{
 	int grammer;
 	A_pos pos;
 	union{
-		A_parameterDeclaration u1;
+		A_parameter_declaration u1;
 		struct{
-			A_parameterList u1;
-			A_parameterDeclaration u2;
+			A_parameter_list u1;
+			A_parameter_declaration u2;
 		}u2;
 	}u;
 };
 
-struct A_parameterDeclaration_{
+struct A_parameter_declaration_{
 	int grammer;
 	A_pos pos;
 	union{
@@ -397,7 +397,7 @@ struct A_parameterDeclaration_{
 		}u1;
 		struct{
 			A_declarationSpecifiers u1;
-			A_abstractDeclarator u2;
+			A_abstract_declarator u2;
 		}u2;
 		struct{
 			A_declarationSpecifiers u;
@@ -405,48 +405,48 @@ struct A_parameterDeclaration_{
 	}u;
 };
 
-struct A_identifierList_{
+struct A_identifier_list_{
 	int grammer;
 	A_pos pos;
 	union{
 		A_var u1;
 		struct{
-			A_identifierList u1;
+			A_identifier_list u1;
 			S_symbol u2;
 		}u2;
 	}u;
 };
 
-struct A_typeName_{
+struct A_type_name_{
 	int grammer;
 	A_pos pos;
 	union{
 		A_specifierQualifierList u1;
 		struct{
 			A_specifierQualifierList u1;
-			A_abstractDeclarator u2;
+			A_abstract_declarator u2;
 		}u2;
 	}u;
 };
 
-struct A_abstractDeclarator_{
+struct A_abstract_declarator_{
 	int grammer;
 	A_pos pos;
 	union{
 		A_pointer u1;
-		A_directAbstractDeclarator u2;
+		A_direct_abstract_declarator u2;
 		struct{
 			A_pointer u1;
-			A_directAbstractDeclarator u2;
+			A_direct_abstract_declarator u2;
 		}u3;
 	}u;
 };
 
-struct A_directAbstractDeclarator_{
+struct A_direct_abstract_declarator_{
 	int grammer;
 	A_pos pos;
 	union{
-		A_abstractDeclarator u1;
+		A_abstract_declarator u1;
 	}u;
 };
 
@@ -455,12 +455,12 @@ struct A_initializer_{
 	A_pos pos;
 	union{
 		A_assignExpression u1;
-		A_initializerList u2;
-		A_initializerList u3;
+		A_initializer_list u2;
+		A_initializer_list u3;
 	}u;
 };
 
-struct A_initializerList_{
+struct A_initializer_list_{
 	int grammer;
 	A_pos pos;
 	union{
@@ -470,11 +470,11 @@ struct A_initializerList_{
 			A_initializer u2;
 		}u2;
 		struct{
-			A_initializerList u1;
+			A_initializer_list u1;
 			A_initializer u2;
 		}u3;
 		struct{
-			A_initializerList u1;
+			A_initializer_list u1;
 			A_designation u2;
 			A_initializer u3;
 		}u4;
@@ -486,7 +486,7 @@ struct A_designation_{
 	A_pos pos;
 };
 
-struct A_designationList_{
+struct A_designation_list_{
 	int grammer;
 	A_pos pos;
 	union{
@@ -511,16 +511,16 @@ struct A_statement_{
 	int grammer;
 	A_pos pos;
 	union{
-		A_labeledStatement u1;
-		A_compoundStatement u2;
-		A_expressionStatement u3;
-		A_selectionStatement u4;
-		A_iterationStatement u5;
-		A_jumpStatement u6;
+		A_labeled_statement u1;
+		A_compound_statement u2;
+		A_expression_statement u3;
+		A_selection_statement u4;
+		A_iteration_statement u5;
+		A_jump_statement u6;
 	}u;
 };
 
-struct A_labeledStatement_{
+struct A_labeled_statement_{
 	int grammer;
 	A_pos pos;
 	union{
@@ -536,25 +536,25 @@ struct A_labeledStatement_{
 	}u;
 };
 
-struct A_compoundStatement_{
+struct A_compound_statement_{
 	int grammer;
-	A_blockItemList u;
+	A_block_item_list u;
 	A_pos pos;
 };
 
-struct A_blockItemList_{
+struct A_block_item_list_{
 	int grammer;
 	A_pos pos;
 	union{
-		A_blockItem u1;
+		A_block_item u1;
 		struct{
-			A_blockItemList u1;
-			A_blockItem u2;
+			A_block_item_list u1;
+			A_block_item u2;
 		}u2;
 	}u;
 };
 
-struct A_blockItem_{
+struct A_block_item_{
 	int grammer;
 	A_pos pos;
 	union{
@@ -563,13 +563,13 @@ struct A_blockItem_{
 	}u;
 };
 
-struct A_expressionStatement_{
+struct A_expression_statement_{
 	int grammer;
 	A_pos pos;
 	A_expression u;
 };
 
-struct A_selectionStatement_{
+struct A_selection_statement_{
 	int grammer;
 	A_pos pos;
 	union{
@@ -589,7 +589,7 @@ struct A_selectionStatement_{
 	}u;
 };
 
-struct A_iterationStatement_{
+struct A_iteration_statement_{
 	int grammer;
 	A_pos pos;
 	union{
@@ -602,31 +602,31 @@ struct A_iterationStatement_{
 			A_expression u2;
 		}u2;
 		struct{
-			A_expressionStatement u1;
-			A_expressionStatement u2;
+			A_expression_statement u1;
+			A_expression_statement u2;
 			A_statement u3;
 		}u3;
 		struct{
-			A_expressionStatement u1;
-			A_expressionStatement u2;
+			A_expression_statement u1;
+			A_expression_statement u2;
 			A_expression u3;
 			A_statement u4;
 		}u4;
 		struct{
 			A_declaration u1;
-			A_expressionStatement u2;
+			A_expression_statement u2;
 			A_statement u3;
 		}u5;
 		struct{
 			A_declaration u1;
-			A_expressionStatement u2;
+			A_expression_statement u2;
 			A_expression u3;
 			A_statement u4;
 		}u6;
 	}u;
 };
 
-struct A_jumpStatement_{
+struct A_jump_statement_{
 	int grammer;
 	A_pos pos;
 	union{
@@ -642,24 +642,24 @@ struct A_functionDefinition_{
 		struct{
 			A_declarationSpecifiers u1;
 			A_declarator u2;
-			A_declarationList u3;
-			A_compoundStatement u4;
+			A_declaration_list u3;
+			A_compound_statement u4;
 		}u1;
 		struct{
 			A_declarationSpecifiers u1;
 			A_declarator u2;
-			A_compoundStatement u3;
+			A_compound_statement u3;
 		}u2;
 	}u;
 };
 
-struct A_declarationList_{
+struct A_declaration_list_{
 	int grammer;
 	A_pos pos;
 	union{
 		A_declaration u1;
 		struct{
-			A_declarationList u1;
+			A_declaration_list u1;
 			A_declaration u2;
 		}u2;
 	}u;
