@@ -1,10 +1,11 @@
 typedef int A_pos;
+typedef struct A_var_ *A_var;
+typedef struct A_exp_ *A_exp;
+typedef struct A_dec_ *A_dec;
 typedef struct A_fundec_ *A_fundec;
 typedef struct A_fundecList_ *A_fundecList;
 typedef struct A_nametyList_ *A_nametyList;
-A_dec A_FunctionDec(A_pos pos, A_fundecList function);
-A_dec A_VarDec(A_pos pos, S_symbol var, A_exp init);
-A_dec A_arrVarDec(A_pos pos, S_symbol var, A_exp init);
+typedef struct A_expList_ *A_expList;
 
 typedef enum {A_addOp, A_subOp, A_mulOp, A_divOp,
             A_add_assignOp, A_sub_assignOp, A_mul_assignOp,A_div_assignOp,
@@ -26,15 +27,14 @@ struct A_var_{
 };
 
 struct A_dec_ 
-    {enum {A_functionDec, A_varDec, A_arrvarDec} kind;
+    {enum {A_functionDec, A_varDec} kind;
      A_pos pos;
      union {A_fundecList function;
         /* escape may change after the initial declaration */
-        struct {S_symbol var; S_symbol typ; A_exp init; bool escape;} var;
-        A_nametyList type;
+        struct {S_symbol var;  A_expList_ init; bool escape;} var;
       } u;
    };
-   
+
 struct A_exp_
       {enum {A_varExp, 
 	    A_nilExp, 
@@ -75,13 +75,22 @@ struct A_exp_
 		  struct {A_exp init, test, last, body;} forr;
 		  struct {A_exp test, then;} iff;	
 		  int intt;
-		  struct {A_exp exp;} returnn;
+		  struct {A_exp ret;} returnn;
 		  struct {S_symbol typ;} sizeoff;
 		  struct {A_exp test, body;} whilee;	
 	    } u;
      };
 
+struct A_expList_ {A_exp head; A_expList tail;};
+struct A_fundecList_ {A_fundec head; A_fundecList tail;};
+
 /* Function Prototypes */
+A_var A_SimpleVar(A_pos pos, S_symbol sym);
+A_var A_SubscriptVar(A_pos pos, A_var var, A_exp exp);
+
+A_dec A_FunctionDec(A_pos pos, A_fundecList function);
+A_dec A_VarDec(A_pos pos, S_symbol var, A_exp init);
+
 A_exp A_VarExp(A_pos pos, A_var var);
 A_exp A_NilExp(A_pos pos); 
 A_exp A_CallExp(A_pos pos, S_symbol func, A_expList args); 
@@ -99,6 +108,8 @@ A_exp A_FloatExp(A_pos pos, float floatt);
 A_exp A_ForExp(A_pos pos, A_exp init, A_exp test, A_exp last, A_exp body);		
 A_exp A_IfExp(A_pos pos, A_exp test, A_exp then);			
 A_exp A_IntExp(A_pos pos, int intt);				
-A_exp A_ReturnExp(A_pos pos, A_exp exp);			
+A_exp A_ReturnExp(A_pos pos, A_exp ret);			
 A_exp A_SizeofExp(A_pos pos, S_symbol typ);	 			
 A_exp A_WhileExp(A_pos pos, A_exp test, A_exp body);	
+
+A_fundecList A_FundecList(A_fundec head, A_fundecList tail);
