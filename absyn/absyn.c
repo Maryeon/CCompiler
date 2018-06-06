@@ -4,7 +4,7 @@
 #include"absyn.h"
 
 /******************************MA******************************/
-A_translation_unit A_TranslationUnit(A_pos pos, int grammer, void *argv[])
+A_translation_unit A_Translation_Unit(A_pos pos, int grammer, void *argv[])
 {
 	A_translation_unit p = checked_malloc(sizeof(*p));
 	p->grammer = grammer;
