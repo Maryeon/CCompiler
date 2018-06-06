@@ -23,6 +23,7 @@ typedef struct A_assignment_expression_ *A_assignment_expression;
 
 typedef struct A_assignment_operator_ *A_assignment_operator;
 typedef struct A_pointer_ *A_pointer;
+typedef struct A_type_qualifier_ *A_type_qualifier;
 typedef struct A_type_qualifier_list_ *A_type_qualifier_list;
 typedef struct A_parameter_type_list_ *A_parameter_type_list;
 typedef struct A_parameter_list_ *A_parameter_list;
@@ -34,7 +35,7 @@ typedef struct A_direct_abstract_declarator_ *A_direct_abstract_declarator;
 typedef struct A_initializer_ *A_initializer;
 typedef struct A_initializer_list_ *A_initializer_list;
 typedef struct A_designation_ *A_designation;
-typedef struct A_designation_list_ *A_designation_list;
+typedef struct A_designator_list_ *A_designator_list;
 typedef struct A_designator_ *A_designator;
 typedef struct A_statement_ *A_statement;
 typedef struct A_labeled_statement_ *A_labeled_statement;
@@ -56,8 +57,26 @@ typedef struct A_init_declarator_ *A_init_declarator;
 typedef struct A_type_specifier_ *A_type_specifier;
 typedef struct A_specifier_qualifier_list_ *A_specifier_qualifier_list;
 typedef struct A_declarator_ *A_declarator;
+typedef struct A_expression_ *A_expression;
+typedef struct A_constant_expression_ *A_constant_expression;
 
+struct A_constant_expression_{
+	int grammer;
+	A_pos pos;
+	A_conditional_expression u;
+};
 
+struct A_expression_{
+	int grammer;
+	A_pos pos;
+	union{
+		A_assignment_expression u1;
+		struct{
+			A_expression u1;
+			A_assignment_expression u2;
+		}u2;
+	}u;
+};
 
 struct A_primary_expression_{
 	enum{IDENTIFIER, CONSTANT_INT, CONSTANT_DOUBLE, STRING_LITERAL, LP_expression_RP}kind;
@@ -284,6 +303,15 @@ struct A_external_declaration_{
 		A_declaration u2;
 	}u;
 };
+
+struct A_type_qualifier_{
+	enum{
+		CONST,
+		RESTRICT,
+		VOLATILE
+	}kind;
+	A_pos pos;
+};
 /******************END***************/
 
 
@@ -380,8 +408,8 @@ struct A_pointer_{
 		A_type_qualifier_list u1;
 		A_pointer u2;
 		struct{
-			A_type_qualifier_list typequalifierlist;
-			A_pointer pointer;
+			A_type_qualifier_list u1;
+			A_pointer u2;
 		}u3;
 	}u;
 };
@@ -390,10 +418,10 @@ struct A_type_qualifier_list_{
 	int grammer;
 	A_pos pos;
 	union{
-		A_typeQualifier u1;
+		A_type_qualifier u1;
 		struct{
 			A_type_qualifier_list u1;
-			A_typeQualifier u2;
+			A_type_qualifier u2;
 		}u2;
 	}u;
 };
@@ -427,9 +455,7 @@ struct A_parameter_declaration_{
 			A_declaration_specifiers u1;
 			A_abstract_declarator u2;
 		}u2;
-		struct{
-			A_declaration_specifiers u;
-		}u3;
+		A_declaration_specifiers u3;
 	}u;
 };
 
@@ -437,7 +463,7 @@ struct A_identifier_list_{
 	int grammer;
 	A_pos pos;
 	union{
-		A_var u1;
+		S_Symbol u1;
 		struct{
 			A_identifier_list u1;
 			S_symbol u2;
@@ -449,9 +475,9 @@ struct A_type_name_{
 	int grammer;
 	A_pos pos;
 	union{
-		A_specifierQualifierList u1;
+		A_specifier_qualifier_list u1;
 		struct{
-			A_specifierQualifierList u1;
+			A_specifier_qualifier_list u1;
 			A_abstract_declarator u2;
 		}u2;
 	}u;
@@ -482,7 +508,7 @@ struct A_initializer_{
 	int grammer;
 	A_pos pos;
 	union{
-		A_assignExpression u1;
+		A_assignment_expression u1;
 		A_initializer_list u2;
 		A_initializer_list u3;
 	}u;
@@ -510,17 +536,17 @@ struct A_initializer_list_{
 };
 
 struct A_designation_{
-	A_designatorList u;
+	A_designator_list u;
 	A_pos pos;
 };
 
-struct A_designation_list_{
+struct A_designator_list_{
 	int grammer;
 	A_pos pos;
 	union{
 		A_designator u1;
 		struct{
-			A_designatorList u1;
+			A_designator_list u1;
 			A_designator u2;
 		}u2;
 	}u;
@@ -530,7 +556,7 @@ struct A_designator_{
 	int grammer;
 	A_pos pos;
 	union{
-		A_constantExpression u1;
+		A_constant_expression u1;
 		S_symbol u2;
 	}u;
 };
@@ -557,7 +583,7 @@ struct A_labeled_statement_{
 			A_statement u2;
 		}u1;
 		struct{
-			A_constantExpression u1;
+			A_constant_expression u1;
 			A_statement u2;
 		}u2;
 		A_statement u3;
@@ -692,3 +718,33 @@ struct A_declaration_list_{
 		}u2;
 	}u;
 };
+
+A_translation_unit A_Translation_Unit(A_pos pos, int grammer, void *argv[]);
+A_external_declaration A_External_Declaration(A_pos, int grammer, void *argv[]);
+A_direct_declarator A_Direct_Declarator(A_pos pos, int grammer, void *argv[]);
+A_pointer A_Pointer(A_pos pos, int grammer, void *argv[]);
+A_type_qualifier_list A_Type_Qualifier_List(A_pos pos, int grammer, void *argv[]);
+A_parameter_type_list A_Parameter_Type_List(A_pos pos, int grammer, void *argv[]);
+A_parameter_list A_Parameter_List(A_pos pos, int grammer, void *argv[]);
+A_parameter_declaration A_Parameter_Declaration(A_pos pos, int grammer, void *argv[]);
+A_identifier_list A_Identifier_List(A_pos pos, int grammer, void *argv[]);
+A_type_name A_Type_Name(A_pos pos, int grammer, void *argv[]);
+A_abstract_declarator A_Abstract_Declarator(A_pos pos, int grammer, void *argv[]);
+A_direct_abstract_declarator A_Direct_Abstract_Declarator(A_pos pos, int grammer, void *argv[]);
+A_initializer A_Initializer(A_pos pos, int grammer, void *argv[]);
+A_initializer_list A_Initializer_List(A_pos pos, int grammer, void *argv[]);
+A_designation A_Designation(A_pos pos, int grammer, void *argv[]);
+A_designator_list A_Designator_List(A_pos pos, int grammer, void *argv[]);
+A_designator A_Designator(A_pos pos, int grammer, void *argv[]);
+A_statement A_Statement(A_pos pos, int grammer, void *argv[]);
+A_labeled_statement A_Labeled_Statement(A_pos pos, int grammer, void *argv[]);
+A_compound_statement A_Compound_Statement(A_pos pos, int grammer, void *argv[]);
+A_block_item_list A_Block_Item_List(A_pos pos, int grammer, void *argv[]);
+A_block_item A_Block_Item(A_pos pos, int grammer, void *argv[]);
+A_expression_statement A_Expression_Statement(A_pos pos, int grammer, void *argv[]);
+A_selection_statement A_Selection_Statement(A_pos pos, int grammer, void *argv[]);
+A_iteration_statement A_Iteration_Statement(A_pos pos, int grammer, void *argv[]);
+A_jump_statement A_Jump_Statement(A_pos pos, int grammer, void *argv[]);
+A_function_definition A_Function_Definition(A_pos pos, int grammer, void *argv[]);
+A_declaration_list A_Declaration_List(A_pos pos, int grammer, void *argv[]);
+
