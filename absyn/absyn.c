@@ -13,8 +13,8 @@ A_translation_unit A_Translation_Unit(A_pos pos, int grammer, void *argv[])
 	{
 		case 1:	p->u.u1 = (A_external_declaration)argv[0];
 				break;
-		case 2: p->u.u2.u1 = argv[0];
-				p->u.u2.u2 = argv[1];
+		case 2: p->u.u2.u1 = (A_translation_unit)argv[0];
+				p->u.u2.u2 = (A_external_declaration)argv[1];
 				break;
 		default:
 				break;
