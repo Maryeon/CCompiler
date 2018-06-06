@@ -394,7 +394,8 @@ A_compound_statement A_Compound_Statement(A_pos pos, int grammer, void *argv[])
 	p->pos = pos;
 	switch(grammer)
 	{
-		case 1:	p->u = (A_block_item_list)argv[0];
+		case 1:break;
+		case 2:	p->u = (A_block_item_list)argv[0];
 				break;
 		default:
 				return NULL;
