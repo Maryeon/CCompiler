@@ -45,7 +45,7 @@ typedef struct A_expression_statement_ *A_expression_statement;
 typedef struct A_selection_statement_ *A_selection_statement;
 typedef struct A_iteration_statement_ *A_iteration_statement;
 typedef struct A_jump_statement_ *A_jump_statement;
-typedef struct A_functionDefinition_ *A_functionDefinition;
+typedef struct A_function_definition_ *A_function_definition;
 typedef struct A_declaration_list_ *A_declaration_list;
 
 
@@ -263,21 +263,28 @@ struct A_assignment_operator_{
 
 
 
-/******************example*************/
+/******************MA***************/
 struct A_translation_unit_{
-	A_external_declaration *head;
+	int grammer;
+	union{
+		A_external_declaration u1;
+		struct{
+			A_translation_unit u1;
+			A_external_declaration u2;
+		}u2;
+	}u;
 	A_pos pos;
 };
 
 struct A_external_declaration_{
 	int grammer;
-	enum{A_FUNCTIONDEFINITION, A_DECLARATION}kind;
 	A_pos pos;
 	union{
-		A_functionDefinition functiondefinition;
-		A_declaration declaration;
+		A_function_definition u1;
+		A_declaration u2;
 	}u;
 };
+/******************END***************/
 
 
 //Liu===============================================================
@@ -413,15 +420,15 @@ struct A_parameter_declaration_{
 	A_pos pos;
 	union{
 		struct{
-			A_declarationSpecifiers u1;
+			A_declaration_specifiers u1;
 			A_declarator u2;
 		}u1;
 		struct{
-			A_declarationSpecifiers u1;
+			A_declaration_specifiers u1;
 			A_abstract_declarator u2;
 		}u2;
 		struct{
-			A_declarationSpecifiers u;
+			A_declaration_specifiers u;
 		}u3;
 	}u;
 };
@@ -656,18 +663,18 @@ struct A_jump_statement_{
 	}u;
 };
 
-struct A_functionDefinition_{
+struct A_function_definition_{
 	int grammer;
 	A_pos pos;
 	union{
 		struct{
-			A_declarationSpecifiers u1;
+			A_declaration_specifiers u1;
 			A_declarator u2;
 			A_declaration_list u3;
 			A_compound_statement u4;
 		}u1;
 		struct{
-			A_declarationSpecifiers u1;
+			A_declaration_specifiers u1;
 			A_declarator u2;
 			A_compound_statement u3;
 		}u2;
