@@ -64,11 +64,12 @@ A_pointer A_Pointer(A_pos pos, int grammer, void *argv[])
 	p->pos = pos;
 	switch(grammer)
 	{
-		case 1:	p->u.u1 = (A_type_qualifier)argv[0];
+		case 1:	break;
+		case 2:	p->u.u1 = (A_type_qualifier)argv[0];
 				break;
-		case 2:	p->u.u2 = (A_pointer)argv[0];
+		case 3:	p->u.u2 = (A_pointer)argv[0];
 				break;
-		case 3:	p->u.u3.u1 = (A_type_qualifier_list)argv[0];
+		case 4:	p->u.u3.u1 = (A_type_qualifier_list)argv[0];
 				p->u.u3.u2 = (A_pointer)argv[1];
 				break;
 		default:
@@ -222,6 +223,16 @@ A_direct_abstract_declarator A_Direct_Abstract_Declarator(A_pos pos, int grammer
 	{
 		case 1:	p->u.u1 = (A_abstract_declarator)argv[0];
 				break;
+		case 2:	break;
+		case 3:	break;
+		case 4:	break;
+		case 5:	break;
+		case 6:	break;
+		case 7:	break;
+		case 8:	break;
+		case 9:	break;
+		case 10:break;
+		case 11:break;
 		default:
 				return NULL;
 	}
