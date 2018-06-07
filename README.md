@@ -1,1 +1,1 @@
-C language as
+Simple C language Compiler
