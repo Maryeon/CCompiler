@@ -25,132 +25,487 @@ int yylex(void);
 %start translation_unit
 %%
 
+
 primary_expression
 	: IDENTIFIER
+	{
+		$$ = A_identifier(yylineno, $1);
+	}
 	| CONSTANT_INT
+	{
+		$$ = A_constant_int(yylineno, $1);
+	}
 	| CONSTANT_DOUBLE
+	{
+		$$ = A_constant_double(yylineno, $1);
+	}
 	| STRING_LITERAL
+	{
+		$$ = A_string_literal(yylineno, $1);
+	}
 	| '(' expression ')'
+	{	
+		$$ = A_lp_expression_rp($2->pos, $2);
+	}
 	;
+
 
 postfix_expression
 	: primary_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Postfix_Expression($1->pos, 1, argv);
+	}
 	| postfix_expression '[' expression ']'
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Postfix_Expression($1->pos, 2, argv);
+	}
 	| postfix_expression '(' ')'
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Postfix_Expression($1->pos, 3, argv);
+	}
 	| postfix_expression '(' argument_expression_list ')'
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Postfix_Expression($1->pos, 4, argv);
+	}
 	| postfix_expression '.' IDENTIFIER
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Postfix_Expression($1->pos, 5, argv);
+	}
 	| postfix_expression PTR_OP IDENTIFIER
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| postfix_expression INC_OP
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Postfix_Expression($1->pos, 6, argv);
+	}
 	| postfix_expression DEC_OP
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Postfix_Expression($1->pos, 7, argv);
+	}
 	| '(' type_name ')' '{' initializer_list '}'
+	{
+		void *argv[2];
+		argv[0] = (void *)$2;
+		argv[1] = (void *)$5;
+		$$ = A_Postfix_Expression($2->pos, 8, argv);
+	}
 	| '(' type_name ')' '{' initializer_list ',' '}'
+	{
+		void *argv[2];
+		argv[0] = (void *)$2;
+		argv[1] = (void *)$5;
+		$$ = A_Postfix_Expression($2->pos, 9, argv);
+	}
 	;
 
 argument_expression_list
 	: assignment_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Argument_Expression_List($1->pos, 1, argv);
+	}
 	| argument_expression_list ',' assignment_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Argument_Expression_List($1->pos, 2, argv);
+	}
 	;
 
 unary_expression
 	: postfix_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Unary_Expression($1->pos, 1, argv);
+	}
 	| INC_OP unary_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$2;
+		$$ = A_Unary_Expression($2->pos, 2, argv);
+	}
 	| DEC_OP unary_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$2;
+		$$ = A_Unary_Expression($2->pos, 3, argv);
+	}
 	| unary_operator cast_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$2;
+		$$ = A_Unary_Expression($1->pos, 4, argv);
+	}
 	| SIZEOF unary_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$2;
+		$$ = A_Unary_Expression($2->pos, 5, argv);
+	}
 	| SIZEOF '(' type_name ')'
+	{
+		void *argv[1];
+		argv[0] = (void *)$3;
+		$$ = A_Unary_Expression($3->pos, 6, argv);
+	}
 	;
+
 
 unary_operator
 	: '&'
+	{
+		$$ = A_Unary_Expression(yylineno, 1, NULL);
+	}
 	| '*'
+	{
+		$$ = A_Unary_Expression(yylineno, 2, NULL);
+	}
 	| '+'
+	{
+		$$ = A_Unary_Expression(yylineno, 3, NULL);
+	}
 	| '-'
+	{
+		$$ = A_Unary_Expression(yylineno, 4, NULL);
+	}
 	| '~'
+	{
+		$$ = A_Unary_Expression(yylineno, 5, NULL);
+	}
 	| '!'
+	{
+		$$ = A_Unary_Expression(yylineno, 6, NULL);
+	}
 	;
+
 
 cast_expression
 	: unary_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Cast_Expression($1->pos, 1, argv);
+	}
 	| '(' type_name ')' cast_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$2;
+		argv[1] = (void *)$4;
+		$$ = A_Cast_Expression($2->pos, 2, argv);
+	}
 	;
+
 
 multiplicative_expression
 	: cast_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Multiplicative_Expression($1->pos, 1, argv);
+	}
 	| multiplicative_expression '*' cast_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Multiplicative_Expression($1->pos, 2, argv);
+	}
 	| multiplicative_expression '/' cast_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Multiplicative_Expression($1->pos, 3, argv);
+	}
 	| multiplicative_expression '%' cast_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Multiplicative_Expression($1->pos, 4, argv);
+	}
 	;
 
 additive_expression
 	: multiplicative_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Additive_Expression($1->pos, 1, argv);
+	}
 	| additive_expression '+' multiplicative_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Additive_Expression($1->pos, 2, argv);
+	}
 	| additive_expression '-' multiplicative_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Additive_Expression($1->pos, 3, argv);
+	}
 	;
-
 shift_expression
 	: additive_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Additive_Expression($1->pos, 1, argv);
+	}
 	;
+
+
 
 relational_expression
 	: shift_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Relational_Expression($1->pos, 1, argv);
+	}
 	| relational_expression '<' shift_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Relational_Expression($1->pos, 2, argv);
+	}
 	| relational_expression '>' shift_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Relational_Expression($1->pos, 3, argv);
+	}
 	| relational_expression LE_OP shift_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Relational_Expression($1->pos, 4, argv);
+	}
 	| relational_expression GE_OP shift_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Relational_Expression($1->pos, 5, argv);
+	}
 	;
+
 
 equality_expression
 	: relational_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Equality_Expression($1->pos, 1, argv);
+	}
 	| equality_expression EQ_OP relational_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Equality_Expression($1->pos, 2, argv);
+	}
 	| equality_expression NE_OP relational_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Equality_Expression($1->pos, 3, argv);
+	}
 	;
 
+
+
+	
 and_expression
 	: equality_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_And_Expression($1->pos, 1, argv);
+	}
 	| and_expression '&' equality_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_And_Expression($1->pos, 2, argv);
+	}
 	;
+
 
 exclusive_or_expression
 	: and_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Exclusive_Or_Expression($1->pos, 1, argv);
+	}
 	| exclusive_or_expression '^' and_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Exclusive_Or_Expression($1->pos, 2, argv);
+	}
 	;
 
 inclusive_or_expression
 	: exclusive_or_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Inclusive_Or_Expression($1->pos, 1, argv);
+	}
 	| inclusive_or_expression '|' exclusive_or_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Inclusive_Or_Expression($1->pos, 2, argv);
+	}
 	;
+
 
 logical_and_expression
 	: inclusive_or_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Logical_And_Expression($1->pos, 1, argv);
+	}
 	| logical_and_expression AND_OP inclusive_or_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Logical_And_Expression($1->pos, 2, argv);
+	}
 	;
+
 
 logical_or_expression
 	: logical_and_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Logical_Or_Expression($1->pos, 1, argv);
+	}
 	| logical_or_expression OR_OP logical_and_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Logical_Or_Expression($1->pos, 2, argv);
+	}
 	;
+
 
 conditional_expression
 	: logical_or_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Conditional_Expression($1->pos, 1, argv);
+	}
 	| logical_or_expression '?' expression ':' conditional_expression
+	{
+		void *argv[3];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		argv[2] = (void *)$5;
+		$$ = A_Conditional_Expression($1->pos, 2, argv);
+	}
 	;
+
 
 assignment_expression
 	: conditional_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Assignment_Expression($1->pos, 1, argv);
+	}
 	| unary_expression assignment_operator assignment_expression
+	{
+		void *argv[3];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$2;
+		argv[2] = (void *)$3;
+		$$ = A_Assignment_Expression($1->pos, 2, argv);
+	}
 	;
 
 assignment_operator
 	: '='
+	{
+		$$ = A_Assignment_Operator(yylineno, 1, NULL);
+	}
 	| MUL_ASSIGN
+	{
+		$$ = A_Assignment_Operator(yylineno, 2, NULL);
+	}
 	| DIV_ASSIGN
+	{
+		$$ = A_Assignment_Operator(yylineno, 3, NULL);
+	}
 	| MOD_ASSIGN
+	{
+		$$ = A_Assignment_Operator(yylineno, 4, NULL);
+	}
 	| ADD_ASSIGN
+	{
+		$$ = A_Assignment_Operator(yylineno, 5, NULL);
+	}
 	| SUB_ASSIGN
+	{
+		$$ = A_Assignment_Operator(yylineno, 6, NULL);
+	}
 	| AND_ASSIGN
+	{
+		$$ = A_Assignment_Operator(yylineno, 7, NULL);
+	}
 	| XOR_ASSIGN
+	{
+		$$ = A_Assignment_Operator(yylineno, 8, NULL);
+	}
 	| OR_ASSIGN
+	{
+		$$ = A_Assignment_Operator(yylineno, 9, NULL);
+	}
 	;
+
+	
+
 
 expression
 	: assignment_expression
