@@ -3,6 +3,426 @@
 
 #include"absyn.h"
 
+/******************************GUO******************************/
+
+
+
+A_primary_expression A_identifier(A_pos pos, S_symbol symbol)
+{
+	A_primary_expression p = checked_malloc(sizeof(*p));
+	p->kind = IDENTIFIER;
+	p->pos = pos;
+	p->u.symbol = symbol;
+	return p;
+}
+
+A_primary_expression A_constant_int(A_pos pos, int intt)
+{
+	A_primary_expression p = checked_malloc(sizeof(*p));
+	p->kind = CONSTANT_INT;
+	p->pos = pos;
+	p->u.intt = intt;
+	return p;
+}
+
+A_primary_expression A_constant_double(A_pos pos, double doublee)
+{
+	A_primary_expression p = checked_malloc(sizeof(*p));
+	p->kind = CONSTANT_DOUBLE;
+	p->pos = pos;
+	p->u.doublee = doublee;
+	return p;
+}
+A_primary_expression A_string_literal(A_pos pos, string stringg)
+{
+	A_primary_expression p = checked_malloc(sizeof(*p));
+	p->kind = STRING_LITERAL;
+	p->pos = pos;
+	p->u.stringg = stringg;
+	return p;
+}
+A_primary_expression A_lp_expression_rp(A_pos pos, A_expression expression)
+{
+	A_primary_expression p = checked_malloc(sizeof(*p));
+	p->kind = LP_expression_RP;
+	p->pos = pos;
+	p->u.expression = expression;
+	return p;
+}
+
+
+A_postfix_expression A_Postfix_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_postfix_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.primary_expression = (A_primary_expression)argv[0];
+				break;
+		case 2: p->u.post_e.postfix_expression = (A_postfix_expression)argv[0];
+				p->u.post_e.expression = (A_expression)argv[1];
+				break;
+		case 3: p->u.postfix_expression = (A_postfix_expression)argv[0];
+				break;
+		case 4: p->u.post_lp_ael_rp.postfix_expression = (A_postfix_expression)argv[0];
+				p->u.post_lp_ael_rp.argument_expression_list = (A_argument_expression_list)argv[1];
+				break;
+		case 5: p->u.post_dot_id.postfix_expression = (A_postfix_expression)argv[0];
+				p->u.post_dot_id.symbol = (S_symbol)argv[1];
+				break;
+		case 6: p->u.postfix_expression = (A_postfix_expression)argv[0];
+				break;
+		case 7: p->u.postfix_expression = (A_postfix_expression)argv[0];
+				break;
+		case 8:	p->u.lr_tn_rp_il.type_name = (A_type_name)argv[0];
+				p->u.lr_tn_rp_il.initializer_list = (A_initializer_list)argv[1];
+				break;
+		case 9: p->u.lp_tn_rp_il_semi.type_name = (A_type_name)argv[0];
+				p->u.lp_tn_rp_il_semi.initializer_list = (A_initializer_list)argv[1];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+
+A_argument_expression_list A_Argument_Expression_List(A_pos pos, int kind, void *argv[])
+{
+	A_argument_expression_list p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.assignment_expression = (A_assignment_expression)argv[0];
+				break;
+		case 2: p->u.ael.argument_expression_list = (A_argument_expression_list)argv[0];
+				p->u.ael.assignment_expression = (A_assignment_expression)argv[1];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+
+A_unary_expression A_Unary_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_unary_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.postfix_expression = (A_postfix_expression)argv[0];
+				break;
+		case 2: p->u.unary_expression = (A_unary_expression)argv[0];
+				break;
+		case 3: p->u.unary_expression = (A_unary_expression)argv[0];
+				break;
+		case 4: p->u.lr_tn_rp_il.unary_operator = (A_unary_operator)argv[0];
+				p->u.lr_tn_rp_il.cast_expression = (A_cast_expression)argv[1];
+				break;
+		case 5: p->u.unary_expression = (A_unary_expression)argv[0];
+				break;
+		case 6: p->u.type_name = (A_type_name)argv[0];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+
+A_unary_operator A_Unary_Operator(A_pos pos, int kind, void *argv[])
+{
+	A_unary_operator p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+
+	return p;
+}
+
+
+A_cast_expression A_Cast_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_cast_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.unary_expression = (A_unary_expression)argv[0];
+				break;
+		case 2: p->u.tn_ce.type_name = (A_type_name)argv[0];
+				p->u.tn_ce.cast_expression = (A_cast_expression)argv[1];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+A_multiplicative_expression A_Multiplicative_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_multiplicative_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.cast_expression = (A_cast_expression)argv[0];
+				break;
+		case 2: p->u.mul.multiplicative_expression = (A_multiplicative_expression)argv[0];
+				p->u.mul.cast_expression = (A_cast_expression)argv[1];
+				break;
+		case 3: p->u.div.multiplicative_expression = (A_multiplicative_expression)argv[0];
+				p->u.div.cast_expression = (A_cast_expression)argv[1];
+				break;
+		case 4: p->u.mod.multiplicative_expression = (A_multiplicative_expression)argv[0];
+				p->u.mod.cast_expression = (A_cast_expression)argv[1];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+
+
+A_additive_expression A_Additive_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_additive_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.multiplicative_expression = (A_multiplicative_expression)argv[0];
+				break;
+		case 2: p->u.add.additive_expression = (A_additive_expression)argv[0];
+				p->u.add.multiplicative_expression = (A_multiplicative_expression)argv[1];
+				break;
+		case 3: p->u.minus.additive_expression = (A_additive_expression)argv[0];
+				p->u.minus.multiplicative_expression = (A_multiplicative_expression)argv[1];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+A_shift_expression A_Shift_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_shift_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.additive_expression = (A_additive_expression)argv[0];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+
+A_relational_expression A_Relational_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_relational_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.shift_expression = (A_shift_expression)argv[0];
+				break;
+		case 2: p->u.lt.relational_expression = (A_relational_expression)argv[0];
+				p->u.lt.shift_expression = (A_shift_expression)argv[1];
+				break;
+		case 3: p->u.gt.relational_expression = (A_relational_expression)argv[0];
+				p->u.gt.shift_expression = (A_shift_expression)argv[1];
+				break;
+		case 4: p->u.le.relational_expression = (A_relational_expression)argv[0];
+				p->u.le.shift_expression = (A_shift_expression)argv[1];
+				break;
+		case 5: p->u.ge.relational_expression = (A_relational_expression)argv[0];
+				p->u.ge.shift_expression = (A_shift_expression)argv[1];
+				break;
+
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+
+
+A_equality_expression A_Equality_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_equality_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.relational_expression = (A_relational_expression)argv[0];
+				break;
+		case 2: p->u.eq.equality_expression = (A_equality_expression)argv[0];
+				p->u.eq.shift_expression = (A_shift_expression)argv[1];
+				break;
+		case 3: p->u.neq.equality_expression = (A_equality_expression)argv[0];
+				p->u.neq.shift_expression = (A_shift_expression)argv[1];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+A_and_expression A_And_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_and_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.equality_expression = (A_equality_expression)argv[0];
+				break;
+		case 2: p->u.andd.and_expression = (A_and_expression)argv[0];
+				p->u.andd.equality_expression = (A_equality_expression)argv[1];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+
+A_exclusive_or_expression A_Exclusive_Or_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_exclusive_or_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.and_expression = (A_and_expression)argv[0];
+				break;
+		case 2: p->u.xorr.exclusive_or_expression = (A_exclusive_or_expression)argv[0];
+				p->u.xorr.and_expression = (A_and_expression)argv[1];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+A_inclusive_or_expression A_Inclusive_Or_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_inclusive_or_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.exclusive_or_expression = (A_exclusive_or_expression)argv[0];
+				break;
+		case 2: p->u.orr.inclusive_or_expression = (A_inclusive_or_expression)argv[0];
+				p->u.orr.exclusive_or_expression = (A_exclusive_or_expression)argv[1];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+
+A_logical_and_expression A_Logical_And_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_logical_and_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.inclusive_or_expression = (A_inclusive_or_expression)argv[0];
+				break;
+		case 2: p->u.and_op.logical_and_expression = (A_logical_and_expression)argv[0];
+				p->u.and_op.inclusive_or_expression = (A_inclusive_or_expression)argv[1];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+
+A_logical_or_expression A_Logical_Or_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_logical_or_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.logical_and_expression = (A_logical_and_expression)argv[0];
+				break;
+		case 2: p->u.or_op.logical_or_expression = (A_logical_or_expression)argv[0];
+				p->u.or_op.logical_and_expression = (A_logical_and_expression)argv[1];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+A_conditional_expression A_Conditional_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_conditional_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.logical_or_expression = (A_logical_or_expression)argv[0];
+				break;
+		case 2: p->u.cond.logical_or_expression = (A_logical_or_expression)argv[0];
+				p->u.cond.expression = (A_expression)argv[1];
+				p->u.cond.conditional_expression = (A_conditional_expression)argv[2];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+A_assignment_expression A_Assignment_Expression(A_pos pos, int kind, void *argv[])
+{
+	A_assignment_expression p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	switch(kind)
+	{
+		case 1:	p->u.conditional_expression = (A_conditional_expression)argv[0];
+				break;
+		case 2: p->u.assignn.unary_expression = (A_unary_expression)argv[0];
+				p->u.assignn.assignment_operator = (A_assignment_operator)argv[1];
+				p->u.assignn.assignment_expression = (A_assignment_expression)argv[2];
+				break;
+		default:
+				return NULL;	
+	}
+	return p;
+}
+
+A_assignment_operator A_Assignment_Operator(A_pos pos, int kind, void *argv[])
+{
+	A_assignment_operator p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	p->pos = pos;
+	return p;
+}
+
+
+
+
+
+
+
+
+
 /******************************MA******************************/
 A_translation_unit A_Translation_Unit(A_pos pos, int grammer, void *argv[])
 {

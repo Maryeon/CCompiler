@@ -78,11 +78,14 @@ struct A_expression_{
 	}u;
 };
 
+/******************GUO***************/
+
 struct A_primary_expression_{
 	enum{IDENTIFIER, CONSTANT_INT, CONSTANT_DOUBLE, STRING_LITERAL, LP_expression_RP}kind;
+	//int kind;
 	A_pos pos;
 	union{
-		S_Symbol symbol;
+		S_symbol symbol;
 		int intt;
 		double doublee;
 		string stringg;
@@ -91,15 +94,16 @@ struct A_primary_expression_{
 };
 
 struct A_postfix_expression_{
-	enum{PRI_E, POST_E, POST_LP_RP, POST_LP_AEL_RP, POST_DOT_ID, //POST_PTR_OP_ID,
-	POST_INC_OP, POST_DEC_OP, LR_TN_RP_IL, LP_TN_RP_IL_SEMI}kind;
+	//enum{PRI_E, POST_E, POST_LP_RP, POST_LP_AEL_RP, POST_DOT_ID, //POST_PTR_OP_ID,
+	//POST_INC_OP, POST_DEC_OP, LR_TN_RP_IL, LP_TN_RP_IL_SEMI}kind;
+	int kind;
 	A_pos pos;
 	union{
-		A_primaryExpression primary_expression;
+		A_primary_expression primary_expression;
 		struct{A_postfix_expression postfix_expression; A_expression expression; }post_e;
 		A_postfix_expression postfix_expression;
 		struct{A_postfix_expression postfix_expression; A_argument_expression_list argument_expression_list; }post_lp_ael_rp;
-		struct{A_postfix_expression postfix_expression; S_Symbol symbol; }post_dot_id;
+		struct{A_postfix_expression postfix_expression; S_symbol symbol; }post_dot_id;
 		//postfix_expression PTR_OP IDENTIFIER,
 		A_postfix_expression postfix_expression;
 		A_postfix_expression postfix_expression;
@@ -109,7 +113,8 @@ struct A_postfix_expression_{
 };
 
 struct A_argument_expression_list_{
-	enum{ASS_E, AEL}kind;
+	//enum{ASS_E, AEL}kind;
+	int kind;
 	A_pos pos;
 	union{
 		A_assignment_expression assignment_expression;
@@ -266,7 +271,7 @@ struct A_assignment_expression_{
 };
 
 struct A_assignment_operator_{
-	enum{
+	/* enum{
 		ASSIGN,//'='
 		MUL_ASSIGN,
 		DIV_ASSIGN,
@@ -276,11 +281,12 @@ struct A_assignment_operator_{
 		AND_ASSIGN,
 		XOR_ASSIGN,
 		OR_ASSIGN
-	}kind;
+	}kind; */
+	int kind;
 	A_pos pos;
 };
 
-
+/******************END***************/
 
 /******************MA***************/
 struct A_translation_unit_{
@@ -463,7 +469,7 @@ struct A_identifier_list_{
 	int grammer;
 	A_pos pos;
 	union{
-		S_Symbol u1;
+		S_symbol u1;
 		struct{
 			A_identifier_list u1;
 			S_symbol u2;
@@ -719,8 +725,36 @@ struct A_declaration_list_{
 	}u;
 };
 
+
+
+A_primary_expression A_identifier(A_pos pos, S_symbol symbol);
+A_primary_expression A_constant_int(A_pos pos, int intt);
+A_primary_expression A_constant_double(A_pos pos, double doublee);
+A_primary_expression A_string_literal(A_pos pos, string stringg);
+A_primary_expression A_lp_expression_rp(A_pos pos, A_expression expression);
+
+A_postfix_expression A_Postfix_Expression(A_pos pos, int kind, void *argv[]);
+A_argument_expression_list A_Argument_Expression_List(A_pos pos, int kind, void *argv[]);
+A_unary_expression A_Unary_Expression(A_pos pos, int kind, void *argv[]);
+A_unary_operator A_Unary_Operator(A_pos pos, int kind, void *argv[]);
+A_cast_expression A_Cast_Expression(A_pos pos, int kind, void *argv[]);
+A_multiplicative_expression A_Multiplicative_Expression(A_pos pos, int kind, void *argv[]);
+A_additive_expression A_Additive_Expression(A_pos pos, int kind, void *argv[]);
+A_shift_expression A_Shift_Expression(A_pos pos, int kind, void *argv[]);
+A_relational_expression A_Relational_Expression(A_pos pos, int kind, void *argv[]);
+A_equality_expression A_Equality_Expression(A_pos pos, int kind, void *argv[]);
+A_and_expression A_And_Expression(A_pos pos, int kind, void *argv[]);
+A_exclusive_or_expression A_Exclusive_Or_Expression(A_pos pos, int kind, void *argv[]);
+A_inclusive_or_expression A_Inclusive_Or_Expression(A_pos pos, int kind, void *argv[]);
+A_logical_and_expression A_Logical_And_Expression(A_pos pos, int kind, void *argv[]);
+A_logical_or_expression A_Logical_Or_Expression(A_pos pos, int kind, void *argv[]);
+A_conditional_expression A_Conditional_Expression(A_pos pos, int kind, void *argv[]);
+A_assignment_expression A_Assignment_Expression(A_pos pos, int kind, void *argv[]);
+A_assignment_operator A_Assignment_Operator(A_pos pos, int kind, void *argv[]);
+
+
 A_translation_unit A_Translation_Unit(A_pos pos, int grammer, void *argv[]);
-A_external_declaration A_External_Declaration(A_pos, int grammer, void *argv[]);
+A_external_declaration A_External_Declaration(A_pos pos, int grammer, void *argv[]);
 A_direct_declarator A_Direct_Declarator(A_pos pos, int grammer, void *argv[]);
 A_pointer A_Pointer(A_pos pos, int grammer, void *argv[]);
 A_type_qualifier_list A_Type_Qualifier_List(A_pos pos, int grammer, void *argv[]);
