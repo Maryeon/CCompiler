@@ -1,3 +1,5 @@
+#include "util.h"
+
 typedef int A_pos;
 typedef struct A_translation_unit_ *A_translation_unit;
 typedef struct A_external_declaration_ *A_external_declaration;

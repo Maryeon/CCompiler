@@ -5,8 +5,6 @@
 
 /******************************GUO******************************/
 
-
-
 A_primary_expression A_identifier(A_pos pos, S_symbol symbol)
 {
 	A_primary_expression p = checked_malloc(sizeof(*p));

@@ -9,7 +9,74 @@ void yyerror(char *);
 int yylex(void);
 %}
 
-%token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF CONSTANT_INT CONSTANT_DOUBLE
+%union{
+	S_symbol symbol;
+	int intt;
+	double doublee;
+	string stringg;
+	A_translation_unit _A_translation_unit;
+	A_external_declaration _A_external_declaration;
+	A_direct_declarator _A_direct_declarator;
+	A_primary_expression _A_primary_expression;
+	A_argument_expression_list _A_argument_expression_list;
+	A_unary_expression _A_unary_expression;
+	A_unary_operator _A_unary_operator;
+	A_cast_expression _A_cast_expression;
+	A_multiplicative_expression _A_multiplicative_expression;
+	A_additive_expression _A_additive_expression;
+	A_shift_expression _A_shift_expression;
+	A_relational_expression _A_relational_expression;
+	A_equality_expression _A_equality_expression;
+	A_and_expression _A_and_expression;
+	A_exclusive_or_expression _A_exclusive_or_expression;
+	A_inclusive_or_expression _A_inclusive_or_expression;
+	A_logical_and_expression _A_logical_and_expression;
+	A_logical_or_expression _A_logical_or_expression;
+	A_conditional_expression _A_conditional_expression;
+	A_assignment_expression _A_assignment_expression;
+	A_assignment_operator _A_assignment_operator;
+	A_pointer _A_pointer;
+	A_type_qualifier _A_type_qualifier;
+	A_type_qualifier_list _A_type_qualifier_list;
+	A_parameter_type_list _A_parameter_type_list;
+	A_parameter_list _A_parameter_list;
+	A_parameter_declaration _A_parameter_declaration;
+	A_identifier_list _A_identifier_list;
+	A_type_name _A_type_name;
+	A_abstract_declarator _A_abstract_declarator;
+	A_direct_abstract_declarator _A_direct_abstract_declarator;
+	A_initializer _A_initializer;
+	A_initializer_list _A_initializer_list;
+	A_designation _A_designation;
+	A_designator_list _A_designator_list;
+	A_designator _A_designator;
+	A_statement _A_statement;
+	A_labeled_statement _A_labeled_statement;
+	A_compound_statement _A_compound_statement;
+	A_block_item_list _A_block_item_list;
+	A_block_item _A_block_item;
+	A_expression_statement _A_expression_statement;
+	A_selection_statement _A_selection_statement;
+	A_iteration_statement _A_iteration_statement;
+	A_jump_statement _A_jump_statement;
+	A_function_definition _A_function_definition;
+	A_declaration_list _A_declaration_list;
+	A_declaration _A_declaration;
+	A_declaration_specifiers _A_declaration_specifiers;
+	A_init_declarator_list _A_init_declarator_list;
+	A_init_declarator _A_init_declarator;
+	A_type_specifier _A_type_specifier;
+	A_specifier_qualifier_list _A_specifier_qualifier_list;
+	A_declarator _A_declarator;
+	A_expression _A_expression;
+	A_constant_expression _A_constant_expression;
+}
+
+%token <symbol> IDENTIFIER 
+%token <stringg> STRING_LITERAL 
+%token SIZEOF 
+%token <intt> CONSTANT_INT 
+%token <doublee> CONSTANT_DOUBLE
 %token PTR_OP INC_OP DEC_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token SUB_ASSIGN AND_ASSIGN
@@ -21,6 +88,63 @@ int yylex(void);
 %token STRUCT UNION ENUM
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
+
+%type <_A_translation_unit> translation_unit
+%type <_A_external_declaration> external_declaration
+%type <_A_direct_declarator> direct_declarator
+%type <_A_primary_expression> primary_expression
+%type <_A_argument_expression_list> argument_expression_list
+%type <_A_unary_expression> unary_expression
+%type <_A_unary_operator> unary_operator
+%type <_A_cast_expression> cast_expression
+%type <_A_multiplicative_expression> multiplicative_expression
+%type <_A_additive_expression> additive_expression
+%type <_A_shift_expression> shift_expression
+%type <_A_relational_expression> relational_expression
+%type <_A_equality_expression> equality_expression
+%type <_A_and_expression> and_expression
+%type <_A_exclusive_or_expression> exclusive_or_expression
+%type <_A_inclusive_or_expression> inclusive_or_expression
+%type <_A_logical_and_expression> logical_and_expression
+%type <_A_logical_or_expression> logical_or_expression
+%type <_A_conditional_expression> conditional_expression
+%type <_A_assignment_expression> assignment_expression
+%type <_A_assignment_operator> assignment_operator
+%type <_A_pointer> pointer
+%type <_A_type_qualifier> type_qualifier
+%type <_A_type_qualifier_list> type_qualifier_list
+%type <_A_parameter_type_list> parameter_type_list
+%type <_A_parameter_list> parameter_type_list
+%type <_A_parameter_declaration> parameter_declaration
+%type <_A_identifier_list> identifier_list
+%type <_A_type_name> type_name
+%type <_A_abstract_declarator> abstract_declarator
+%type <_A_direct_abstract_declarator> direct_abstract_declarator
+%type <_A_initializer> initializer
+%type <_A_initializer_list> initializer_list
+%type <_A_designation> designation
+%type <_A_designator_list> designator_list
+%type <_A_designator> designator
+%type <_A_statement> statement
+%type <_A_labeled_statement> labeled_statement
+%type <_A_compound_statement> compound_statement
+%type <_A_block_item_list> block_item_list
+%type <_A_block_item> block_item
+%type <_A_expression_statement> expression_statement
+%type <_A_selection_statement> selection_statement
+%type <_A_iteration_statement> iteration_statement
+%type <_A_jump_statement> jump_statement
+%type <_A_function_definition> function_definition
+%type <_A_declaration_list> declaration_list
+%type <_A_declaration> declaration
+%type <_A_declaration_specifiers> declaration_specifiers
+%type <_A_init_declarator_list> init_declarator_list
+%type <_A_init_declarator> init_declarator
+%type <_A_type_specifier> type_qualifier
+%type <_A_specifier_qualifier_list> specifier_qualifier_list
+%type <_A_declarator> declarator
+%type <_A_expression> expression
+%type <_A_constant_expression> constant_expression
 
 %start translation_unit
 %%
