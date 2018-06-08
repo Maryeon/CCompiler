@@ -59,6 +59,8 @@ typedef struct A_init_declarator_ *A_init_declarator;
 typedef struct A_type_specifier_ *A_type_specifier;
 typedef struct A_specifier_qualifier_list_ *A_specifier_qualifier_list;
 typedef struct A_declarator_ *A_declarator;
+
+
 typedef struct A_expression_ *A_expression;
 typedef struct A_constant_expression_ *A_constant_expression;
 
@@ -325,7 +327,8 @@ struct A_type_qualifier_{
 
 //Liu===============================================================
 struct A_declaration_{
-	enum{Fenhao} kind;
+	//enum{Fenhao} kind;
+	int kind;
 	A_pos pos;
 	union{
 		A_declaration_specifiers declaration_specifiers;
@@ -349,7 +352,8 @@ struct A_declaration_specifiers_{
 }
 
 struct A_init_declarator_list_{
-	enum{Douhao} kind;
+	//enum{Douhao} kind;
+	int kind;
 	A_pos pos;
 	union{
 		A_init_declarator init_declarator;
@@ -359,7 +363,8 @@ struct A_init_declarator_list_{
 }
 
 struct A_init_declarator_{
-	enum{Equal} kind;
+	//enum{Equal} kind;
+	int kind;
 	A_pos pos;
 	union{
 		A_declarator declarator;
@@ -368,12 +373,13 @@ struct A_init_declarator_{
 }
 
 struct A_type_specifier_{
-	enum{eVOID,eCHAR,eINT,eLONG,eSHORT,eFLOAT,eDOUBLE,eSIGHED,eUNSIGNED,eBOOL}kind;
+	//enum{eVOID,eCHAR,eINT,eLONG,eSHORT,eFLOAT,eDOUBLE,eSIGHED,eUNSIGNED,eBOOL}kind;
+	int kind;
 	A_pos pos;
-	union{
-		A_struct_or_union_specifier struct_or_union_specifier;
+	//union{
+		//A_struct_or_union_specifier struct_or_union_specifier;
 		//enum_specifier
-	}u;
+	//}u;
 }
 
 
@@ -398,7 +404,7 @@ struct A_declarator_{
 }
 
 
-//end===============================================================
+//Liu end===============================================================
 
 
 struct A_direct_declarator_{
@@ -754,6 +760,13 @@ A_conditional_expression A_Conditional_Expression(A_pos pos, int kind, void *arg
 A_assignment_expression A_Assignment_Expression(A_pos pos, int kind, void *argv[]);
 A_assignment_operator A_Assignment_Operator(A_pos pos, int kind, void *argv[]);
 
+A_declaration A_Declaration(A_pos pos, int kind, void *argv[]);
+A_declaration_specifiers A_Declaration_Specifiers(A_pos pos, int kind, void *argv[]);
+A_init_declarator_list A_Init_Declarator_List(A_pos pos, int kind, void *argv[]);
+A_init_declarator A_Init_Declarator(A_pos pos, int kind, void *argv[]);
+A_type_specifier A_Type_Specifier(A_pos pos, int kind, void *argv[]);
+A_specifier_qualifier_list A_Specifier_Qualifier_List(A_pos pos, int kind, void *argv[]);
+A_declarator A_Declarator(A_pos pos, int kind, void *argv[]);
 
 A_translation_unit A_Translation_Unit(A_pos pos, int grammer, void *argv[]);
 A_external_declaration A_External_Declaration(A_pos pos, int grammer, void *argv[]);

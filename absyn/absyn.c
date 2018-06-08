@@ -415,7 +415,138 @@ A_assignment_operator A_Assignment_Operator(A_pos pos, int kind, void *argv[])
 
 
 
+/******************************Liu******************************/
 
+A_declaration A_Declaration(A_pos pos, int kind, void *argv[]){
+	A_declaration p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	switch(kind){
+
+		case 1: p->u.declaration_specifiers = (A_declaration_specifiers)argv[0];
+			   	break;
+		case 2: p->u.dec2.declaration_specifiers = (A_declaration_specifiers)argv[0];
+				p->u.dec2.init_declarator_list = (A_init_declarator_list)argv[1];
+				break;
+
+		default:
+				return NULL;
+	}
+
+	return p;
+
+}
+
+
+A_declaration_specifiers A_Declaration_Specifiers(A_pos pos, int kind, void *argv[]){
+	A_declaration_specifiers p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	switch(kind){
+
+		case 1: p->u.type_specifier = (A_type_specifier)argv[0];
+				break;
+		case 2: p->u.type_s_dec.type_specifier = (A_type_specifier)argv[0];
+				p->u.type_s_dec.declaration_specifiers = (A_declaration_specifiers)argv[1];
+				break;
+		default:
+				return NULL;
+		
+	}
+
+	return p;
+
+}
+
+
+A_init_declarator_list A_Init_Declarator_List(A_pos pos, int kind, void *argv[]){
+	A_init_declarator_list p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	switch(kind){
+
+		case 1: p->u.init_declarator = (A_init_declarator)argv[0];
+				break;
+		case 2: p->u.init_dec_list.init_declarator_list = (A_init_declarator_list)argv[0];
+				p->u.init_dec_list.init_declarator = (A_init_declarator)argv[1];
+				break;
+		default:
+				return NULL;
+	}
+
+	return p;
+
+}
+
+
+A_init_declarator A_Init_Declarator(A_pos pos, int kind, void *argv[]){
+	A_init_declarator p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	switch(kind){
+
+		case 1: p->u.declarator = (A_declarator)argv[0];
+				break;
+		case 2: p->u.init_dec2.declarator = (A_declarator)argv[0];
+				p->u.init_dec2.initializer = (A_initializer)argv[1];
+				break;
+		default:
+				return NULL;
+
+	}
+
+	return p;
+	
+}
+
+
+A_type_specifier A_Type_Specifier(A_pos pos, int kind, void *argv[]){
+	A_type_specifier p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+
+	return p;
+}
+
+
+A_specifier_qualifier_list A_Specifier_Qualifier_List(A_pos pos, int kind, void *argv[]){
+	A_specifier_qualifier_list p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	switch(kind){
+
+		case 1: p->u.type_specifier = (A_type_specifier)argv[0];
+				break;
+		case 2: p->u.sql.type_specifier = (A_type_specifier)argv[0];
+				p->u.sql.specifier_qualifier_list = (A_specifier_qualifier_list)argv[1];
+				break;
+		default:
+				return NULL;
+
+	}
+
+	return p;
+
+}
+
+
+A_declarator A_Declarator(A_pos pos, int kind, void *argv[]){
+	A_declarator p = checked_malloc(sizeof(*p));
+	p->kind = kind;
+	switch(kind){
+
+		case 1: p->u.direct_declarator = (A_direct_declarator)argv[0];
+				break;
+		case 2: p->u.dec.pointer = (A_pointer)argv[0];
+				p->u.dec.direct_declarator = (A_direct_declarator)argv[1];
+				break;
+		default:
+				return NULL;
+
+	}
+
+	return p;
+
+}
+
+
+
+
+/******************************End Liu******************************/
 
 
 

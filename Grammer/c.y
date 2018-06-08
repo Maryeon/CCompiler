@@ -633,7 +633,18 @@ assignment_operator
 
 expression
 	: assignment_expression
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Assignment_Expression($1->pos, 1, argv);
+	}
 	| expression ',' assignment_expression
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Assignment_Expression($1->pos, 2, argv);
+	}
 	;
 
 constant_expression
@@ -642,125 +653,400 @@ constant_expression
 
 declaration
 	: declaration_specifiers ';'
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Declaration($1->pos, 1, argv);
+	}
 	| declaration_specifiers init_declarator_list ';'
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$2;
+		$$ = A_Declaration($1->pos, 2, argv);
+	}
 	;
 
 declaration_specifiers
 	: storage_class_specifier
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| storage_class_specifier declaration_specifiers
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| type_specifier
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Declaration_Specifiers($1->pos, 1, argv);
+	}
 	| type_specifier declaration_specifiers
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$2;
+		$$ = A_Declaration_Specifiers($1->pos, 2, argv);
+	}
 	| type_qualifier
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| type_qualifier declaration_specifiers
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| function_specifier
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| function_specifier declaration_specifiers
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 init_declarator_list
 	: init_declarator
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Init_Declarator_List($1->pos, 1, argv);
+	}
 	| init_declarator_list ',' init_declarator
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Init_Declarator_List($1->pos, 2, argv);
+	}
 	;
 
 init_declarator
 	: declarator
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Init_Declarator($1->pos, 1, argv);
+	}
 	| declarator '=' initializer
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$3;
+		$$ = A_Init_Declarator($1->pos, 2, argv);
+	}
 	;
 
 storage_class_specifier
 	: TYPEDEF
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| EXTERN
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| STATIC
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| AUTO
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| REGISTER
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 type_specifier
 	: VOID
+	{
+		$$ = A_Type_Specifier(yylineno, 1, NULL);
+	}
 	| CHAR
+	{
+		$$ = A_Type_Specifier(yylineno, 2, NULL);
+	}
 	| SHORT
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| INT
+	{
+		$$ = A_Type_Specifier(yylineno, 3, NULL);
+	}
 	| LONG
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| FLOAT
+	{
+		$$ = A_Type_Specifier(yylineno, 4, NULL);
+	}
 	| DOUBLE
+	{
+		$$ = A_Type_Specifier(yylineno, 5, NULL);
+	}
 	| SIGNED
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| UNSIGNED
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| BOOL
+	{
+		$$ = A_Type_Specifier(yylineno, 6, NULL);
+	}
 	| COMPLEX
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| IMAGINARY
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| struct_or_union_specifier
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| enum_specifier
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| TYPE_NAME
+	{
+		$$ = A_Type_Specifier(yylineno, 7, NULL);
+	}
 	;
 
 struct_or_union_specifier
 	: struct_or_union IDENTIFIER '{' struct_declaration_list '}'
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| struct_or_union '{' struct_declaration_list '}'
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| struct_or_union IDENTIFIER
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 struct_or_union
 	: STRUCT
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| UNION
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 struct_declaration_list
 	: struct_declaration
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| struct_declaration_list struct_declaration
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 struct_declaration
 	: specifier_qualifier_list struct_declarator_list ';'
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 specifier_qualifier_list
 	: type_specifier specifier_qualifier_list
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$2;
+		$$ = A_Specifier_Qualifier_List($1->pos, 2, argv);
+	}
 	| type_specifier
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Specifier_Qualifier_List($1->pos, 1, argv);
+	}
 	| type_qualifier specifier_qualifier_list
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| type_qualifier
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 struct_declarator_list
 	: struct_declarator
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| struct_declarator_list ',' struct_declarator
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 struct_declarator
 	: declarator
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| ':' constant_expression
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| declarator ':' constant_expression
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 enum_specifier
 	: ENUM '{' enumerator_list '}'
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| ENUM IDENTIFIER '{' enumerator_list '}'
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| ENUM '{' enumerator_list ',' '}'
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| ENUM IDENTIFIER '{' enumerator_list ',' '}'
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| ENUM IDENTIFIER
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 enumerator_list
 	: enumerator
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| enumerator_list ',' enumerator
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 enumerator
 	: IDENTIFIER
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| IDENTIFIER '=' constant_expression
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 type_qualifier
 	: CONST
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| RESTRICT
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	| VOLATILE
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 function_specifier
 	: INLINE
+	{
+		printf("Not Supported!\n");
+		exit(0);
+	}
 	;
 
 declarator
 	: pointer direct_declarator
+	{
+		void *argv[2];
+		argv[0] = (void *)$1;
+		argv[1] = (void *)$2;
+		$$ = A_Declarator($1->pos, 2, argv);
+	}
 	| direct_declarator
+	{
+		void *argv[1];
+		argv[0] = (void *)$1;
+		$$ = A_Declarator($1->pos, 1, argv);
+	}
 	;
 
 
