@@ -24,16 +24,16 @@ extern int yylex(void);
 }
 
 %token <stringg> IDENTIFIER STRING_LITERAL CONSTANT_INT CONSTANT_DOUBLE UMINUS
-%token <token> LE_OP GE_OP EQ_OP NE_OP
+%token <token> LE_OP GE_OP EQ_OP NE_OP LT_OP GT_OP
 %token <token> MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token <token> SUB_ASSIGN AND_ASSIGN
 %token <token> XOR_ASSIGN OR_ASSIGN
 %token <token> SEMICOLON LBRACE RBRACE COMMA EQUAL RPAREN LPAREN LBRACKET RBRACKET
-%token <token> DOT AND_OP MINUS_OP PLUS_OP MUL_OP DIV_OP MOD_OP LT_OP GT_OP XOR_OP OR_OP
+%token <token> DOT AND_OP MINUS_OP PLUS_OP MUL_OP DIV_OP MOD_OP XOR_OP OR_OP
 
 %token <stringg> CHAR INT FLOAT DOUBLE VOID BOOL
 %token <token> STRUCT
-%token <token> IF ELSE WHILE DO FOR CONTINUE BREAK RETURN
+%token <token> IF ELSE WHILE FOR RETURN
 
 %type <arrayindex> array_index
 %type <identifier> ident, primary_typename array_typename struct_typename typename
@@ -42,12 +42,20 @@ extern int yylex(void);
 %type <expressionlist> call_args
 %type <block> program statements block
 %type <statement> statement var_dec func_dec struct_dec if_stmt for_stmt while_stmt
-%type <token> comparison
+%type <token> binary_operator assign_operator
 
 %start program
 
+%right EQUAL ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN AND_ASSIGN XOR_ASSIGN OR_ASSIGN
+%left OR_OP
+%left XOR_OP
+%left AND_OP
+%left EQ_OP NE_OP
+%left LT_OP LE_OP GT_OP GE_OP
 %left PLUS_OP MINUS_OP
 %left MUL_OP DIV_OP MOD_OP
+%left UMINUS
+%left DOT
 %%
 
 
@@ -271,27 +279,7 @@ expr
 	{
 		$$ = $1;
 	}
-	| expr comparison expr
-	{
-		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
-	}
-	| expr MOD_OP expr
-	{
-		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
-	}
-	| expr MUL_OP expr
-	{
-		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
-	}
-	| expr DIV_OP expr
-	{
-		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
-	}
-	| expr PLUS_OP expr
-	{
-		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
-	}
-	| expr MINUS_OP expr
+	| expr binary_operator expr
 	{
 		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
 	}
@@ -333,63 +321,182 @@ assign
 	}
 	| array_index assign_operator expr
 	{
-		
+		$$ = new ArrayAssignment(shared_ptr<ArrayIndex>($1), $2, shared_ptr<Expression>($3));
 	}
 	| ident DOT ident assign_operator expr
+	{
+		StructMember member = new StructMember(shared_ptr<Identifier>($1), shared_ptr<Identifier>($3));
+		$$ = new StructAssignment(member, shared_ptr<Expression>($5));
+	}
 	;
 	
 assign_operator
 	: EQUAL
+	{
+		$$ = $1;
+	}
 	| MUL_ASSIGN
+	{
+		$$ = $1;
+	}
 	| DIV_ASSIGN
+	{
+		$$ = $1;
+	}
 	| MOD_ASSIGN
+	{
+		$$ = $1;
+	}
 	| ADD_ASSIGN
+	{
+		$$ = $1;
+	}
 	| SUB_ASSIGN
+	{
+		$$ = $1;
+	}
 	| AND_ASSIGN
-	| XOR_ASSIGN 
+	{
+		$$ = $1;
+	}
+	| XOR_ASSIGN
+	{
+		$$ = $1;
+	}	
 	| OR_ASSIGN
+	{
+		$$ = $1;
+	}
 	;
 
 call_args 
 	: /* blank */
+	{
+		$$ = new ExpressionList();
+	}
 	| expr
+	{
+		$$ = new ExpressionList();
+		$$->push_back(shared_ptr<Expression>($1));
+	}
 	| call_args COMMA expr
+	{
+		$1->push_back(shared_ptr<Expression>($3));
+	}
 	;
 	
-comparison 
+binary_operator
 	: EQ_OP
+	{
+		$$ = $1;
+	}
 	| NE_OP
+	{
+		$$ = $1;
+	}
 	| LT_OP
-	| LE_OP 
+	{
+		$$ = $1;
+	}
+	| LE_OP
+	{
+		$$ = $1;
+	}
 	| GT_OP
+	{
+		$$ = $1;
+	}
 	| GE_OP
+	{
+		$$ = $1;
+	}
 	| AND_OP
-	| OR_OP 
-	| XOR_OP 
+	{
+		$$ = $1;
+	}
+	| OR_OP
+	{
+		$$ = $1;
+	}	
+	| XOR_OP
+	{
+		$$ = $1;
+	}
+	| MOD_OP
+	{
+		$$ = $1;
+	}
+	| MUL_OP
+	{
+		$$ = $1;
+	}
+	| DIV_OP
+	{
+		$$ = $1;
+	}
+	| PLUS_OP
+	{
+		$$ = $1;
+	}
+	| MINUS_OP
+	{
+		$$ = $1;
+	}	
 	;
 	
 if_stmt 
 	: IF expr block
+	{
+		$$ = new IfStatement(shared_ptr<Expression>($2), shared_ptr<Block>($3));
+	}
 	| IF expr block ELSE block
+	{
+		$$ = new IfStatement(shared_ptr<Expression>($2), shared_ptr<Block>($3), shared_ptr<Block>($5));
+	}
 	| IF expr block ELSE if_stmt
+	{
+		Block block = new Block();
+		block->statements->push_back(shared_ptr<Statement>($5));
+		$$ = new IfStatement(shared_ptr<Expression>($2), shared_ptr<Block>($3), shared_ptr<Block>block);
+	}
 	;
 
 for_stmt 
 	: FOR LPAREN expr SEMICOLON expr SEMICOLON expr RPAREN block
+	{
+		$$ = new ForStatement(shared_ptr<Expression>($3), shared_ptr<Expression>($5), shared_ptr<Expression>(%7), shared_ptr<Block>($9));
+	}
 	;
 		
 while_stmt 
-	: WHILE '( expr RPAREN block
+	: WHILE LPAREN expr RPAREN block
+	{
+		$$ = new WhileStatement(shared_ptr<Expression>($3), shared_ptr<Block>($5));
+	}
 	;
 
 struct_dec
-	: STRUCT ident { struct_members }
+	: STRUCT ident LBRACE struct_members RBRACE
+	{
+		$$ = new StructDeclaration(shared_ptr<Identifier>($2), shared_ptr<VariableDeclarationList>($4));
+	}
 	;
 
 struct_members 
 	: /* blank */
+	{
+		$$ = new VariableDeclarationList();
+	}
 	| var_dec
+	{
+		$$ = new VariableDeclarationList();
+		$$->push_back(shared_ptr<VariableDeclaration>($1));
+	}
 	| struct_members var_dec
+	{
+		$1->push_back(shared_ptr<VariableDeclaration>($2));
+		$$ = $1;
+	}
 	;
 
 %%

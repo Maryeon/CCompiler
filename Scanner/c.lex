@@ -25,10 +25,7 @@ IS			((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 
 
 "bool"			{ count(); yylval.stringg = new string(yytext); return BOOL; }
-"break"			{ count(); yylval.token = BREAK; return BREAK; }
 "char"			{ count(); yylval.stringg = new string(yytext); return CHAR; }
-"continue"		{ count(); yylval.token = CONTINUE; return CONTINUE; }
-"do"			{ count(); yylval.token = DO; return DO; }
 "double"		{ count(); yylval.stringg = new string(yytext); return DOUBLE; }
 "else"			{ count(); yylval.token = ELSE; return ELSE; }
 "float"			{ count(); yylval.stringg = new string(yytext); return FLOAT; }
