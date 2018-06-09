@@ -25,31 +25,18 @@ IS			((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 
 "bool"			{ count(); return(BOOL); }
 "break"			{ count(); return(BREAK); }
-"case"			{ count(); return(CASE); }
 "char"			{ count(); return(CHAR); }
-"const"			{ count(); return(CONST); }
 "continue"		{ count(); return(CONTINUE); }
-"default"		{ count(); return(DEFAULT); }
 "do"			{ count(); return(DO); }
 "double"		{ count(); return(DOUBLE); }
 "else"			{ count(); return(ELSE); }
-"enum"			{ count(); return(ENUM); }
 "float"			{ count(); return(FLOAT); }
 "for"			{ count(); return(FOR); }
-"goto"			{ count(); return(GOTO); }
 "if"			{ count(); return(IF); }
 "int"			{ count(); return(INT); }
-"long"			{ count(); return(LONG); }
 "return"		{ count(); return(RETURN); }
-"short"			{ count(); return(SHORT); }
-"signed"		{ count(); return(SIGNED); }
-"sizeof"		{ count(); return(SIZEOF); }
-"static"		{ count(); return(STATIC); }
 "struct"		{ count(); return(STRUCT); }
 "switch"		{ count(); return(SWITCH); }
-"typedef"		{ count(); return(TYPEDEF); }
-"union"			{ count(); return(UNION); }
-"unsigned"		{ count(); return(UNSIGNED); }
 "void"			{ count(); return(VOID); }
 "while"			{ count(); return(WHILE); }
 
@@ -87,11 +74,6 @@ L?\"(\\.|[^\\"\n])*\"	{ count(); return(STRING_LITERAL); }
 "&="			{ count(); return(AND_ASSIGN); }
 "^="			{ count(); return(XOR_ASSIGN); }
 "|="			{ count(); return(OR_ASSIGN); }
-"++"			{ count(); return(INC_OP); }
-"--"			{ count(); return(DEC_OP); }
-"->"			{ count(); return(PTR_OP); }
-"&&"			{ count(); return(AND_OP); }
-"||"			{ count(); return(OR_OP); }
 "<="			{ count(); return(LE_OP); }
 ">="			{ count(); return(GE_OP); }
 "=="			{ count(); return(EQ_OP); }
@@ -108,8 +90,6 @@ L?\"(\\.|[^\\"\n])*\"	{ count(); return(STRING_LITERAL); }
 "]"				{ count(); return(']'); }
 "."				{ count(); return('.'); }
 "&"				{ count(); return('&'); }
-"!"				{ count(); return('!'); }
-"~"				{ count(); return('~'); }
 "-"				{ count(); return('-'); }
 "+"				{ count(); return('+'); }
 "*"				{ count(); return('*'); }
@@ -119,7 +99,6 @@ L?\"(\\.|[^\\"\n])*\"	{ count(); return(STRING_LITERAL); }
 ">"				{ count(); return('>'); }
 "^"				{ count(); return('^'); }
 "|"				{ count(); return('|'); }
-"?"				{ count(); return('?'); }
 
 [ \t\v\n\f]		{ count(); }
 .			{ /* Add code to complain about unmatched characters */ }
