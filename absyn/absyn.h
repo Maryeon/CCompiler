@@ -128,13 +128,14 @@ public:
 
 class Assignment: public Expression{
 public:	
+	int op;
 	shared_ptr<Identifier> loperand;
 	shared_ptr<Expression> roperand;
 
 	Assignment(){}
 	
-	Assignment(shared_ptr<Identifier> loperand, shared_ptr<Expression> roperand)
-		:loperand(loperand), roperand(roperand){}
+	Assignment(int op, shared_ptr<Identifier> loperand, shared_ptr<Expression> roperand)
+		:op(op), loperand(loperand), roperand(roperand){}
 		
 	string getType()const override{
 		return "Assignment";
