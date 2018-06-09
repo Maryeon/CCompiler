@@ -269,3 +269,235 @@ llvm::Value* VariableDeclaration::codeGen(CodeGenContext &context) {
     }
     return inst;
 }
+
+
+
+
+
+
+
+
+llvm::Value *ArrayInitialization::codeGen(CodeGenContext &context) {
+    cout << "Generating array initialization of " << this->declaration->id->name << endl;
+    auto arrayPtr = this->declaration->codeGen(context);
+    auto sizeVec = context.getArraySize(this->declaration->id->name);
+    // TODO: multi-dimension array initialization
+    assert(sizeVec.size() == 1);
+
+    for(int index=0; index < this->expressionList->size(); index++){
+        shared_ptr<Integer> indexValue = make_shared<Integer>(index);
+
+        shared_ptr<ArrayIndex> arrayIndex = make_shared<ArrayIndex>(this->declaration->id, indexValue);
+        ArrayAssignment assignment(arrayIndex, this->expressionList->at(index));
+        assignment.codeGen(context);
+    }
+    return nullptr;
+}
+
+
+llvm::Value* FunctionDeclaration::codeGen(CodeGenContext &context) {
+    cout << "Generating function declaration of " << this->id->name << endl;
+    std::vector<Type*> argTypes;
+
+    for(auto &arg: *this->arguments){
+        if( arg->type->isArray ){
+            argTypes.push_back(PointerType::get(context.typeSystem.getVarType(arg->type->name), 0));
+        } else{
+            argTypes.push_back(TypeOf(*arg->type, context));
+        }
+    }
+    Type* retType = nullptr;
+    if( this->type->isArray )
+        retType = PointerType::get(context.typeSystem.getVarType(this->type->name), 0);
+    else
+        retType = TypeOf(*this->type, context);
+
+    FunctionType* functionType = FunctionType::get(retType, argTypes, false);
+    Function* function = Function::Create(functionType, GlobalValue::ExternalLinkage, this->id->name.c_str(), context.theModule.get());
+
+    if( !this->isExternal ){
+        BasicBlock* basicBlock = BasicBlock::Create(context.llvmContext, "entry", function, nullptr);
+
+        context.builder.SetInsertPoint(basicBlock);
+        context.pushBlock(basicBlock);
+
+        // declare function params
+        auto origin_arg = this->arguments->begin();
+
+        for(auto &ir_arg_it: function->args()){
+            ir_arg_it.setName((*origin_arg)->id->name);
+            Value* argAlloc;
+            if( (*origin_arg)->type->isArray )
+                argAlloc = context.builder.CreateAlloca(PointerType::get(context.typeSystem.getVarType((*origin_arg)->type->name), 0));
+            else
+                argAlloc = (*origin_arg)->codeGen(context);
+
+            context.builder.CreateStore(&ir_arg_it, argAlloc, false);
+            context.setSymbolValue((*origin_arg)->id->name, argAlloc);
+            context.setSymbolType((*origin_arg)->id->name, (*origin_arg)->type);
+            context.setFuncArg((*origin_arg)->id->name, true);
+            origin_arg++;
+        }
+
+        this->block->codeGen(context);
+        if( context.getCurrentReturnValue() ){
+            context.builder.CreateRet(context.getCurrentReturnValue());
+        } else{
+            return LogErrorV("Function block return value not founded");
+        }
+        context.popBlock();
+
+    }
+
+
+    return function;
+}
+
+
+llvm::Value* StructDeclaration::codeGen(CodeGenContext& context) {
+    cout << "Generating struct declaration of " << this->name->name << endl;
+
+    std::vector<Type*> memberTypes;
+
+//    context.builder.createstr
+    auto structType = StructType::create(context.llvmContext, this->name->name);
+    context.typeSystem.addStructType(this->name->name, structType);
+
+    for(auto& member: *this->members){
+        context.typeSystem.addStructMember(this->name->name, member->type->name, member->id->name);
+        memberTypes.push_back(TypeOf(*member->type, context));
+    }
+
+    structType->setBody(memberTypes);
+
+    return nullptr;
+}
+
+
+llvm::Value* ReturnStatement::codeGen(CodeGenContext &context) {
+    cout << "Generating return statement" << endl;
+    Value* returnValue = this->expression->codeGen(context);
+    context.setCurrentReturnValue(returnValue);
+    return returnValue;
+}
+
+llvm::Value* IfStatement::codeGen(CodeGenContext &context) {
+    cout << "Generating if statement" << endl;
+    Value* condValue = this->condition->codeGen(context);
+    if( !condValue )
+        return nullptr;
+
+    condValue = CastToBoolean(context, condValue);
+
+    Function* theFunction = context.builder.GetInsertBlock()->getParent();      // the function where if statement is in
+
+    BasicBlock *thenBB = BasicBlock::Create(context.llvmContext, "then", theFunction);
+    BasicBlock *falseBB = BasicBlock::Create(context.llvmContext, "else");
+    BasicBlock *mergeBB = BasicBlock::Create(context.llvmContext, "ifcont");
+
+    if( this->falseBlock ){
+        context.builder.CreateCondBr(condValue, thenBB, falseBB);
+    } else{
+        context.builder.CreateCondBr(condValue, thenBB, mergeBB);
+    }
+
+    context.builder.SetInsertPoint(thenBB);
+
+    context.pushBlock(thenBB);
+
+    this->trueBlock->codeGen(context);
+
+    context.popBlock();
+
+    thenBB = context.builder.GetInsertBlock();
+
+    if( thenBB->getTerminator() == nullptr ){       //
+        context.builder.CreateBr(mergeBB);
+    }
+
+    if( this->falseBlock ){
+        theFunction->getBasicBlockList().push_back(falseBB);    //
+        context.builder.SetInsertPoint(falseBB);            //
+
+        context.pushBlock(thenBB);
+
+        this->falseBlock->codeGen(context);
+
+        context.popBlock();
+
+        context.builder.CreateBr(mergeBB);
+    }
+
+    theFunction->getBasicBlockList().push_back(mergeBB);        //
+    context.builder.SetInsertPoint(mergeBB);        //
+
+    return nullptr;
+}
+
+llvm::Value* ForStatement::codeGen(CodeGenContext &context) {
+
+    Function* theFunction = context.builder.GetInsertBlock()->getParent();
+
+    BasicBlock *block = BasicBlock::Create(context.llvmContext, "forloop", theFunction);
+    BasicBlock *after = BasicBlock::Create(context.llvmContext, "forcont");
+
+    // execute the initial
+    if( this->initial )
+        this->initial->codeGen(context);
+
+    Value* condValue = this->condition->codeGen(context);
+    if( !condValue )
+        return nullptr;
+
+    condValue = CastToBoolean(context, condValue);
+
+    // fall to the block
+    context.builder.CreateCondBr(condValue, block, after);
+
+    context.builder.SetInsertPoint(block);
+
+    context.pushBlock(block);
+
+    this->block->codeGen(context);
+
+    context.popBlock();
+
+    // do increment
+    if( this->increment ){
+        this->increment->codeGen(context);
+    }
+
+    // execute the again or stop
+    condValue = this->condition->codeGen(context);
+    condValue = CastToBoolean(context, condValue);
+    context.builder.CreateCondBr(condValue, block, after);
+
+    // insert the after block
+    theFunction->getBasicBlockList().push_back(after);
+    context.builder.SetInsertPoint(after);
+
+    return nullptr;
+}
+
+llvm::Value *StructMember::codeGen(CodeGenContext &context) {
+    cout << "Generating struct member expression of " << this->id->name << "." << this->member->name << endl;
+
+    auto varPtr = context.getSymbolValue(this->id->name);
+    auto structPtr = context.builder.CreateLoad(varPtr, "structPtr");
+    structPtr->setAlignment(4);
+
+    if( !structPtr->getType()->isStructTy() ){
+        return LogErrorV("The variable is not struct");
+    }
+
+    string structName = structPtr->getType()->getStructName().str();
+    long memberIndex = context.typeSystem.getStructMemberIndex(structName, this->member->name);
+
+    std::vector<Value*> indices;
+    indices.push_back(ConstantInt::get(context.typeSystem.intTy, 0, false));
+    indices.push_back(ConstantInt::get(context.typeSystem.intTy, (uint64_t)memberIndex, false));
+    auto ptr = context.builder.CreateInBoundsGEP(varPtr, indices, "memberPtr");
+
+    return context.builder.CreateLoad(ptr);
+}
+
