@@ -96,7 +96,7 @@ llvm::Value* BinaryOperation::codeGen(CodeGenContext &context) {
             return fp ? context.builder.CreateFSub(L, R, "subftmp") : context.builder.CreateSub(L, R, "subtmp");
         case MUL_OP:
             return fp ? context.builder.CreateFMul(L, R, "mulftmp") : context.builder.CreateMul(L, R, "multmp");
-        case TDIV:
+        case DIV_OP:
             return fp ? context.builder.CreateFDiv(L, R, "divftmp") : context.builder.CreateSDiv(L, R, "divtmp");
         case AND_OP:
             return fp ? LogErrorV("Double type has no AND operation") : context.builder.CreateAnd(L, R, "andtmp");
