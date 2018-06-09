@@ -1,8 +1,12 @@
 %{
 /*C Declarations: */
 #include <stdio.h>
-#include "y.tab.h"
+#include "parser.h"
 #include <string>
+#include <iostream>
+#include "absyn.h"
+
+using namespace std;
 
 void count(void);
 %}

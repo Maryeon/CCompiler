@@ -15,17 +15,17 @@
 ****************************************************************************/
 
 /****************************************************************************
-* mylexer.h
-* C++ header file generated from mylexer.l.
+* lex.h
+* C++ header file generated from lex.l.
 * 
 * Date: 06/10/18
-* Time: 02:03:59
+* Time: 02:28:04
 * 
 * ALex Version: 2.07
 ****************************************************************************/
 
-#ifndef _MYLEXER_H
-#define _MYLEXER_H
+#ifndef _LEX_H
+#define _LEX_H
 
 #include <yyclex.h>
 

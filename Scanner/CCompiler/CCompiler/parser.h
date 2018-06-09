@@ -15,23 +15,23 @@
 ****************************************************************************/
 
 /****************************************************************************
-* myparser.h
-* C++ header file generated from myparser.y.
+* parser.h
+* C++ header file generated from parser.y.
 * 
 * Date: 06/10/18
-* Time: 02:03:59
+* Time: 02:28:04
 * 
 * AYACC Version: 2.07
 ****************************************************************************/
 
-#ifndef _MYPARSER_H
-#define _MYPARSER_H
+#ifndef _PARSER_H
+#define _PARSER_H
 
 #include <yycpars.h>
 
 #ifndef YYSTYPE
 union tagYYSTYPE {
-#line 12 ".\\myparser.y"
+#line 16 ".\\parser.y"
 
 	string *stringg;
 	int token;
@@ -45,7 +45,7 @@ union tagYYSTYPE {
 	std::vector<shared_ptr<VariableDeclaration>>* variabledeclarationlist;
 	std::vector<shared_ptr<Expression>>* expressionlist;
 
-#line 49 "myparser.h"
+#line 49 "parser.h"
 };
 
 #define YYSTYPE union tagYYSTYPE

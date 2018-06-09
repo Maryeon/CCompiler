@@ -15,11 +15,11 @@
 ****************************************************************************/
 
 /****************************************************************************
-* mylexer.cpp
-* C++ source file generated from mylexer.l.
+* lex.cpp
+* C++ source file generated from lex.l.
 * 
 * Date: 06/10/18
-* Time: 02:03:59
+* Time: 02:28:04
 * 
 * ALex Version: 2.07
 ****************************************************************************/
@@ -34,16 +34,20 @@ using namespace std;
 using namespace yl;
 #endif
 
-#line 1 ".\\mylexer.l"
+#line 1 ".\\lex.l"
 
 /*C Declarations: */
 #include <stdio.h>
 #include "parser.h"
 #include <string>
+#include <iostream>
+#include "absyn.h"
+
+using namespace std;
 
 void count(void);
 
-#line 47 "mylexer.cpp"
+#line 51 "lex.cpp"
 // repeated because of possible precompiled header
 #include <yyclex.h>
 
@@ -55,7 +59,7 @@ using namespace std;
 using namespace yl;
 #endif
 
-#include ".\mylexer.h"
+#include ".\lex.h"
 
 #ifndef YYTEXT_SIZE
 #define YYTEXT_SIZE 100
@@ -124,366 +128,366 @@ int YYLEXERNAME::yyaction(int action)
 	switch (action) {
 	case 1:
 		{
-#line 23 ".\\mylexer.l"
+#line 27 ".\\lex.l"
  comment(); 
-#line 130 "mylexer.cpp"
+#line 134 "lex.cpp"
 		}
 		break;
 	case 2:
 		{
-#line 24 ".\\mylexer.l"
+#line 28 ".\\lex.l"
  /* consume //-comment */ 
-#line 137 "mylexer.cpp"
+#line 141 "lex.cpp"
 		}
 		break;
 	case 3:
 		{
-#line 27 ".\\mylexer.l"
+#line 31 ".\\lex.l"
  count(); yylval.stringg = new string(yytext); return BOOL; 
-#line 144 "mylexer.cpp"
+#line 148 "lex.cpp"
 		}
 		break;
 	case 4:
 		{
-#line 28 ".\\mylexer.l"
+#line 32 ".\\lex.l"
  count(); yylval.stringg = new string(yytext); return CHAR; 
-#line 151 "mylexer.cpp"
+#line 155 "lex.cpp"
 		}
 		break;
 	case 5:
 		{
-#line 29 ".\\mylexer.l"
+#line 33 ".\\lex.l"
  count(); yylval.stringg = new string(yytext); return DOUBLE; 
-#line 158 "mylexer.cpp"
+#line 162 "lex.cpp"
 		}
 		break;
 	case 6:
 		{
-#line 30 ".\\mylexer.l"
+#line 34 ".\\lex.l"
  count(); yylval.token = ELSE; return ELSE; 
-#line 165 "mylexer.cpp"
+#line 169 "lex.cpp"
 		}
 		break;
 	case 7:
 		{
-#line 31 ".\\mylexer.l"
+#line 35 ".\\lex.l"
  count(); yylval.stringg = new string(yytext); return FLOAT; 
-#line 172 "mylexer.cpp"
+#line 176 "lex.cpp"
 		}
 		break;
 	case 8:
 		{
-#line 32 ".\\mylexer.l"
+#line 36 ".\\lex.l"
  count(); yylval.token = FOR; return FOR; 
-#line 179 "mylexer.cpp"
+#line 183 "lex.cpp"
 		}
 		break;
 	case 9:
 		{
-#line 33 ".\\mylexer.l"
+#line 37 ".\\lex.l"
  count(); yylval.token = IF; return IF; 
-#line 186 "mylexer.cpp"
+#line 190 "lex.cpp"
 		}
 		break;
 	case 10:
 		{
-#line 34 ".\\mylexer.l"
+#line 38 ".\\lex.l"
  count(); yylval.stringg = new string(yytext); return INT; 
-#line 193 "mylexer.cpp"
+#line 197 "lex.cpp"
 		}
 		break;
 	case 11:
 		{
-#line 35 ".\\mylexer.l"
+#line 39 ".\\lex.l"
  count(); yylval.token = RETURN; return RETURN; 
-#line 200 "mylexer.cpp"
+#line 204 "lex.cpp"
 		}
 		break;
 	case 12:
 		{
-#line 36 ".\\mylexer.l"
+#line 40 ".\\lex.l"
  count(); yylval.token = STRUCT; return STRUCT; 
-#line 207 "mylexer.cpp"
+#line 211 "lex.cpp"
 		}
 		break;
 	case 13:
 		{
-#line 37 ".\\mylexer.l"
+#line 41 ".\\lex.l"
  count(); yylval.stringg = new string(yytext); return VOID ; 
-#line 214 "mylexer.cpp"
+#line 218 "lex.cpp"
 		}
 		break;
 	case 14:
 		{
-#line 38 ".\\mylexer.l"
+#line 42 ".\\lex.l"
  count(); yylval.token = WHILE; return WHILE; 
-#line 221 "mylexer.cpp"
+#line 225 "lex.cpp"
 		}
 		break;
 	case 15:
 		{
-#line 40 ".\\mylexer.l"
+#line 44 ".\\lex.l"
  count(); yylval.stringg = new string(yytext); return IDENTIFIER;
-#line 228 "mylexer.cpp"
+#line 232 "lex.cpp"
 		}
 		break;
 	case 16:
 		{
-#line 46 ".\\mylexer.l"
+#line 50 ".\\lex.l"
  count(); yylval.stringg = new string(yytext); return CONSTANT_INT;
-#line 235 "mylexer.cpp"
+#line 239 "lex.cpp"
 		}
 		break;
 	case 17:
 		{
-#line 60 ".\\mylexer.l"
+#line 64 ".\\lex.l"
  count(); yylval.stringg = new string(yytext); return CONSTANT_DOUBLE; /*¸¡µãÊý*/
-#line 242 "mylexer.cpp"
+#line 246 "lex.cpp"
 		}
 		break;
 	case 18:
 		{
-#line 67 ".\\mylexer.l"
+#line 71 ".\\lex.l"
  count(); yylval.stringg = new string(yytext); return STRING_LITERAL; 
-#line 249 "mylexer.cpp"
+#line 253 "lex.cpp"
 		}
 		break;
 	case 19:
 		{
-#line 69 ".\\mylexer.l"
+#line 73 ".\\lex.l"
  count(); yylval.token = ADD_ASSIGN; return ADD_ASSIGN; 
-#line 256 "mylexer.cpp"
+#line 260 "lex.cpp"
 		}
 		break;
 	case 20:
 		{
-#line 70 ".\\mylexer.l"
+#line 74 ".\\lex.l"
  count(); yylval.token = SUB_ASSIGN; return SUB_ASSIGN; 
-#line 263 "mylexer.cpp"
+#line 267 "lex.cpp"
 		}
 		break;
 	case 21:
 		{
-#line 71 ".\\mylexer.l"
+#line 75 ".\\lex.l"
  count(); yylval.token = MUL_ASSIGN; return MUL_ASSIGN; 
-#line 270 "mylexer.cpp"
+#line 274 "lex.cpp"
 		}
 		break;
 	case 22:
 		{
-#line 72 ".\\mylexer.l"
+#line 76 ".\\lex.l"
  count(); yylval.token = DIV_ASSIGN; return DIV_ASSIGN; 
-#line 277 "mylexer.cpp"
+#line 281 "lex.cpp"
 		}
 		break;
 	case 23:
 		{
-#line 73 ".\\mylexer.l"
+#line 77 ".\\lex.l"
  count(); yylval.token = MOD_ASSIGN; return MOD_ASSIGN; 
-#line 284 "mylexer.cpp"
+#line 288 "lex.cpp"
 		}
 		break;
 	case 24:
 		{
-#line 74 ".\\mylexer.l"
+#line 78 ".\\lex.l"
  count(); yylval.token = AND_ASSIGN; return AND_ASSIGN; 
-#line 291 "mylexer.cpp"
+#line 295 "lex.cpp"
 		}
 		break;
 	case 25:
 		{
-#line 75 ".\\mylexer.l"
+#line 79 ".\\lex.l"
  count(); yylval.token = XOR_ASSIGN; return XOR_ASSIGN; 
-#line 298 "mylexer.cpp"
+#line 302 "lex.cpp"
 		}
 		break;
 	case 26:
 		{
-#line 76 ".\\mylexer.l"
+#line 80 ".\\lex.l"
  count(); yylval.token = OR_ASSIGN; return OR_ASSIGN; 
-#line 305 "mylexer.cpp"
+#line 309 "lex.cpp"
 		}
 		break;
 	case 27:
 		{
-#line 77 ".\\mylexer.l"
+#line 81 ".\\lex.l"
  count(); yylval.token = LE_OP; return LE_OP; 
-#line 312 "mylexer.cpp"
+#line 316 "lex.cpp"
 		}
 		break;
 	case 28:
 		{
-#line 78 ".\\mylexer.l"
+#line 82 ".\\lex.l"
  count(); yylval.token = GE_OP; return GE_OP; 
-#line 319 "mylexer.cpp"
+#line 323 "lex.cpp"
 		}
 		break;
 	case 29:
 		{
-#line 79 ".\\mylexer.l"
+#line 83 ".\\lex.l"
  count(); yylval.token = EQ_OP; return EQ_OP; 
-#line 326 "mylexer.cpp"
+#line 330 "lex.cpp"
 		}
 		break;
 	case 30:
 		{
-#line 80 ".\\mylexer.l"
+#line 84 ".\\lex.l"
  count(); yylval.token = NE_OP; return NE_OP; 
-#line 333 "mylexer.cpp"
+#line 337 "lex.cpp"
 		}
 		break;
 	case 31:
 		{
-#line 81 ".\\mylexer.l"
+#line 85 ".\\lex.l"
  count(); yylval.token = SEMICOLON; return SEMICOLON; 
-#line 340 "mylexer.cpp"
+#line 344 "lex.cpp"
 		}
 		break;
 	case 32:
 		{
-#line 82 ".\\mylexer.l"
+#line 86 ".\\lex.l"
  count(); yylval.token = LBRACE; return LBRACE; 
-#line 347 "mylexer.cpp"
+#line 351 "lex.cpp"
 		}
 		break;
 	case 33:
 		{
-#line 83 ".\\mylexer.l"
+#line 87 ".\\lex.l"
  count(); yylval.token = RBRACE; return RBRACE; 
-#line 354 "mylexer.cpp"
+#line 358 "lex.cpp"
 		}
 		break;
 	case 34:
 		{
-#line 84 ".\\mylexer.l"
+#line 88 ".\\lex.l"
  count(); yylval.token = COMMA; return COMMA; 
-#line 361 "mylexer.cpp"
+#line 365 "lex.cpp"
 		}
 		break;
 	case 35:
 		{
-#line 85 ".\\mylexer.l"
+#line 89 ".\\lex.l"
  count(); yylval.token = EQUAL; return EQUAL; 
-#line 368 "mylexer.cpp"
+#line 372 "lex.cpp"
 		}
 		break;
 	case 36:
 		{
-#line 86 ".\\mylexer.l"
+#line 90 ".\\lex.l"
  count(); yylval.token = RPAREN; return RPAREN; 
-#line 375 "mylexer.cpp"
+#line 379 "lex.cpp"
 		}
 		break;
 	case 37:
 		{
-#line 87 ".\\mylexer.l"
+#line 91 ".\\lex.l"
  count(); yylval.token = LPAREN; return LPAREN; 
-#line 382 "mylexer.cpp"
+#line 386 "lex.cpp"
 		}
 		break;
 	case 38:
 		{
-#line 88 ".\\mylexer.l"
+#line 92 ".\\lex.l"
  count(); yylval.token = LBRACKET; return LBRACKET; 
-#line 389 "mylexer.cpp"
+#line 393 "lex.cpp"
 		}
 		break;
 	case 39:
 		{
-#line 89 ".\\mylexer.l"
+#line 93 ".\\lex.l"
  count(); yylval.token = RBRACKET; return RBRACKET; 
-#line 396 "mylexer.cpp"
+#line 400 "lex.cpp"
 		}
 		break;
 	case 40:
 		{
-#line 90 ".\\mylexer.l"
+#line 94 ".\\lex.l"
  count(); yylval.token = DOT; return DOT; 
-#line 403 "mylexer.cpp"
+#line 407 "lex.cpp"
 		}
 		break;
 	case 41:
 		{
-#line 91 ".\\mylexer.l"
+#line 95 ".\\lex.l"
  count(); yylval.token = AND_OP; return AND_OP; 
-#line 410 "mylexer.cpp"
+#line 414 "lex.cpp"
 		}
 		break;
 	case 42:
 		{
-#line 92 ".\\mylexer.l"
+#line 96 ".\\lex.l"
  count(); yylval.token = MINUS_OP; return MINUS_OP; 
-#line 417 "mylexer.cpp"
+#line 421 "lex.cpp"
 		}
 		break;
 	case 43:
 		{
-#line 93 ".\\mylexer.l"
+#line 97 ".\\lex.l"
  count(); yylval.token = PLUS_OP; return PLUS_OP; 
-#line 424 "mylexer.cpp"
+#line 428 "lex.cpp"
 		}
 		break;
 	case 44:
 		{
-#line 94 ".\\mylexer.l"
+#line 98 ".\\lex.l"
  count(); yylval.token = MUL_OP; return MUL_OP; 
-#line 431 "mylexer.cpp"
+#line 435 "lex.cpp"
 		}
 		break;
 	case 45:
 		{
-#line 95 ".\\mylexer.l"
+#line 99 ".\\lex.l"
  count(); yylval.token = DIV_OP; return DIV_OP; 
-#line 438 "mylexer.cpp"
+#line 442 "lex.cpp"
 		}
 		break;
 	case 46:
 		{
-#line 96 ".\\mylexer.l"
+#line 100 ".\\lex.l"
  count(); yylval.token = MOD_OP; return MOD_OP; 
-#line 445 "mylexer.cpp"
+#line 449 "lex.cpp"
 		}
 		break;
 	case 47:
 		{
-#line 97 ".\\mylexer.l"
+#line 101 ".\\lex.l"
  count(); yylval.token = LT_OP; return LT_OP; 
-#line 452 "mylexer.cpp"
+#line 456 "lex.cpp"
 		}
 		break;
 	case 48:
 		{
-#line 98 ".\\mylexer.l"
+#line 102 ".\\lex.l"
  count(); yylval.token = GT_OP; return GT_OP; 
-#line 459 "mylexer.cpp"
+#line 463 "lex.cpp"
 		}
 		break;
 	case 49:
 		{
-#line 99 ".\\mylexer.l"
+#line 103 ".\\lex.l"
  count(); yylval.token = XOR_OP; return XOR_OP; 
-#line 466 "mylexer.cpp"
+#line 470 "lex.cpp"
 		}
 		break;
 	case 50:
 		{
-#line 100 ".\\mylexer.l"
+#line 104 ".\\lex.l"
  count(); yylval.token = OR_OP; return OR_OP; 
-#line 473 "mylexer.cpp"
+#line 477 "lex.cpp"
 		}
 		break;
 	case 51:
 		{
-#line 102 ".\\mylexer.l"
+#line 106 ".\\lex.l"
  count(); 
-#line 480 "mylexer.cpp"
+#line 484 "lex.cpp"
 		}
 		break;
 	case 52:
 		{
-#line 103 ".\\mylexer.l"
+#line 107 ".\\lex.l"
  printf("Unknown token:%s\n", yytext); yyterminate(); 
-#line 487 "mylexer.cpp"
+#line 491 "lex.cpp"
 		}
 		break;
 	default:
@@ -976,7 +980,7 @@ void YYLEXERNAME::yytables()
 	};
 	yybackup = backup;
 }
-#line 105 ".\\mylexer.l"
+#line 109 ".\\lex.l"
 
 
 int yywrap(void)
