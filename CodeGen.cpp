@@ -241,13 +241,13 @@ llvm::Value* VariableDeclaration::codeGen(CodeGenContext &context) {
         uint64_t arraySize = 1;
         std::vector<uint64_t> arraySizes;
         for(auto it=this->type->arraySize->begin(); it!=this->type->arraySize->end(); it++){
-            NInteger* integer = dynamic_cast<NInteger*>(it->get());
+            Integer* integer = dynamic_cast<Integer*>(it->get());
             arraySize *= integer->value;
             arraySizes.push_back(integer->value);
         }
 
         context.setArraySize(this->id->name, arraySizes);
-        Value* arraySizeValue = NInteger(arraySize).codeGen(context);
+        Value* arraySizeValue = Integer(arraySize).codeGen(context);
         auto arrayType = ArrayType::get(context.typeSystem.getVarType(this->type->name), arraySize);
         inst = context.builder.CreateAlloca(arrayType, arraySizeValue, "arraytmp");
     }else{
@@ -260,7 +260,7 @@ llvm::Value* VariableDeclaration::codeGen(CodeGenContext &context) {
     context.PrintSymTable();
 
     if( this->assignmentExpr != nullptr ){
-        NAssignment assignment(this->id, this->assignmentExpr);
+        Assignment assignment(this->id, this->assignmentExpr);
         assignment.codeGen(context);
     }
     return inst;
