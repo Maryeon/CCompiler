@@ -119,80 +119,222 @@ block
 primary_typename 
 	: INT
 	{	
-		$4 = new Identifier(*$1);
-		$$->istype = true;
+		$$ = new Identifier(*$1);
+		$$->isType = true;
 		delete $1;
 	}
 	| DOUBLE
+	{
+		$$ = new Identifier(*$1);
+		$$->isType = true;
+		delete $1;
+	}
 	| FLOAT
+	{
+		$$ = new Identifier(*$1);
+		$$->isType = true;
+		delete $1;
+	}
 	| CHAR
+	{
+		$$ = new Identifier(*$1);
+		$$->isType = true;
+		delete $1;
+	}
 	| BOOL
+	{
+		$$ = new Identifier(*$1);
+		$$->isType = true;
+		delete $1;
+	}
 	| VOID
-
+	{
+		$$ = new Identifier(*$1);
+		$$->isType = true;
+		delete $1;
+	}
+	;
+	
 array_typename 
 	: primary_typename LBRACKET CONSTANT_INT RBRACKET
+	{
+		$1->isArray = true;
+		$1->arraySize->push_back(make_shared<Interger>(atol($3->c_str())));
+		$$ = $1;
+	}
 	| array_typename LBRACKET CONSTANT_INT RBRACKET
+	{
+		$1->arraySize = ->push_back(make_shared<Interger>(atol($3->c_str())));
+		$$ = $1;
+	}
 	;
 	
 struct_typename 
 	: STRUCT ident
-
+	{
+		$2->isType = true;
+		$$ = $2;
+	}
+	;
+	
 typename 
 	: primary_typename
+	{
+		$$ = $1;
+	}
 	| array_typename
+	{
+		$$ = $1;
+	}
 	| struct_typename
-
+	{
+		$$ = $1;
+	}
+	;
+	
 var_dec
 	: typename ident
+	{
+		$$ = new VariableDeclaration(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2), NULL);
+	}
 	| typename ident EQUAL expr
+	{
+		$$ = new VariableDeclaration(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2), shared_ptr<Expression>($4));
+	}
 	| typename ident EQUAL LBRACE call_args RBRACE
+	{
+		$$ = new ArrayInitialization(make_shared<VariableDeclaration>(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2), NULL), shared_ptr<ExpressionList>($5));
+	}
 	;
 
 func_dec
 	: typename ident LPAREN func_dec_args RPAREN block
+	{
+		$$ = new FunctionDeclaration(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2), shared_ptr<VariableDeclarationList>($4), shared_ptr<Block>($6));
+	}
 	;
 
 func_dec_args 
 	: /* blank */
+	{
+		$$ = new VariableDeclarationList();
+	}
 	| var_dec
+	{
+		$$ = new VariableDeclarationList();
+		$$->push_back(shared_ptr<VariableDeclaration>($1));
+	}
 	| func_dec_args COMMA var_dec
+	{
+		$1->push_back(shared_ptr<VariableDeclaration>($3));
+		$$ = $1;
+	}
 	;
 
 ident
 	: IDENTIFIER
+	{
+		$$ = new Identifier(*$1);
+		delete $1;
+	}
 	;
 
 numeric 
 	: CONSTANT_INT
+	{
+		$$ = new Interger(atol($1->c_str()));
+	}
 	| CONSTANT_DOUBLE
+	{
+		$$ = new Double(atof($1->c_str()));
+	}
 	;
 	
 expr 
 	: assign
+	{
+		$$ = $1;
+	}
 	| ident LPAREN call_args RPAREN
+	{
+		$$ = new FuntionCall(shared_ptr<Identifier>($1), shared_ptr<ExpressionList>($3));
+	}
 	| ident
+	{
+		$$ = $1;
+	}
 	| ident DOT ident
+	{
+		$$ = new StructMember(shared_ptr<Identifier>($1), shared_ptr<Identifier>($3));
+	}
 	| numeric
+	{
+		$$ = $1;
+	}
 	| expr comparison expr
+	{
+		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
+	}
 	| expr MOD_OP expr
+	{
+		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
+	}
 	| expr MUL_OP expr
+	{
+		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
+	}
 	| expr DIV_OP expr
+	{
+		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
+	}
 	| expr PLUS_OP expr
+	{
+		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
+	}
 	| expr MINUS_OP expr
+	{
+		$$ = new BinaryOperation(shared_ptr<Expression>($1), $2, shared_ptr<Expression>($3));
+	}
 	| LPAREN expr RPAREN
+	{
+		$$ = $2;
+	}
 	| MINUS_OP expr	%prec UMINUS
+	{
+		$$ = NULL;
+	}
 	| array_index
+	{
+		$$ = $1;
+	}
 	| STRING_LITERAL
+	{
+		$$ = new Literal(*$1); 
+		delete $1;
+	}
 	;
 
 array_index 
-	: ident LBRACKET expr RBRACKET 
+	: ident LBRACKET expr RBRACKET
+	{
+		$$ = new ArrayIndex(shared_ptr<Identifier>($1), shared_ptr<Expression>($3));
+	}	
 	| array_index LBRACKET expr RBRACKET 
+	{
+		$1->expressions->push_back(shared_ptr<Expression>($3));
+		$$ = $1;
+	}
 	;
 	
 assign 
 	: ident assign_operator expr
+	{
+		$$ = new Assignment($2, shared_ptr<Identifier>($1), shared_ptr<Expression>($3));
+	}
 	| array_index assign_operator expr
+	{
+		
+	}
 	| ident DOT ident assign_operator expr
 	;
 	
