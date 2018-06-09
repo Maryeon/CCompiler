@@ -497,3 +497,61 @@ llvm::Value *StructMember::codeGen(CodeGenContext &context) {
     return context.builder.CreateLoad(ptr);
 }
 
+llvm::Value* WhileStatement::codeGen(CodeGenContext &context) {
+
+    Function* theFunction = context.builder.GetInsertBlock()->getParent();
+
+    BasicBlock *block = BasicBlock::Create(context.llvmContext, "whileloop", theFunction);
+    BasicBlock *after = BasicBlock::Create(context.llvmContext, "whilecont");
+
+    // execute the initial
+    Value* condValue = this->condition->codeGen(context);
+    if( !condValue )
+        return nullptr;
+
+    condValue = CastToBoolean(context, condValue);
+
+    // fall to the block
+    context.builder.CreateCondBr(condValue, block, after);
+
+    context.builder.SetInsertPoint(block);
+
+    context.pushBlock(block);
+
+    this->block->codeGen(context);
+
+    context.popBlock();
+
+    // do increment
+    if( this->increment ){
+        this->increment->codeGen(context);
+    }
+
+    // execute the again or stop
+    condValue = this->condition->codeGen(context);
+    condValue = CastToBoolean(context, condValue);
+    context.builder.CreateCondBr(condValue, block, after);
+
+    // insert the after block
+    theFunction->getBasicBlockList().push_back(after);
+	
+    context.builder.SetInsertPoint(after);
+
+    return nullptr;
+}
+
+std::unique_ptr<Expression> LogError(const char *str) {
+    fprintf(stderr, "LogError: %s\n", str);
+    return nullptr;
+}
+
+Value *LogErrorV(string str){
+    return LogErrorV(str.c_str());
+}
+
+Value *LogErrorV(const char *str) {
+    LogError(str);
+    return nullptr;
+}
+
+
