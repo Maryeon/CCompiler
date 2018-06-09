@@ -70,6 +70,7 @@ int yylex(void);
 	A_declarator _A_declarator;
 	A_expression _A_expression;
 	A_constant_expression _A_constant_expression;
+	
 }
 
 %token <symbol> IDENTIFIER 
