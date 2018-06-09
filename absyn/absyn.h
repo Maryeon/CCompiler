@@ -34,10 +34,9 @@ public:
 };
 
 class Double: public Expression{
-private:
+public:
 	double value;
 	
-public:
 	Double(){};
 	
 	Double(double value):value(value){}
@@ -53,10 +52,9 @@ public:
 };
 
 class Interger: public Expression{
-private:
+public:	
 	int value;
 	
-public:
 	Interger(){}
 	
 	Interger(int value):value(value){}
@@ -72,14 +70,17 @@ public:
 };
 
 class Identifier: public Expression{
-private:
-	string name;
-	
 public:
+	string name;
+	bool isType = false;
+	bool isArray = false;
+	
+	shared_ptr<ExpressionList> arraySize = make_shared<ExpressionList>();
+	
 	Identifier(){}
 	
 	Identifier(const string &name)name(name){}
-	
+		
 	string getType()const override{
 		return "Identifier";
 	}
@@ -91,11 +92,10 @@ public:
 };
 
 class FuntionCall: public Expression{
-private:
+public:
 	const shared_ptr<Identifier> name;
 	shared_ptr<ExpressionList> arguments = make_shared<ExpressionList>();
-	
-public:
+
 	FunctionCall(){}
 	
 	FunctionCall(const shared_ptr<Identifier> name, shared_ptr<ExpressionList> arguments)
@@ -111,12 +111,11 @@ public:
 };
 
 class BinaryOperation: public Expression{
-private:
+public:
 	int op;
 	shared_ptr<Expression> loperand;
 	shared_ptr<Expression> roperand;
 	
-public:
 	BinaryOperation(){};
 	
 	BinaryOperation(int op, shared_ptr<Expression> loperand, shared_ptr<Expression> roperand)
@@ -128,11 +127,10 @@ public:
 };
 
 class Assignment: public Expression{
-private:
+public:	
 	shared_ptr<Identifier> loperand;
 	shared_ptr<Expression> roperand;
-	
-public:
+
 	Assignment(){}
 	
 	Assignment(shared_ptr<Identifier> loperand, shared_ptr<Expression> roperand)
@@ -144,11 +142,10 @@ public:
 };
 
 class ArrayAssignment: public Expression{
-private:
+public:
 	shared_ptr<ArrayIndex> loperand;
 	shared_ptr<Expression> roperand;
 	
-public:
 	ArrayAssignment(){}
 	
 	ArrayAssignment(shared_ptr<ArrayIndex> loperand, shared_ptr<Expression> roperand)
@@ -161,11 +158,10 @@ public:
 
 
 class StructAssignment: public Expression{
-private:
+public:
 	shared_ptr<StructMember> loperand;
 	shared_ptr<Expression> roperand;
-
-public:	
+	
 	StructAssignment(){}
 	
 	StructAssignment(shared_ptr<StructMember> loperand, shared_ptr<Expression> roperand)
@@ -177,11 +173,10 @@ public:
 };
 
 class ArrayIndex: public Expression{
-private:
+public:
 	shared_ptr<Identifier> arrayName;
 	shared_ptr<ExpressionList> expressions = make_shared<ExpressionList>();
-	
-public:
+
 	ArrayIndex(){};
 	
 	ArrayIndex(shared_ptr<Identifier> arrayName, shared_ptr<ExpressionList> expressions)
@@ -198,10 +193,9 @@ public:
 };
 
 class Literal: public Expression{
-private:
+public:	
 	string value;
-	
-public:
+
 	Literal(){}
 	
 	Literal(const string &value):value(value){}
@@ -212,10 +206,9 @@ public:
 };
 
 class Block: public Statement{
-private:
+public:
 	shared_ptr<StatementList> statements = make_shared<StatementList>();
 	
-public:
 	Block(){}
 	
 	Block(shared_ptr<StatementList> statements): statements(statements){}
@@ -226,10 +219,9 @@ public:
 };
 
 class ExpressionStatement: public Statement{
-private:
+public:
 	shared_ptr<Expression> expression;
 	
-public:
 	ExpressionStatement(){}
 	
 	ExpressionStatement(shared_ptr<Expression>): expression(expression){}
@@ -240,12 +232,11 @@ public:
 };
 
 class VariableDeclaration: public Statement{
-private:
+public:
 	const shared_ptr<Identifier> type;
 	shared_ptr<Identifier> name;
 	shared_ptr<Expression> init = NULL;
 	
-public:
 	VariableDeclaration(){}
 	
 	VariableDeclaration(const shared_ptr<Identifier> type, shared_ptr<Identifier> name, shared_ptr<Expression> init = NULL)
@@ -257,11 +248,10 @@ public:
 };
 
 class ArrayInitialization: public Statement{
-private:
+public:
 	shared_ptr<VariableDeclaration> declaration;
 	shared_ptr<ExpressionList> expressions = make_shared<ExpressionList>();
 	
-public:
 	ArrayInitialization(){}
 	
 	ArrayInitialization(shared_ptr<VariableDeclaration> declaration, shared_ptr<ExpressionList> exceptions)
@@ -273,13 +263,12 @@ public:
 };
 
 class FunctionDeclaration: public Statement{
-private:
+public:
 	shared_ptr<Identifier> retType;
 	shared_ptr<Identifier> name;
 	shared_ptr<VariableDeclarationList> arguments = make_shared<VariableDeclarationList>();
 	shared_ptr<Block> block;
 
-public:
 	FunctionDeclaration(){}
 	
 	FunctionDeclaration(shared_ptr<Identifier> retType, shared_ptr<Identifier> name, shared_ptr<VariableDeclarationList> arguments, shared_ptr<Block> block)
@@ -291,11 +280,10 @@ public:
 };
 
 class StructDeclaration: public Statement{
-private:
+public:
 	shared_ptr<Identifier> name;
 	shared_ptr<VariableDeclarationList> members = make_shared<VariableDeclarationList>();
 
-public:
 	StructDeclaration();
 	
 	StructDeclaration(shared_ptr<Identifier> name, shared_ptr<VariableDeclarationList> members)
@@ -307,10 +295,9 @@ public:
 };
 
 class ReturnStatement: public Statement{
-private:
+public:
 	shared_ptr<Expression> expression;
 	
-public:
 	ReturnStatement(){}
 	
 	ReturnStatement(shared_ptr<Expression> expression):expression(expression){}
@@ -321,12 +308,11 @@ public:
 };
 
 class IfStatement: public Statement{
-private:
+public:
 	shared_ptr<Expression> condition;
 	shared_ptr<Block> trueBlock;
 	shared_ptr<Block> falseBlock = NULL;
 	
-public:
 	IfStatement(){}
 	
 	IfStatement(shared_ptr<Expression> condition, shared_ptr<Block> trueBlock, shared_ptr<Block> falseBlock = NULL)
@@ -338,11 +324,10 @@ public:
 };
 
 class ForStatement: public Statement{
-private:
+public:
 	shared_ptr<Expression> init = NULL, condition = NULL, increment = NULL;
 	shared_ptr<Block> block;
 	
-public:
 	ForStatement(){}
 	
 	ForStatement(shared_ptr<Expression> init = NULL, shared_ptr<Expression> condition = NULL, shared_ptr<Expression> increment = NULL, shared_ptr<Block> block)
@@ -354,11 +339,10 @@ public:
 };
 
 class StructMember :public Expression{
-private:
+public:
 	shared_ptr<Identifier> name;
 	shared_ptr<Identifier> member;
 	
-public:
 	StructMember(){}
 	
 	StructMember(shared_ptr<Identifier> name, shared_ptr<Identifier> member)
@@ -370,11 +354,10 @@ public:
 };
 
 struct WhileStatement: public Statement{
-private:
+public:
 	shared_ptr<Expression> condition;
 	shared_ptr<Block> block;
 	
-public:
 	WhileStatement(){}
 	WhileStatement(shared_ptr<Expression> condition, shared_ptr<Block> block)
 		:condition(condition), block(block){}
@@ -383,6 +366,7 @@ public:
 		return "WhileStatement";
 	}
 };
+
 #endif
 
 
