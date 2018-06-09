@@ -301,6 +301,9 @@ public:
 	string getType()const override{
 		return "ArrayInitialization";
 	}
+	
+	llvm::Value *codeGen(CodeGenContext &context) override ;
+
 };
 
 class FunctionDeclaration: public Statement{
@@ -319,6 +322,8 @@ public:
 	string getType()const override{
 		return "FunctionDeclaration";
 	}
+	
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class StructDeclaration: public Statement{
@@ -335,6 +340,8 @@ public:
 	string getType()const override{
 		return "StructDeclaration";
 	}
+	
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class ReturnStatement: public Statement{
@@ -349,6 +356,8 @@ public:
 	string getType()const override{
 		return "ReturnStatement";
 	}
+	
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class IfStatement: public Statement{
@@ -366,6 +375,8 @@ public:
 	string getType()const override{
 		return "IfStatement";
 	}
+	
+	llvm::Value *codeGen(CodeGenContext &context) override ;
 };
 
 class ForStatement: public Statement{
@@ -382,6 +393,8 @@ public:
 	string getType()const override{
 		return "ForStatement";
 	}
+	
+	llvm::Value *codeGen(CodeGenContext &context) override ;
 };
 
 class StructMember :public Expression{
@@ -398,6 +411,8 @@ public:
 	string getType()const override{
 		return "StructMember";
 	}
+	
+	llvm::Value *codeGen(CodeGenContext &context) override ;
 };
 
 struct WhileStatement: public Statement{
@@ -413,6 +428,8 @@ public:
 	string getType()const override{
 		return "WhileStatement";
 	}
+	
+	llvm::Value *codeGen(CodeGenContext &context) override ;
 };
 #endif
 
