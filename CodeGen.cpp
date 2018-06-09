@@ -42,6 +42,25 @@ llvm::Value* Identifier::codeGen(CodeGenContext &context) {
 
 }
 
+llvm::Value* FuntionCall::codeGen(CodeGenContext &context) {
+    cout << "Generating method call of " << this->id->name << endl;
+    Function * calleeF = context.theModule->getFunction(this->id->name);
+    if( !calleeF ){
+        LogErrorV("Function name not found");
+    }
+    if( calleeF->arg_size() != this->arguments->size() ){
+        LogErrorV("Function arguments size not match, calleeF=" + std::to_string(calleeF->size()) + ", this->arguments=" + std::to_string(this->arguments->size()) );
+    }
+    std::vector<Value*> argsv;
+    for(auto it=this->arguments->begin(); it!=this->arguments->end(); it++){
+        argsv.push_back((*it)->codeGen(context));
+        if( !argsv.back() ){        // if any argument codegen fail
+            return nullptr;
+        }
+    }
+    return context.builder.CreateCall(calleeF, argsv, "calltmp");
+}
+
 llvm::Value* BinaryOperation::codeGen(CodeGenContext &context) {
     cout << "Generating binary operator" << endl;
 

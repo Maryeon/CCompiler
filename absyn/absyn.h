@@ -118,6 +118,8 @@ public:
 	string getType()const override{
 		return "FunctionCall";
 	}
+
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 	
 };
 
