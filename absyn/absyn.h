@@ -4,10 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <llvm/IR/Value.h>
-
-class CodeGenContext;
-
 typedef std::vector<shared_ptr<Expression>> ExpressionList;
 typedef std::vector<shared_ptr<Statement>> StatementList;
 typedef std::vector<shared_ptr<VariableDeclaration>> VariableDeclarationList;
@@ -17,7 +13,6 @@ public:
 	Node(){}
 	virtual ~Node(){}
 	virtual string getType()const = 0;
-	virtual llvm::Value *codeGen(CodeGenContext &context) { return (llvm::Value *)0; }
 };
 
 class Expression: public Node{
@@ -39,10 +34,9 @@ public:
 };
 
 class Double: public Expression{
-private:
+public:
 	double value;
 	
-public:
 	Double(){};
 	
 	Double(double value):value(value){}
@@ -54,16 +48,13 @@ public:
 	double getValue()const{
 		return value;
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 	
 };
 
 class Interger: public Expression{
-private:
+public:	
 	int value;
 	
-public:
 	Interger(){}
 	
 	Interger(int value):value(value){}
@@ -75,20 +66,21 @@ public:
 	int getValue()const{
 		return value;
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 	
 };
 
 class Identifier: public Expression{
-private:
-	string name;
-	
 public:
+	string name;
+	bool isType = false;
+	bool isArray = false;
+	
+	shared_ptr<ExpressionList> arraySize = make_shared<ExpressionList>();
+	
 	Identifier(){}
 	
 	Identifier(const string &name)name(name){}
-	
+		
 	string getType()const override{
 		return "Identifier";
 	}
@@ -96,17 +88,14 @@ public:
 	string getName()const{
 		return name;
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 	
 };
 
 class FuntionCall: public Expression{
-private:
+public:
 	const shared_ptr<Identifier> name;
 	shared_ptr<ExpressionList> arguments = make_shared<ExpressionList>();
-	
-public:
+
 	FunctionCall(){}
 	
 	FunctionCall(const shared_ptr<Identifier> name, shared_ptr<ExpressionList> arguments)
@@ -118,18 +107,15 @@ public:
 	string getType()const override{
 		return "FunctionCall";
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 	
 };
 
 class BinaryOperation: public Expression{
-private:
+public:
 	int op;
 	shared_ptr<Expression> loperand;
 	shared_ptr<Expression> roperand;
 	
-public:
 	BinaryOperation(){};
 	
 	BinaryOperation(int op, shared_ptr<Expression> loperand, shared_ptr<Expression> roperand)
@@ -138,16 +124,13 @@ public:
 	string getType()const name{
 		return "BinaryOperation";
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class Assignment: public Expression{
-private:
+public:	
 	shared_ptr<Identifier> loperand;
 	shared_ptr<Expression> roperand;
-	
-public:
+
 	Assignment(){}
 	
 	Assignment(shared_ptr<Identifier> loperand, shared_ptr<Expression> roperand)
@@ -156,16 +139,13 @@ public:
 	string getType()const override{
 		return "Assignment";
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class ArrayAssignment: public Expression{
-private:
+public:
 	shared_ptr<ArrayIndex> loperand;
 	shared_ptr<Expression> roperand;
 	
-public:
 	ArrayAssignment(){}
 	
 	ArrayAssignment(shared_ptr<ArrayIndex> loperand, shared_ptr<Expression> roperand)
@@ -174,17 +154,14 @@ public:
 	string getType()const override{
 		return "ArrayAssignment";
 	}
-
-	llvm::Value *codeGen(CodeGenContext &context) override ;
 }; 
 
 
 class StructAssignment: public Expression{
-private:
+public:
 	shared_ptr<StructMember> loperand;
 	shared_ptr<Expression> roperand;
-
-public:	
+	
 	StructAssignment(){}
 	
 	StructAssignment(shared_ptr<StructMember> loperand, shared_ptr<Expression> roperand)
@@ -192,17 +169,14 @@ public:
 
 	string getType()const override{
 		return "StructAssignment";
-	}
-
-	llvm::Value *codeGen(CodeGenContext &context) override;		
+	}		
 };
 
 class ArrayIndex: public Expression{
-private:
+public:
 	shared_ptr<Identifier> arrayName;
 	shared_ptr<ExpressionList> expressions = make_shared<ExpressionList>();
-	
-public:
+
 	ArrayIndex(){};
 	
 	ArrayIndex(shared_ptr<Identifier> arrayName, shared_ptr<ExpressionList> expressions)
@@ -216,15 +190,12 @@ public:
 	string getType()const override{
 		return "ArrayIndex";
 	}
-
-	llvm::Value *codeGen(CodeGenContext &context) override ;
 };
 
 class Literal: public Expression{
-private:
+public:	
 	string value;
-	
-public:
+
 	Literal(){}
 	
 	Literal(const string &value):value(value){}
@@ -232,15 +203,12 @@ public:
 	string getType()const override{
 		return "Literal";
 	}
-
-	llvm::Value *codeGen(CodeGenContext &context) override;
 };
 
 class Block: public Statement{
-private:
+public:
 	shared_ptr<StatementList> statements = make_shared<StatementList>();
 	
-public:
 	Block(){}
 	
 	Block(shared_ptr<StatementList> statements): statements(statements){}
@@ -248,15 +216,12 @@ public:
 	string getType()const override{
 		return "Block";
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class ExpressionStatement: public Statement{
-private:
+public:
 	shared_ptr<Expression> expression;
 	
-public:
 	ExpressionStatement(){}
 	
 	ExpressionStatement(shared_ptr<Expression>): expression(expression){}
@@ -264,17 +229,14 @@ public:
 	string getType()const override{
 		return "ExpressionStatement";
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class VariableDeclaration: public Statement{
-private:
+public:
 	const shared_ptr<Identifier> type;
 	shared_ptr<Identifier> name;
 	shared_ptr<Expression> init = NULL;
 	
-public:
 	VariableDeclaration(){}
 	
 	VariableDeclaration(const shared_ptr<Identifier> type, shared_ptr<Identifier> name, shared_ptr<Expression> init = NULL)
@@ -283,16 +245,13 @@ public:
 	string getType()const override{
 		return "VariableDeclaration";
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class ArrayInitialization: public Statement{
-private:
+public:
 	shared_ptr<VariableDeclaration> declaration;
 	shared_ptr<ExpressionList> expressions = make_shared<ExpressionList>();
 	
-public:
 	ArrayInitialization(){}
 	
 	ArrayInitialization(shared_ptr<VariableDeclaration> declaration, shared_ptr<ExpressionList> exceptions)
@@ -304,13 +263,12 @@ public:
 };
 
 class FunctionDeclaration: public Statement{
-private:
+public:
 	shared_ptr<Identifier> retType;
 	shared_ptr<Identifier> name;
 	shared_ptr<VariableDeclarationList> arguments = make_shared<VariableDeclarationList>();
 	shared_ptr<Block> block;
 
-public:
 	FunctionDeclaration(){}
 	
 	FunctionDeclaration(shared_ptr<Identifier> retType, shared_ptr<Identifier> name, shared_ptr<VariableDeclarationList> arguments, shared_ptr<Block> block)
@@ -322,11 +280,10 @@ public:
 };
 
 class StructDeclaration: public Statement{
-private:
+public:
 	shared_ptr<Identifier> name;
 	shared_ptr<VariableDeclarationList> members = make_shared<VariableDeclarationList>();
 
-public:
 	StructDeclaration();
 	
 	StructDeclaration(shared_ptr<Identifier> name, shared_ptr<VariableDeclarationList> members)
@@ -338,10 +295,9 @@ public:
 };
 
 class ReturnStatement: public Statement{
-private:
+public:
 	shared_ptr<Expression> expression;
 	
-public:
 	ReturnStatement(){}
 	
 	ReturnStatement(shared_ptr<Expression> expression):expression(expression){}
@@ -352,12 +308,11 @@ public:
 };
 
 class IfStatement: public Statement{
-private:
+public:
 	shared_ptr<Expression> condition;
 	shared_ptr<Block> trueBlock;
 	shared_ptr<Block> falseBlock = NULL;
 	
-public:
 	IfStatement(){}
 	
 	IfStatement(shared_ptr<Expression> condition, shared_ptr<Block> trueBlock, shared_ptr<Block> falseBlock = NULL)
@@ -369,11 +324,10 @@ public:
 };
 
 class ForStatement: public Statement{
-private:
+public:
 	shared_ptr<Expression> init = NULL, condition = NULL, increment = NULL;
 	shared_ptr<Block> block;
 	
-public:
 	ForStatement(){}
 	
 	ForStatement(shared_ptr<Expression> init = NULL, shared_ptr<Expression> condition = NULL, shared_ptr<Expression> increment = NULL, shared_ptr<Block> block)
@@ -385,11 +339,10 @@ public:
 };
 
 class StructMember :public Expression{
-private:
+public:
 	shared_ptr<Identifier> name;
 	shared_ptr<Identifier> member;
 	
-public:
 	StructMember(){}
 	
 	StructMember(shared_ptr<Identifier> name, shared_ptr<Identifier> member)
@@ -401,11 +354,10 @@ public:
 };
 
 struct WhileStatement: public Statement{
-private:
+public:
 	shared_ptr<Expression> condition;
 	shared_ptr<Block> block;
 	
-public:
 	WhileStatement(){}
 	WhileStatement(shared_ptr<Expression> condition, shared_ptr<Block> block)
 		:condition(condition), block(block){}
@@ -414,5 +366,30 @@ public:
 		return "WhileStatement";
 	}
 };
+
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

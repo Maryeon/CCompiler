@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+Block *programBlock;
 extern FILE* yyin;
 extern int yylineno;
 void yyerror(char *);
@@ -9,8 +10,17 @@ extern int yylex(void);
 %}
 
 %union{
-	string stringg;
+	string *stringg;
 	int token;
+	
+	Block *block;
+	Expression *expression;
+	Statement *statement;
+	Identifier *identifier;
+	VariableDeclaration *variabledeclaration;
+	ArrayIndex *arrayindex;
+	std::vector<shared_ptr<VariableDeclaration>>* variabledeclarationlist;
+	std::vector<shared_ptr<Expression>>* expressionlist;
 }
 
 %token <stringg> IDENTIFIER STRING_LITERAL CONSTANT_INT CONSTANT_DOUBLE UMINUS
@@ -18,45 +28,101 @@ extern int yylex(void);
 %token <token> MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token <token> SUB_ASSIGN AND_ASSIGN
 %token <token> XOR_ASSIGN OR_ASSIGN
+%token <token> SEMICOLON LBRACE RBRACE COMMA EQUAL RPAREN LPAREN LBRACKET RBRACKET
+%token <token> DOT AND_OP MINUS_OP PLUS_OP MUL_OP DIV_OP MOD_OP LT_OP GT_OP XOR_OP OR_OP
 
 %token <stringg> CHAR INT FLOAT DOUBLE VOID BOOL
 %token <token> STRUCT
 %token <token> IF ELSE WHILE DO FOR CONTINUE BREAK RETURN
 
+%type <arrayindex> array_index
+%type <identifier> ident, primary_typename array_typename struct_typename typename
+%type <expression> numeric expr assign
+%type <variabledeclarationlist> func_dec_args struct_members
+%type <expressionlist> call_args
+%type <block> program statements block
+%type <statement> statement var_dec func_dec struct_dec if_stmt for_stmt while_stmt
+%type <token> comparison
+
 %start program
 
-%left TPLUS TMINUS
-%left TMUL TDIV TMOD
+%left PLUS_OP MINUS_OP
+%left MUL_OP DIV_OP MOD_OP
 %%
 
 
 program 
 	: statements
+	{
+		programBlock = $1;
+	}
 	;
 
 statements 
 	: statement
+	{
+		$$ = new Block();
+		$$->statements->push_back(shared_ptr<Statement>($1));
+	}
 	| statements statement
+	{
+		$1->statements->push_back(shared_ptr<Statement>($2));
+	}
 	;
 	
 statement 
-	: var_dec
+	: var_dec SEMICOLON
+	{
+		$$ = $1;
+	}
 	| func_dec
-	| struct_dec
-	| expr
-	| RETURN expr
+	{
+		$$ = $1;
+	}
+	| struct_dec SEMICOLON
+	{
+		$$ = $1;
+	}
+	| expr SEMICOLON
+	{
+		$$ = new ExpressionStatement(shared_ptr<Expression>($1));
+	}
+	| RETURN expr SEMICOLON
+	{
+		$$ = new ReturnStatement(shared_ptr<Expression>($2));
+	}
 	| if_stmt
+	{
+		$$ = $1;
+	}
 	| for_stmt
+	{
+		$$ = $1;
+	}
 	| while_stmt
+	{
+		$$ = $1;
+	}
 	;
 
 block 
-	: '{' statements '}'
-	| '{' '}'
+	: LBRACE statements RBRACE
+	{
+		$$ = $2;
+	}
+	| LBRACE RBRACE
+	{
+		$$ = new Block();
+	}
 	;
 
 primary_typename 
 	: INT
+	{	
+		$4 = new Identifier(*$1);
+		$$->istype = true;
+		delete $1;
+	}
 	| DOUBLE
 	| FLOAT
 	| CHAR
@@ -64,8 +130,8 @@ primary_typename
 	| VOID
 
 array_typename 
-	: primary_typename '[' CONSTANT_INT']'
-	| array_typename '[' CONSTANT_INT ']'
+	: primary_typename LBRACKET CONSTANT_INT RBRACKET
+	| array_typename LBRACKET CONSTANT_INT RBRACKET
 	;
 	
 struct_typename 
@@ -78,18 +144,18 @@ typename
 
 var_dec
 	: typename ident
-	| typename ident '=' expr
-	| typename ident '=' '{' call_args '}'
+	| typename ident EQUAL expr
+	| typename ident EQUAL LBRACE call_args RBRACE
 	;
 
 func_dec
-	: typename ident '(' func_dec_args ')' block
+	: typename ident LPAREN func_dec_args RPAREN block
 	;
 
 func_dec_args 
 	: /* blank */
 	| var_dec
-	| func_dec_args ',' var_dec
+	| func_dec_args COMMA var_dec
 	;
 
 ident
@@ -103,35 +169,36 @@ numeric
 	
 expr 
 	: assign
-	| ident '(' call_args ')'
+	| ident LPAREN call_args RPAREN
 	| ident
-	| ident '.' ident
+	| ident DOT ident
 	| numeric
 	| expr comparison expr
-	| expr '%' expr
-	| expr '*' expr
-	| expr '/' expr
-	| expr '+' expr
-	| expr '-' expr
-	| '(' expr ')'
-	| '-' expr
+	| expr MOD_OP expr
+	| expr MUL_OP expr
+	| expr DIV_OP expr
+	| expr PLUS_OP expr
+	| expr MINUS_OP expr
+	| LPAREN expr RPAREN
+	| MINUS_OP expr	%prec UMINUS
 	| array_index
 	| STRING_LITERAL
 	;
 
 array_index 
-	: ident '[' expr ']' 
-	| array_index '[' expr '] 
+	: ident LBRACKET expr RBRACKET 
+	| array_index LBRACKET expr RBRACKET 
 	;
 	
 assign 
 	: ident assign_operator expr
 	| array_index assign_operator expr
-	| ident '.' ident assign_operator expr
+	| ident DOT ident assign_operator expr
 	;
 	
 assign_operator
-	: MUL_ASSIGN
+	: EQUAL
+	| MUL_ASSIGN
 	| DIV_ASSIGN
 	| MOD_ASSIGN
 	| ADD_ASSIGN
@@ -144,19 +211,19 @@ assign_operator
 call_args 
 	: /* blank */
 	| expr
-	| call_args ',' expr
+	| call_args COMMA expr
 	;
 	
 comparison 
 	: EQ_OP
 	| NE_OP
-	| '<'
+	| LT_OP
 	| LE_OP 
-	| '>'
+	| GT_OP
 	| GE_OP
-	| '&'
-	| '|' 
-	| '^' 
+	| AND_OP
+	| OR_OP 
+	| XOR_OP 
 	;
 	
 if_stmt 
@@ -166,11 +233,11 @@ if_stmt
 	;
 
 for_stmt 
-	: FOR '(' expr ';' expr ';' expr ')' block
+	: FOR LPAREN expr SEMICOLON expr SEMICOLON expr RPAREN block
 	;
 		
 while_stmt 
-	: WHILE '( expr ')' block
+	: WHILE '( expr RPAREN block
 	;
 
 struct_dec

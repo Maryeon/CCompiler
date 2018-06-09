@@ -2,6 +2,7 @@
 /*C Declarations: */
 #include <stdio.h>
 #include "y.tab.h"
+#include <string>
 
 void count(void);
 %}
@@ -23,30 +24,29 @@ IS			((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 "//"[^\n]*              { /* consume //-comment */ }
 
 
-"bool"			{ count(); return(BOOL); }
-"break"			{ count(); return(BREAK); }
-"char"			{ count(); return(CHAR); }
-"continue"		{ count(); return(CONTINUE); }
-"do"			{ count(); return(DO); }
-"double"		{ count(); return(DOUBLE); }
-"else"			{ count(); return(ELSE); }
-"float"			{ count(); return(FLOAT); }
-"for"			{ count(); return(FOR); }
-"if"			{ count(); return(IF); }
-"int"			{ count(); return(INT); }
-"return"		{ count(); return(RETURN); }
-"struct"		{ count(); return(STRUCT); }
-"switch"		{ count(); return(SWITCH); }
-"void"			{ count(); return(VOID); }
-"while"			{ count(); return(WHILE); }
+"bool"			{ count(); yylval.stringg = new string(yytext); return BOOL; }
+"break"			{ count(); yylval.token = BREAK; return BREAK; }
+"char"			{ count(); yylval.stringg = new string(yytext); return CHAR; }
+"continue"		{ count(); yylval.token = CONTINUE; return CONTINUE; }
+"do"			{ count(); yylval.token = DO; return DO; }
+"double"		{ count(); yylval.stringg = new string(yytext); return DOUBLE; }
+"else"			{ count(); yylval.token = ELSE; return ELSE; }
+"float"			{ count(); yylval.stringg = new string(yytext); return FLOAT; }
+"for"			{ count(); yylval.token = FOR; return FOR; }
+"if"			{ count(); yylval.token = IF; return IF; }
+"int"			{ count(); yylval.stringg = new string(yytext); return INT; }
+"return"		{ count(); yylval.token = RETURN; return RETURN; }
+"struct"		{ count(); yylval.token = STRUCT; return STRUCT; }
+"void"			{ count(); yylval.stringg = new string(yytext); return VOID ; }
+"while"			{ count(); yylval.token = WHILE; return WHILE; }
 
-{L}({L}|{D})*		{ count(); return(check_type()); }
+{L}({L}|{D})*		{ count(); yylval.stringg = new string(yytext); return IDENTIFIER;}
 /*
 0[xX]{H}+{IS}?		{ count(); return(CONSTANT); }
 0[0-7]*{IS}?		{ count(); return(CONSTANT); }
 L?'(\\.|[^\\'\n])+'	{ count(); return(CONSTANT); }
 */
-[1-9]{D}*{IS}?		{ count(); return(CONSTANT_INT); }
+[1-9]{D}*{IS}?		{ count(); yylval.stringg = new string(yytext); return CONSTANT_INT;}
 
 
 /*
@@ -55,53 +55,55 @@ L?'(\\.|[^\\'\n])+'	{ count(); return(CONSTANT); }
 {D}+"."{D}*{E}?{FS}?	{ count(); return(CONSTANT); }
 */
 
-{D}+{E}{FS}?				{ count();	return(CONSTANT_DOUBLE); /*浮点数*/}
-{D}*"."{D}+{E}?{FS}?		{ count(); return(CONSTANT_DOUBLE); /*浮点数*/}
-{D}+"."{D}*{E}?{FS}?		{ count(); return(CONSTANT_DOUBLE); /*浮点数*/}
+/*
+{D}+{E}{FS}?				{ count();	return(CONSTANT_DOUBLE);}
+{D}*"."{D}+{E}?{FS}?		{ count(); return(CONSTANT_DOUBLE);}
+*/
+
+{D}+"."{D}*{E}?{FS}?		{ count(); yylval.stringg = new string(yytext); return CONSTANT_DOUBLE; /*浮点数*/}
 /*
 0[xX]{H}+{P}{FS}?	{ count(); return(CONSTANT); }
 0[xX]{H}*"."{H}+{P}{FS}?     { count(); return(CONSTANT); }
 0[xX]{H}+"."{H}*{P}{FS}?     { count(); return(CONSTANT); }
 */
 
-L?\"(\\.|[^\\"\n])*\"	{ count(); return(STRING_LITERAL); }
+L?\"(\\.|[^\\"\n])*\"	{ count(); yylval.stringg = new string(yytext); return STRING_LITERAL; }
 
-"+="			{ count(); return(ADD_ASSIGN); }
-"-="			{ count(); return(SUB_ASSIGN); }
-"*="			{ count(); return(MUL_ASSIGN); }
-"/="			{ count(); return(DIV_ASSIGN); }
-"%="			{ count(); return(MOD_ASSIGN); }
-"&="			{ count(); return(AND_ASSIGN); }
-"^="			{ count(); return(XOR_ASSIGN); }
-"|="			{ count(); return(OR_ASSIGN); }
-"<="			{ count(); return(LE_OP); }
-">="			{ count(); return(GE_OP); }
-"=="			{ count(); return(EQ_OP); }
-"!="			{ count(); return(NE_OP); }
-";"				{ count(); return(';'); }
-"{"				{ count(); return('{'); }
-"}"				{ count(); return('}'); }
-","				{ count(); return(','); }
-":"				{ count(); return(':'); }
-"="				{ count(); return('='); }
-"("				{ count(); return('('); }
-")"				{ count(); return(')'); }
-"["				{ count(); return('['); }
-"]"				{ count(); return(']'); }
-"."				{ count(); return('.'); }
-"&"				{ count(); return('&'); }
-"-"				{ count(); return('-'); }
-"+"				{ count(); return('+'); }
-"*"				{ count(); return('*'); }
-"/"				{ count(); return('/'); }
-"%"				{ count(); return('%'); }
-"<"				{ count(); return('<'); }
-">"				{ count(); return('>'); }
-"^"				{ count(); return('^'); }
-"|"				{ count(); return('|'); }
+"+="			{ count(); yylval.token = ADD_ASSIGN; return ADD_ASSIGN; }
+"-="			{ count(); yylval.token = SUB_ASSIGN; return SUB_ASSIGN; }
+"*="			{ count(); yylval.token = MUL_ASSIGN; return MUL_ASSIGN; }
+"/="			{ count(); yylval.token = DIV_ASSIGN; return DIV_ASSIGN; }
+"%="			{ count(); yylval.token = MOD_ASSIGN; return MOD_ASSIGN; }
+"&="			{ count(); yylval.token = AND_ASSIGN; return AND_ASSIGN; }
+"^="			{ count(); yylval.token = XOR_ASSIGN; return XOR_ASSIGN; }
+"|="			{ count(); yylval.token = OR_ASSIGN; return OR_ASSIGN; }
+"<="			{ count(); yylval.token = LE_OP; return LE_OP; }
+">="			{ count(); yylval.token = GE_OP; return GE_OP; }
+"=="			{ count(); yylval.token = EQ_OP; return EQ_OP; }
+"!="			{ count(); yylval.token = NE_OP; return NE_OP; }
+";"				{ count(); yylval.token = SEMICOLON; return SEMICOLON; }
+"{"				{ count(); yylval.token = LBRACE; return LBRACE; }
+"}"				{ count(); yylval.token = RBRACE; return RBRACE; }
+","				{ count(); yylval.token = COMMA; return COMMA; }
+"="				{ count(); yylval.token = EQUAL; return EQUAL; }
+"("				{ count(); yylval.token = RPAREN; return RPAREN; }
+")"				{ count(); yylval.token = LPAREN; return LPAREN; }
+"["				{ count(); yylval.token = LBRACKET; return LBRACKET; }
+"]"				{ count(); yylval.token = RBRACKET; return RBRACKET; }
+"."				{ count(); yylval.token = DOT; return DOT; }
+"&"				{ count(); yylval.token = AND_OP; return AND_OP; }
+"-"				{ count(); yylval.token = MINUS_OP; return MINUS_OP; }
+"+"				{ count(); yylval.token = PLUS_OP; return PLUS_OP; }
+"*"				{ count(); yylval.token = MUL_OP; return MUL_OP; }
+"/"				{ count(); yylval.token = DIV_OP; return DIV_OP; }
+"%"				{ count(); yylval.token = MOD_OP; return MOD_OP; }
+"<"				{ count(); yylval.token = LT_OP; return LT_OP; }
+">"				{ count(); yylval.token = GT_OP; return GT_OP; }
+"^"				{ count(); yylval.token = XOR_OP; return XOR_OP; }
+"|"				{ count(); yylval.token = OR_OP; return OR_OP; }
 
 [ \t\v\n\f]		{ count(); }
-.			{ /* Add code to complain about unmatched characters */ }
+.				{ printf("Unknown token:%s\n", yytext); yyterminate(); }
 
 %%
 
@@ -142,23 +144,4 @@ void count(void)
 			column++;
 
 	ECHO;
-}
-
-
-int check_type(void)
-{
-/*
-* pseudo code --- this is what it should check
-*
-*	if (yytext == type_name)
-*		return TYPE_NAME;
-*
-*	return IDENTIFIER;
-*/
-
-/*
-*	it actually will only return IDENTIFIER
-*/
-
-	return IDENTIFIER;
 }
