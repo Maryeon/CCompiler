@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 typedef char *string;
+typedef const char* conststring;
 
 void *checked_malloc(int);
 
