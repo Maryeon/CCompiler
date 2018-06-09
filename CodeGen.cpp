@@ -90,36 +90,33 @@ llvm::Value* BinaryOperation::codeGen(CodeGenContext &context) {
     cout << "R is " << TypeSystem::llvmTypeToStr(R) << endl;
 
     switch (this->op){
-        case TPLUS:
+        case PLUS_OP:
             return fp ? context.builder.CreateFAdd(L, R, "addftmp") : context.builder.CreateAdd(L, R, "addtmp");
-        case TMINUS:
+        case MINUS_OP:
             return fp ? context.builder.CreateFSub(L, R, "subftmp") : context.builder.CreateSub(L, R, "subtmp");
-        case TMUL:
+        case MUL_OP:
             return fp ? context.builder.CreateFMul(L, R, "mulftmp") : context.builder.CreateMul(L, R, "multmp");
         case TDIV:
             return fp ? context.builder.CreateFDiv(L, R, "divftmp") : context.builder.CreateSDiv(L, R, "divtmp");
-        case TAND:
+        case AND_OP:
             return fp ? LogErrorV("Double type has no AND operation") : context.builder.CreateAnd(L, R, "andtmp");
-        case TOR:
+        case OR_OP:
             return fp ? LogErrorV("Double type has no OR operation") : context.builder.CreateOr(L, R, "ortmp");
-        case TXOR:
+        case XOR_OP:
             return fp ? LogErrorV("Double type has no XOR operation") : context.builder.CreateXor(L, R, "xortmp");
-        case TSHIFTL:
-            return fp ? LogErrorV("Double type has no LEFT SHIFT operation") : context.builder.CreateShl(L, R, "shltmp");
-        case TSHIFTR:
-            return fp ? LogErrorV("Double type has no RIGHT SHIFT operation") : context.builder.CreateAShr(L, R, "ashrtmp");
+        
 
-        case TCLT:
+        case LT_OP:
             return fp ? context.builder.CreateFCmpULT(L, R, "cmpftmp") : context.builder.CreateICmpULT(L, R, "cmptmp");
-        case TCLE:
+        case LE_OP:
             return fp ? context.builder.CreateFCmpOLE(L, R, "cmpftmp") : context.builder.CreateICmpSLE(L, R, "cmptmp");
-        case TCGE:
+        case GE_OP:
             return fp ? context.builder.CreateFCmpOGE(L, R, "cmpftmp") : context.builder.CreateICmpSGE(L, R, "cmptmp");
-        case TCGT:
+        case GT_OP:
             return fp ? context.builder.CreateFCmpOGT(L, R, "cmpftmp") : context.builder.CreateICmpSGT(L, R, "cmptmp");
-        case TCEQ:
+        case EQ_OP:
             return fp ? context.builder.CreateFCmpOEQ(L, R, "cmpftmp") : context.builder.CreateICmpEQ(L, R, "cmptmp");
-        case TCNE:
+        case NE_OP:
             return fp ? context.builder.CreateFCmpONE(L, R, "cmpftmp") : context.builder.CreateICmpNE(L, R, "cmptmp");
         default:
             return LogErrorV("Unknown binary operator");
@@ -153,14 +150,13 @@ llvm::Value *ArrayAssignment::codeGen(CodeGenContext &context) {
     }
     
     auto arrayPtr = context.builder.CreateLoad(varPtr, "arrayPtr");
-//    arrayPtr->setAlignment(16);
 
     if( !arrayPtr->getType()->isArrayTy() && !arrayPtr->getType()->isPointerTy() ){
         return LogErrorV("The variable is not array");
     }
-//    std::vector<Value*> indices;
+
     auto index = calcArrayIndex(arrayIndex, context);
-//    cout << "here2" << endl;
+
     ArrayRef<Value*> gep2_array{ ConstantInt::get(Type::getInt64Ty(context.llvmContext), 0), index };
     auto ptr = context.builder.CreateInBoundsGEP(varPtr, gep2_array, "elementPtr");
 
@@ -171,7 +167,7 @@ llvm::Value* StructAssignment::codeGen(CodeGenContext &context) {
     cout << "Generating struct assignment of " << this->structMember->id->name << "." << this->structMember->member->name << endl;
     auto varPtr = context.getSymbolValue(this->structMember->id->name);
     auto structPtr = context.builder.CreateLoad(varPtr, "structPtr");
-//    auto underlyingStruct = context.builder.CreateLoad(load);
+
     structPtr->setAlignment(4);
 
     if( !structPtr->getType()->isStructTy() ){
@@ -183,7 +179,7 @@ llvm::Value* StructAssignment::codeGen(CodeGenContext &context) {
 
     std::vector<Value*> indices;
     auto value = this->expression->codeGen(context);
-//    auto index = ;
+
     indices.push_back(ConstantInt::get(context.typeSystem.intTy, 0, false));
     indices.push_back(ConstantInt::get(context.typeSystem.intTy, (uint64_t)memberIndex, false));
 
