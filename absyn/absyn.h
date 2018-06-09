@@ -4,6 +4,10 @@
 #include <string>
 #include <vector>
 
+#include <llvm/IR/Value.h>
+
+class CodeGenContext;
+
 typedef std::vector<shared_ptr<Expression>> ExpressionList;
 typedef std::vector<shared_ptr<Statement>> StatementList;
 typedef std::vector<shared_ptr<VariableDeclaration>> VariableDeclarationList;
@@ -13,6 +17,7 @@ public:
 	Node(){}
 	virtual ~Node(){}
 	virtual string getType()const = 0;
+	virtual llvm::Value *codeGen(CodeGenContext &context) { return (llvm::Value *)0; }
 };
 
 class Expression: public Node{
@@ -49,6 +54,8 @@ public:
 	double getValue()const{
 		return value;
 	}
+
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 	
 };
 
@@ -68,6 +75,8 @@ public:
 	int getValue()const{
 		return value;
 	}
+
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 	
 };
 
@@ -87,6 +96,8 @@ public:
 	string getName()const{
 		return name;
 	}
+
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 	
 };
 
@@ -125,6 +136,8 @@ public:
 	string getType()const name{
 		return "BinaryOperation";
 	}
+
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class Assignment: public Expression{
@@ -141,6 +154,8 @@ public:
 	string getType()const override{
 		return "Assignment";
 	}
+
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class ArrayAssignment: public Expression{
@@ -157,6 +172,8 @@ public:
 	string getType()const override{
 		return "ArrayAssignment";
 	}
+
+	llvm::Value *codeGen(CodeGenContext &context) override ;
 }; 
 
 
@@ -173,7 +190,9 @@ public:
 
 	string getType()const override{
 		return "StructAssignment";
-	}		
+	}
+
+	llvm::Value *codeGen(CodeGenContext &context) override;		
 };
 
 class ArrayIndex: public Expression{
@@ -195,6 +214,8 @@ public:
 	string getType()const override{
 		return "ArrayIndex";
 	}
+
+	llvm::Value *codeGen(CodeGenContext &context) override ;
 };
 
 class Literal: public Expression{
@@ -209,6 +230,8 @@ public:
 	string getType()const override{
 		return "Literal";
 	}
+
+	llvm::Value *codeGen(CodeGenContext &context) override;
 };
 
 class Block: public Statement{
@@ -223,6 +246,8 @@ public:
 	string getType()const override{
 		return "Block";
 	}
+
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class ExpressionStatement: public Statement{
@@ -237,6 +262,8 @@ public:
 	string getType()const override{
 		return "ExpressionStatement";
 	}
+
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class VariableDeclaration: public Statement{
@@ -254,6 +281,8 @@ public:
 	string getType()const override{
 		return "VariableDeclaration";
 	}
+
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class ArrayInitialization: public Statement{
@@ -384,28 +413,4 @@ public:
 	}
 };
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
