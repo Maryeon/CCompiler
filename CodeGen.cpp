@@ -8,6 +8,10 @@
 
 #include "absyn/absyn.h"
 
+static Type* TypeOf(const NIdentifier & type, CodeGenContext& context){        // get llvm::type of variable base on its identifier
+    return context.typeSystem.getVarType(type);
+}
+
 llvm::Value* Double::codeGen(CodeGenContext &context) {
     cout << "Generating Double: " << this->value << endl;
     return ConstantFP::get(Type::getDoubleTy(context.llvmContext), this->value);
