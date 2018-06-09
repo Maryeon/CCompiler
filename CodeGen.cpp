@@ -8,7 +8,7 @@
 
 #include "absyn/absyn.h"
 
-static Type* TypeOf(const NIdentifier & type, CodeGenContext& context){        // get llvm::type of variable base on its identifier
+static Type* TypeOf(const Identifier & type, CodeGenContext& context){        // get llvm::type of variable base on its identifier
     return context.typeSystem.getVarType(type);
 }
 
