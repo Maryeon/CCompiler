@@ -539,3 +539,19 @@ llvm::Value* WhileStatement::codeGen(CodeGenContext &context) {
 
     return nullptr;
 }
+
+std::unique_ptr<Expression> LogError(const char *str) {
+    fprintf(stderr, "LogError: %s\n", str);
+    return nullptr;
+}
+
+Value *LogErrorV(string str){
+    return LogErrorV(str.c_str());
+}
+
+Value *LogErrorV(const char *str) {
+    LogError(str);
+    return nullptr;
+}
+
+
