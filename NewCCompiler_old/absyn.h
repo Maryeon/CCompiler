@@ -1,6 +1,5 @@
 #ifndef ABSYN_H
 #define ABSYN_H
-#include <llvm/IR/Value.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -8,8 +7,6 @@
 
 using namespace std;
 
-class CodeGenContext;
-class NBlock;
 class Expression;
 class Statement;
 class VariableDeclaration;
@@ -23,7 +20,6 @@ public:
 	Node(){}
 	virtual ~Node(){}
 	virtual string getType()const = 0;
-	virtual llvm::Value *codeGen(CodeGenContext &context) { return (llvm::Value *)0; }
 };
 
 class Expression: public Node{
@@ -59,28 +55,25 @@ public:
 	double getValue()const{
 		return value;
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 	
 };
 
-class Integer: public Expression{
+class Interger: public Expression{
 public:	
 	int value;
 	
-	Integer(){}
+	Interger(){}
 	
-	Integer(int value):value(value){}
+	Interger(int value):value(value){}
 	
 	string getType()const override{
-		return "Integer";
+		return "Interger";
 	}
 	
 	int getValue()const{
 		return value;
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
+	
 };
 
 class Identifier: public Expression{
@@ -93,8 +86,7 @@ public:
 	
 	Identifier(){}
 	
-	Identifier(const std::string &name)
-		:name(name){}
+	Identifier(const string &name):name(name){}
 		
 	string getType()const override{
 		return "Identifier";
@@ -103,29 +95,26 @@ public:
 	string getName()const{
 		return name;
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 	
 };
 
-class FuntionCall: public Expression{
+class FunctionCall: public Expression{
 public:
 	const shared_ptr<Identifier> name;
 	shared_ptr<ExpressionList> arguments = make_shared<ExpressionList>();
 
-	FuntionCall(){}
+	FunctionCall(){}
 	
-	FuntionCall(const shared_ptr<Identifier> name, shared_ptr<ExpressionList> arguments)
+	FunctionCall(const shared_ptr<Identifier> name, shared_ptr<ExpressionList> arguments)
 		:name(name), arguments(arguments){}
 		
-	FuntionCall(const shared_ptr<Identifier> name)
+	FunctionCall(const shared_ptr<Identifier> name)
 		:name(name){}
 		
 	string getType()const override{
 		return "FunctionCall";
 	}
 	
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class BinaryOperation: public Expression{
@@ -136,33 +125,29 @@ public:
 	
 	BinaryOperation(){};
 	
-	BinaryOperation(int op, shared_ptr<Expression> loperand,  shared_ptr<Expression> roperand)
-		:op(op), loperand(loperand),  roperand(roperand){}
+	BinaryOperation(int op, shared_ptr<Expression> loperand, shared_ptr<Expression> roperand)
+		:op(op), loperand(loperand), roperand(roperand){}
 		
 	string getType()const override{
 		return "BinaryOperation";
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class Assignment: public Expression{
 public:	
-	//int op;
 	shared_ptr<Identifier> loperand;
 	shared_ptr<Expression> roperand;
 
 	Assignment(){}
 	
-	Assignment( shared_ptr<Identifier> loperand, shared_ptr<Expression> roperand)
+	Assignment(shared_ptr<Identifier> loperand, shared_ptr<Expression> roperand)
 		:loperand(loperand), roperand(roperand){}
 		
 	string getType()const override{
 		return "Assignment";
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
+
 
 class ArrayIndex: public Expression{
 public:
@@ -182,8 +167,6 @@ public:
 	string getType()const override{
 		return "ArrayIndex";
 	}
-
-	llvm::Value *codeGen(CodeGenContext &context) override ;
 };
 
 class ArrayAssignment: public Expression{
@@ -199,46 +182,7 @@ public:
 	string getType()const override{
 		return "ArrayAssignment";
 	}
-
-	llvm::Value *codeGen(CodeGenContext &context) override ;
 }; 
-
-class StructMember :public Expression{
-public:
-	shared_ptr<Identifier> name;
-	shared_ptr<Identifier> member;
-	
-	StructMember(){}
-	
-	StructMember(shared_ptr<Identifier> name, shared_ptr<Identifier> member)
-		:name(name), member(member){}
-
-	string getType()const override{
-		return "StructMember";
-	}
-	
-	llvm::Value *codeGen(CodeGenContext &context) override ;
-};
-
-
-class StructAssignment: public Expression{
-public:
-	shared_ptr<StructMember> loperand;
-	shared_ptr<Expression> roperand;
-	
-	StructAssignment(){}
-	
-	StructAssignment(shared_ptr<StructMember> loperand, shared_ptr<Expression> roperand)
-		:loperand(loperand), roperand(roperand){}
-
-	string getType()const override{
-		return "StructAssignment";
-	}
-
-	llvm::Value *codeGen(CodeGenContext &context) override;		
-};
-
-
 
 class Literal: public Expression{
 public:	
@@ -251,8 +195,6 @@ public:
 	string getType()const override{
 		return "Literal";
 	}
-
-	llvm::Value *codeGen(CodeGenContext &context) override;
 };
 
 class Block: public Statement{
@@ -266,8 +208,6 @@ public:
 	string getType()const override{
 		return "Block";
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class ExpressionStatement: public Statement{
@@ -281,26 +221,22 @@ public:
 	string getType()const override{
 		return "ExpressionStatement";
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class VariableDeclaration: public Statement{
 public:
 	const shared_ptr<Identifier> type;
 	shared_ptr<Identifier> name;
-	shared_ptr<Expression> init = NULL;
+	shared_ptr<Expression> init = nullptr;
 	
 	VariableDeclaration(){}
 	
-	VariableDeclaration(const shared_ptr<Identifier> type, shared_ptr<Identifier> name, shared_ptr<Expression> init = NULL)
+	VariableDeclaration(const shared_ptr<Identifier> type, shared_ptr<Identifier> name, shared_ptr<Expression> init = nullptr)
 		:type(type), name(name), init(init){}
 		
 	string getType()const override{
 		return "VariableDeclaration";
 	}
-
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class ArrayInitialization: public Statement{
@@ -316,8 +252,6 @@ public:
 	string getType()const override{
 		return "ArrayInitialization";
 	}
-	
-	llvm::Value *codeGen(CodeGenContext &context) override ;
 
 };
 
@@ -336,8 +270,6 @@ public:
 	string getType()const override{
 		return "FunctionDeclaration";
 	}
-	
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class StructDeclaration: public Statement{
@@ -353,8 +285,6 @@ public:
 	string getType()const override{
 		return "StructDeclaration";
 	}
-	
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class ReturnStatement: public Statement{
@@ -368,46 +298,68 @@ public:
 	string getType()const override{
 		return "ReturnStatement";
 	}
-	
-	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class IfStatement: public Statement{
 public:
 	shared_ptr<Expression> condition;
 	shared_ptr<Block> trueBlock;
-	shared_ptr<Block> falseBlock = NULL;
+	shared_ptr<Block> falseBlock = nullptr;
 	
 	IfStatement(){}
 	
-	IfStatement(shared_ptr<Expression> condition, shared_ptr<Block> trueBlock, shared_ptr<Block> falseBlock = NULL)
+	IfStatement(shared_ptr<Expression> condition, shared_ptr<Block> trueBlock, shared_ptr<Block> falseBlock = nullptr)
 		:condition(condition), trueBlock(trueBlock), falseBlock(falseBlock){}
 	
 	string getType()const override{
 		return "IfStatement";
 	}
-	
-	llvm::Value *codeGen(CodeGenContext &context) override ;
 };
 
 class ForStatement: public Statement{
 public:
-	shared_ptr<Expression> init = NULL, condition = NULL, increment = NULL;
+	shared_ptr<Expression> init = nullptr, condition = nullptr, increment = nullptr;
 	shared_ptr<Block> block;
 	
 	ForStatement(){}
 	
-	ForStatement(shared_ptr<Block> block,shared_ptr<Expression> init = NULL, shared_ptr<Expression> condition = NULL, shared_ptr<Expression> increment = NULL)
-		:init(init), condition(condition), increment(increment), block(block){}
+	ForStatement(shared_ptr<Block> block, shared_ptr<Expression> init = nullptr, shared_ptr<Expression> condition = nullptr, shared_ptr<Expression> increment = nullptr)
+		:block(block), init(init), condition(condition), increment(increment){}
 	
 	string getType()const override{
 		return "ForStatement";
 	}
-	
-	llvm::Value *codeGen(CodeGenContext &context) override ;
 };
 
+class StructMember :public Expression{
+public:
+	shared_ptr<Identifier> name;
+	shared_ptr<Identifier> member;
+	
+	StructMember(){}
+	
+	StructMember(shared_ptr<Identifier> name, shared_ptr<Identifier> member)
+		:name(name), member(member){}
 
+	string getType()const override{
+		return "StructMember";
+	}
+};
+
+class StructAssignment: public Expression{
+public:
+	shared_ptr<StructMember> loperand;
+	shared_ptr<Expression> roperand;
+	
+	StructAssignment(){}
+	
+	StructAssignment(shared_ptr<StructMember> loperand, shared_ptr<Expression> roperand)
+		:loperand(loperand), roperand(roperand){}
+
+	string getType()const override{
+		return "StructAssignment";
+	}		
+};
 
 struct WhileStatement: public Statement{
 public:
@@ -421,12 +373,7 @@ public:
 	string getType()const override{
 		return "WhileStatement";
 	}
-	
-	llvm::Value *codeGen(CodeGenContext &context) override ;
 };
-
-std::unique_ptr<Expression> LogError(const char* srt);
-
 
 #endif
 

@@ -3,6 +3,7 @@ all: compiler
 OBJS = parser.o \
 		lexer.o  \
 		CodeGen.o \
+		utils.o \
 		main.o	 \
 		ObjGen.o \
 		TypeSystem.o \

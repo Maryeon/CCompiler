@@ -165,12 +165,12 @@ array_typename
 	: primary_typename LBRACKET CONSTANT_INT RBRACKET
 	{
 		$1->isArray = true;
-		$1->arraySize->push_back(make_shared<Integer>(atol($3->c_str())));
+		$1->arraySize->push_back(make_shared<Interger>(atol($3->c_str())));
 		$$ = $1;
 	}
 	| array_typename LBRACKET CONSTANT_INT RBRACKET
 	{
-		$1->arraySize->push_back(make_shared<Integer>(atol($3->c_str())));
+		$1->arraySize->push_back(make_shared<Interger>(atol($3->c_str())));
 		$$ = $1;
 	}
 	;
@@ -248,7 +248,7 @@ ident
 numeric 
 	: CONSTANT_INT
 	{
-		$$ = new Integer(atol($1->c_str()));
+		$$ = new Interger(atol($1->c_str()));
 	}
 	| CONSTANT_DOUBLE
 	{
@@ -263,7 +263,7 @@ expr
 	}
 	| ident LPAREN call_args RPAREN
 	{
-		$$ = new FuntionCall(shared_ptr<Identifier>($1), shared_ptr<ExpressionList>($3));
+		$$ = new FunctionCall(shared_ptr<Identifier>($1), shared_ptr<ExpressionList>($3));
 	}
 	| ident
 	{

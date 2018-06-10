@@ -36,10 +36,10 @@ static llvm::Value* calcArrayIndex(shared_ptr<ArrayIndex> index, CodeGenContext 
     auto expression = *(index->expressions->rbegin());
 
     for(unsigned int i=sizeVec.size()-1; i>=1; i--){
-        auto temp = make_shared<BinaryOperation>( MUL_OP,make_shared<Integer>(sizeVec[i]), index->expressions->at(i-1));
-
-        expression = make_shared<BinaryOperation>(PLUS_OP, temp,  expression);
-
+        auto temp = make_shared<BinaryOperator>(make_shared<Integer>(sizeVec[i]), MUL_OP, index->expressions->at(i-1));
+//        cout << "2" << endl;
+        expression = make_shared<BinaryOperator>(temp, PLUS_OP, expression);
+//        cout << "3" << endl;
     }
 
     return expression->codeGen(context);
@@ -102,8 +102,8 @@ llvm::Value* Identifier::codeGen(CodeGenContext &context) {
 }
 
 llvm::Value* FuntionCall::codeGen(CodeGenContext &context) {
-    cout << "Generating method call of " << this->name->name << endl;
-    Function * calleeF = context.theModule->getFunction(this->name->name);
+    cout << "Generating method call of " << this->id->name << endl;
+    Function * calleeF = context.theModule->getFunction(this->id->name);
     if( !calleeF ){
         LogErrorV("Function name not found");
     }
@@ -123,8 +123,8 @@ llvm::Value* FuntionCall::codeGen(CodeGenContext &context) {
 llvm::Value* BinaryOperation::codeGen(CodeGenContext &context) {
     cout << "Generating binary operator" << endl;
 
-    Value* L = this->loperand->codeGen(context);
-    Value* R = this->roperand->codeGen(context);
+    Value* L = this->lhs->codeGen(context);
+    Value* R = this->rhs->codeGen(context);
     bool fp = false;
 
     if( (L->getType()->getTypeID() == Type::DoubleTyID) || (R->getType()->getTypeID() == Type::DoubleTyID) ){  // type upgrade
@@ -179,14 +179,14 @@ llvm::Value* BinaryOperation::codeGen(CodeGenContext &context) {
 }
 
 llvm::Value* Assignment::codeGen(CodeGenContext &context) {
-    cout << "Generating assignment of " << this->loperand->name << " = " << endl;
-    Value* dst = context.getSymbolValue(this->loperand->name);
-    auto dstType = context.getSymbolType(this->loperand->name);
+    cout << "Generating assignment of " << this->lhs->name << " = " << endl;
+    Value* dst = context.getSymbolValue(this->lhs->name);
+    auto dstType = context.getSymbolType(this->lhs->name);
     string dstTypeStr = dstType->name;
     if( !dst ){
         return LogErrorV("Undeclared variable");
     }
-    Value* exp = exp = this->roperand->codeGen(context);
+    Value* exp = exp = this->rhs->codeGen(context);
 
     cout << "dst typeid = " << TypeSystem::llvmTypeToStr(context.typeSystem.getVarType(dstTypeStr)) << endl;
     cout << "exp typeid = " << TypeSystem::llvmTypeToStr(exp) << endl;
@@ -197,8 +197,8 @@ llvm::Value* Assignment::codeGen(CodeGenContext &context) {
 }
 
 llvm::Value *ArrayAssignment::codeGen(CodeGenContext &context) {
-    cout << "Generating array index assignment of " << this->loperand->arrayName->name << endl;
-    auto varPtr = context.getSymbolValue(this->loperand->arrayName->name);
+    cout << "Generating array index assignment of " << this->arrayIndex->arrayName->name << endl;
+    auto varPtr = context.getSymbolValue(this->arrayIndex->arrayName->name);
 
     if( varPtr == nullptr ){
         return LogErrorV("Unknown variable name");
@@ -210,17 +210,17 @@ llvm::Value *ArrayAssignment::codeGen(CodeGenContext &context) {
         return LogErrorV("The variable is not array");
     }
 
-    auto index = calcArrayIndex(loperand, context);
+    auto index = calcArrayIndex(arrayIndex, context);
 
     ArrayRef<Value*> gep2_array{ ConstantInt::get(Type::getInt64Ty(context.llvmContext), 0), index };
     auto ptr = context.builder.CreateInBoundsGEP(varPtr, gep2_array, "elementPtr");
 
-    return context.builder.CreateAlignedStore(this->roperand->codeGen(context), ptr, 4);
+    return context.builder.CreateAlignedStore(this->expression->codeGen(context), ptr, 4);
 }
 
 llvm::Value* StructAssignment::codeGen(CodeGenContext &context) {
-    cout << "Generating struct assignment of " << this->loperand->name->name << "." << this->loperand->name->name << endl;
-    auto varPtr = context.getSymbolValue(this->loperand->name->name);
+    cout << "Generating struct assignment of " << this->structMember->id->name << "." << this->structMember->member->name << endl;
+    auto varPtr = context.getSymbolValue(this->structMember->id->name);
     auto structPtr = context.builder.CreateLoad(varPtr, "structPtr");
 
     structPtr->setAlignment(4);
@@ -230,10 +230,10 @@ llvm::Value* StructAssignment::codeGen(CodeGenContext &context) {
     }
 
     string structName = structPtr->getType()->getStructName().str();
-    long memberIndex = context.typeSystem.getStructMemberIndex(structName, this->loperand->member->name);
+    long memberIndex = context.typeSystem.getStructMemberIndex(structName, this->structMember->member->name);
 
     std::vector<Value*> indices;
-    auto value = this->roperand->codeGen(context);
+    auto value = this->expression->codeGen(context);
 
     indices.push_back(ConstantInt::get(context.typeSystem.intTy, 0, false));
     indices.push_back(ConstantInt::get(context.typeSystem.intTy, (uint64_t)memberIndex, false));
@@ -256,7 +256,7 @@ llvm::Value *ArrayIndex::codeGen(CodeGenContext &context) {
     if(context.isFuncArg(this->arrayName->name) ){
         cout << "isFuncArg" << endl;
         varPtr = context.builder.CreateLoad(varPtr, "actualArrayPtr");
-        //indices = { value };
+        indices = { value };
     }else if( varPtr->getType()->isPointerTy() ){
         cout << this->arrayName->name << "Not isFuncArg" << endl;
         indices = { ConstantInt::get(Type::getInt64Ty(context.llvmContext), 0), value };
@@ -286,7 +286,7 @@ llvm::Value* ExpressionStatement::codeGen(CodeGenContext &context) {
 }
 
 llvm::Value* VariableDeclaration::codeGen(CodeGenContext &context) {
-    cout << "Generating variable declaration of " << this->type->name << " " << this->name->name << endl;
+    cout << "Generating variable declaration of " << this->type->name << " " << this->id->name << endl;
     Type* type = TypeOf(*this->type, context);
     Value* initial = nullptr;
 
@@ -301,7 +301,7 @@ llvm::Value* VariableDeclaration::codeGen(CodeGenContext &context) {
             arraySizes.push_back(integer->value);
         }
 
-        context.setArraySize(this->name->name, arraySizes);
+        context.setArraySize(this->id->name, arraySizes);
         Value* arraySizeValue = Integer(arraySize).codeGen(context);
         auto arrayType = ArrayType::get(context.typeSystem.getVarType(this->type->name), arraySize);
         inst = context.builder.CreateAlloca(arrayType, arraySizeValue, "arraytmp");
@@ -309,13 +309,13 @@ llvm::Value* VariableDeclaration::codeGen(CodeGenContext &context) {
         inst = context.builder.CreateAlloca(type);
     }
 
-    context.setSymbolType(this->name->name, this->type);
-    context.setSymbolValue(this->name->name, inst);
+    context.setSymbolType(this->id->name, this->type);
+    context.setSymbolValue(this->id->name, inst);
 
     context.PrintSymTable();
 
-    if( this->init != nullptr ){
-        Assignment assignment(this->name, this->init);
+    if( this->assignmentExpr != nullptr ){
+        Assignment assignment(this->id, this->assignmentExpr);
         assignment.codeGen(context);
     }
     return inst;
@@ -329,17 +329,17 @@ llvm::Value* VariableDeclaration::codeGen(CodeGenContext &context) {
 
 
 llvm::Value *ArrayInitialization::codeGen(CodeGenContext &context) {
-    cout << "Generating array initialization of " << this->declaration->name->name << endl;
+    cout << "Generating array initialization of " << this->declaration->id->name << endl;
     auto arrayPtr = this->declaration->codeGen(context);
-    auto sizeVec = context.getArraySize(this->declaration->name->name);
+    auto sizeVec = context.getArraySize(this->declaration->id->name);
     // TODO: multi-dimension array initialization
     assert(sizeVec.size() == 1);
 
-    for(int index=0; index < this->expressions->size(); index++){
+    for(int index=0; index < this->expressionList->size(); index++){
         shared_ptr<Integer> indexValue = make_shared<Integer>(index);
 
-        shared_ptr<ArrayIndex> arrayIndex = make_shared<ArrayIndex>(this->declaration->name, indexValue);
-        ArrayAssignment assignment(arrayIndex, this->expressions->at(index));
+        shared_ptr<ArrayIndex> arrayIndex = make_shared<ArrayIndex>(this->declaration->id, indexValue);
+        ArrayAssignment assignment(arrayIndex, this->expressionList->at(index));
         assignment.codeGen(context);
     }
     return nullptr;
@@ -347,7 +347,7 @@ llvm::Value *ArrayInitialization::codeGen(CodeGenContext &context) {
 
 
 llvm::Value* FunctionDeclaration::codeGen(CodeGenContext &context) {
-    cout << "Generating function declaration of " << this->name->name << endl;
+    cout << "Generating function declaration of " << this->id->name << endl;
     std::vector<Type*> argTypes;
 
     for(auto &arg: *this->arguments){
@@ -358,13 +358,48 @@ llvm::Value* FunctionDeclaration::codeGen(CodeGenContext &context) {
         }
     }
     Type* retType = nullptr;
-    if( this->retType->isArray )
-        retType = PointerType::get(context.typeSystem.getVarType(this->retType->name), 0);
+    if( this->type->isArray )
+        retType = PointerType::get(context.typeSystem.getVarType(this->type->name), 0);
     else
-        retType = TypeOf(*this->retType, context);
+        retType = TypeOf(*this->type, context);
 
     FunctionType* functionType = FunctionType::get(retType, argTypes, false);
-    Function* function = Function::Create(functionType, GlobalValue::ExternalLinkage, this->name->name.c_str(), context.theModule.get());
+    Function* function = Function::Create(functionType, GlobalValue::ExternalLinkage, this->id->name.c_str(), context.theModule.get());
+
+    if( !this->isExternal ){
+        BasicBlock* basicBlock = BasicBlock::Create(context.llvmContext, "entry", function, nullptr);
+
+        context.builder.SetInsertPoint(basicBlock);
+        context.pushBlock(basicBlock);
+
+        // declare function params
+        auto origin_arg = this->arguments->begin();
+
+        for(auto &ir_arg_it: function->args()){
+            ir_arg_it.setName((*origin_arg)->id->name);
+            Value* argAlloc;
+            if( (*origin_arg)->type->isArray )
+                argAlloc = context.builder.CreateAlloca(PointerType::get(context.typeSystem.getVarType((*origin_arg)->type->name), 0));
+            else
+                argAlloc = (*origin_arg)->codeGen(context);
+
+            context.builder.CreateStore(&ir_arg_it, argAlloc, false);
+            context.setSymbolValue((*origin_arg)->id->name, argAlloc);
+            context.setSymbolType((*origin_arg)->id->name, (*origin_arg)->type);
+            context.setFuncArg((*origin_arg)->id->name, true);
+            origin_arg++;
+        }
+
+        this->block->codeGen(context);
+        if( context.getCurrentReturnValue() ){
+            context.builder.CreateRet(context.getCurrentReturnValue());
+        } else{
+            return LogErrorV("Function block return value not founded");
+        }
+        context.popBlock();
+
+    }
+
 
     return function;
 }
@@ -380,7 +415,7 @@ llvm::Value* StructDeclaration::codeGen(CodeGenContext& context) {
     context.typeSystem.addStructType(this->name->name, structType);
 
     for(auto& member: *this->members){
-        context.typeSystem.addStructMember(this->name->name, member->type->name, member->name->name);
+        context.typeSystem.addStructMember(this->name->name, member->type->name, member->id->name);
         memberTypes.push_back(TypeOf(*member->type, context));
     }
 
@@ -458,8 +493,8 @@ llvm::Value* ForStatement::codeGen(CodeGenContext &context) {
     BasicBlock *after = BasicBlock::Create(context.llvmContext, "forcont");
 
     // execute the initial
-    if( this->init )
-        this->init->codeGen(context);
+    if( this->initial )
+        this->initial->codeGen(context);
 
     Value* condValue = this->condition->codeGen(context);
     if( !condValue )
@@ -496,9 +531,9 @@ llvm::Value* ForStatement::codeGen(CodeGenContext &context) {
 }
 
 llvm::Value *StructMember::codeGen(CodeGenContext &context) {
-    cout << "Generating struct member expression of " << this->name->name << "." << this->member->name << endl;
+    cout << "Generating struct member expression of " << this->id->name << "." << this->member->name << endl;
 
-    auto varPtr = context.getSymbolValue(this->name->name);
+    auto varPtr = context.getSymbolValue(this->id->name);
     auto structPtr = context.builder.CreateLoad(varPtr, "structPtr");
     structPtr->setAlignment(4);
 
@@ -541,6 +576,11 @@ llvm::Value* WhileStatement::codeGen(CodeGenContext &context) {
     this->block->codeGen(context);
 
     context.popBlock();
+
+    // do increment
+    if( this->increment ){
+        this->increment->codeGen(context);
+    }
 
     // execute the again or stop
     condValue = this->condition->codeGen(context);

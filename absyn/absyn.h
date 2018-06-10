@@ -5,6 +5,8 @@
 #include <vector>
 #include <memory>
 
+using namespace std;
+
 class Expression;
 class Statement;
 class VariableDeclaration;

@@ -153,7 +153,9 @@ Type *TypeSystem::getVarType(string typeStr) {
     if( typeStr.compare("void") == 0 ){
         return this->voidTy;
     }
-
+    if( typeStr.compare("string") == 0 ){
+        return this->stringTy;
+    }
 
     if( this->_structTypes.find(typeStr) != this->_structTypes.end() )
         return this->_structTypes[typeStr];
