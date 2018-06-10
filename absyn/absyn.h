@@ -3,6 +3,11 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
+
+class Expression;
+class Statement;
+class VariableDeclaration;
 
 typedef std::vector<shared_ptr<Expression>> ExpressionList;
 typedef std::vector<shared_ptr<Statement>> StatementList;
