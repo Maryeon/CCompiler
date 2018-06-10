@@ -517,10 +517,9 @@ llvm::Value *StructMember::codeGen(CodeGenContext &context) {
     return context.builder.CreateLoad(ptr);
 }
 
-llvm::Value* WhileStatement::codeGen(CodeGenContext &context) {
-
+llvm::Value* WhileStatement::codeGen(CodeGenContext &context) 
+{
     Function* theFunction = context.builder.GetInsertBlock()->getParent();
-
     BasicBlock *block = BasicBlock::Create(context.llvmContext, "whileloop", theFunction);
     BasicBlock *after = BasicBlock::Create(context.llvmContext, "whilecont");
 
@@ -528,18 +527,13 @@ llvm::Value* WhileStatement::codeGen(CodeGenContext &context) {
     Value* condValue = this->condition->codeGen(context);
     if( !condValue )
         return nullptr;
-
     condValue = CastToBoolean(context, condValue);
 
     // fall to the block
     context.builder.CreateCondBr(condValue, block, after);
-
     context.builder.SetInsertPoint(block);
-
     context.pushBlock(block);
-
     this->block->codeGen(context);
-
     context.popBlock();
 
     // execute the again or stop
@@ -549,9 +543,7 @@ llvm::Value* WhileStatement::codeGen(CodeGenContext &context) {
 
     // insert the after block
     theFunction->getBasicBlockList().push_back(after);
-	
     context.builder.SetInsertPoint(after);
-
     return nullptr;
 }
 
