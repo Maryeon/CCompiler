@@ -366,6 +366,37 @@ llvm::Value* FunctionDeclaration::codeGen(CodeGenContext &context) {
     FunctionType* functionType = FunctionType::get(retType, argTypes, false);
     Function* function = Function::Create(functionType, GlobalValue::ExternalLinkage, this->name->name.c_str(), context.theModule.get());
 
+    BasicBlock* basicBlock = BasicBlock::Create(context.llvmContext, "entry", function, nullptr);
+
+        context.builder.SetInsertPoint(basicBlock);
+        context.pushBlock(basicBlock);
+
+        
+        auto origin_arg = this->arguments->begin();
+
+        for(auto &ir_arg_it: function->args()){
+            ir_arg_it.setName((*origin_arg)->name->name);
+            Value* argAlloc;
+            if( (*origin_arg)->type->isArray )
+                argAlloc = context.builder.CreateAlloca(PointerType::get(context.typeSystem.getVarType((*origin_arg)->type->name), 0));
+            else
+                argAlloc = (*origin_arg)->codeGen(context);
+
+            context.builder.CreateStore(&ir_arg_it, argAlloc, false);
+            context.setSymbolValue((*origin_arg)->name->name, argAlloc);
+            context.setSymbolType((*origin_arg)->name->name, (*origin_arg)->type);
+            context.setFuncArg((*origin_arg)->name->name, true);
+            origin_arg++;
+        }
+
+        this->block->codeGen(context);
+        if( context.getCurrentReturnValue() ){
+            context.builder.CreateRet(context.getCurrentReturnValue());
+        } else{
+            return LogErrorV("Function block return value not founded");
+        }
+        context.popBlock();
+
     return function;
 }
 
