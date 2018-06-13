@@ -440,12 +440,12 @@ struct_members
 	{
 		$$ = new VariableDeclarationList();
 	}
-	| var_dec
+	| var_dec SEMICOLON
 	{
 		$$ = new VariableDeclarationList();
 		$$->push_back(shared_ptr<VariableDeclaration>($<variabledeclaration>1));
 	}
-	| struct_members var_dec
+	| struct_members var_dec SEMICOLON
 	{
 		$1->push_back(shared_ptr<VariableDeclaration>($<variabledeclaration>2));
 		$$ = $1;

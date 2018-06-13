@@ -43,7 +43,7 @@ IS			((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 
 {L}({L}|{D})*		{ count(); yylval.stringg = new string(yytext); return IDENTIFIER;}
 
-[1-9]{D}*{IS}?		{ count(); yylval.stringg = new string(yytext); return CONSTANT_INT;}
+[1-9]{D}*{IS}?|0		{ count(); yylval.stringg = new string(yytext); return CONSTANT_INT;}
 
 {D}+"."{D}*{E}?{FS}?		{ count(); yylval.stringg = new string(yytext); return CONSTANT_DOUBLE; /*������*/}
 
