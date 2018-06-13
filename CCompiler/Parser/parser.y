@@ -85,6 +85,7 @@ statement
 	{
 		$$ = $1;
 	}
+
 	| struct_dec SEMICOLON
 	{
 		$$ = $1;
@@ -209,7 +210,7 @@ var_dec
 	}
 	| typename ident EQUAL LBRACE call_args RBRACE
 	{
-		$$ = new ArrayInitialization(make_shared<VariableDeclaration>(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2), nullptr), shared_ptr<ExpressionList>($5));
+		$$ = new ArrStructInitialization(make_shared<VariableDeclaration>(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2), nullptr), shared_ptr<ExpressionList>($5));
 	}
 	;
 
@@ -432,6 +433,16 @@ struct_dec
 	: STRUCT ident LBRACE struct_members RBRACE
 	{
 		$$ = new StructDeclaration(shared_ptr<Identifier>($2), shared_ptr<VariableDeclarationList>($4));
+	}
+	| STRUCT ident LBRACE struct_members RBRACE ident
+	{
+		shared_ptr<StructDeclaration>declaration = make_shared<shared_ptr>(shared_ptr<Identifier>($2), shared_ptr<VariableDeclarationList>($4));
+		$$ = new VariableDeclaration(declaration, shared_ptr<Identifier>($6), NULL);
+	}
+	| STRUCT ident LBRACE struct_members RBRACE ident EQUAL LBRACE call_args RBRACE
+	{
+		shared_ptr<StructDeclaration>declaration = make_shared<shared_ptr>(shared_ptr<Identifier>($2), shared_ptr<VariableDeclarationList>($4));
+		$$ = new ArrStructInitialization(make_shared<VariableDeclaration>(declaration, shared_ptr<Identifier>($6), nullptr), shared_ptr<ExpressionList>($9));
 	}
 	;
 

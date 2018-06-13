@@ -305,14 +305,14 @@ public:
 	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
-class ArrayInitialization: public Statement{
+class ArrStructInitialization: public Statement{
 public:
 	shared_ptr<VariableDeclaration> declaration;
 	shared_ptr<ExpressionList> expressions = make_shared<ExpressionList>();
 	
-	ArrayInitialization(){}
+	ArrStructInitialization(){}
 	
-	ArrayInitialization(shared_ptr<VariableDeclaration> declaration, shared_ptr<ExpressionList> exceptions)
+	ArrStructInitialization(shared_ptr<VariableDeclaration> declaration, shared_ptr<ExpressionList> exceptions)
 		:declaration(declaration), expressions(expressions){}
 		
 	string getType()const override{
