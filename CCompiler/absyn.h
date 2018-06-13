@@ -87,9 +87,6 @@ class Identifier: public Expression{
 public:
 	string name;
 	bool isType = false;
-	bool isArray = false;
-	
-	shared_ptr<ExpressionList> arraySize = make_shared<ExpressionList>();
 	
 	Identifier(){}
 	
@@ -291,7 +288,7 @@ class VariableDeclaration: public Statement{
 public:
 	const shared_ptr<Identifier> type;
 	shared_ptr<Identifier> name;
-	shared_ptr<Expression> init = NULL;
+	shared_ptr<Expression> init = nullptr;
 	
 	VariableDeclaration(){}
 	
@@ -305,22 +302,23 @@ public:
 	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
-class ArrStructInitialization: public Statement{
+class ArrayDeclaration: public Statement{
 public:
-	shared_ptr<VariableDeclaration> declaration;
-	shared_ptr<ExpressionList> expressions = make_shared<ExpressionList>();
-	
-	ArrStructInitialization(){}
-	
-	ArrStructInitialization(shared_ptr<VariableDeclaration> declaration, shared_ptr<ExpressionList> exceptions)
-		:declaration(declaration), expressions(expressions){}
-		
-	string getType()const override{
-		return "ArrayInitialization";
-	}
-	
-	llvm::Value *codeGen(CodeGenContext &context) override ;
+	const shared_ptr<Identifier> type;
+	shared_ptr<Identifier> name;
+	shared_ptr<ExpressionList> arraySize = make_shared<ExpressionList>();
+	shared_ptr<ExpressionList> inits = nullptr;
 
+	ArrayDeclaration(){}
+
+	ArrayDeclaration(const shared_ptr<Identifier> type, shared_ptr<Identifier> name)
+		:type(type), name(name){}
+
+	string getType()const override{
+		return "ArrayDeclaration";
+	}
+
+	virtual llvm::Value* codeGen(CodeGenContext& context) override ;
 };
 
 class FunctionDeclaration: public Statement{
@@ -344,13 +342,15 @@ public:
 
 class StructDeclaration: public Statement{
 public:
-	shared_ptr<Identifier> name;
+	shared_ptr<Identifier> typeName;
 	shared_ptr<VariableDeclarationList> members = make_shared<VariableDeclarationList>();
+	shared_ptr<Identifier> instName = nullptr;
+	shared_ptr<ExpressionList> inits = nullptr;
 
 	StructDeclaration();
 	
-	StructDeclaration(shared_ptr<Identifier> name, shared_ptr<VariableDeclarationList> members)
-		:name(name), members(members){}
+	StructDeclaration(shared_ptr<Identifier> typeName, shared_ptr<VariableDeclarationList> members, shared_ptr<Identifier> instName = nullptr, shared_ptr<ExpressionList> inits = nullptr)
+		:typeName(typeName), members(members), instName(instName), inits(inits){}
 		
 	string getType()const override{
 		return "StructDeclaration";

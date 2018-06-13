@@ -19,6 +19,7 @@
 	Statement *statement;
 	Identifier *identifier;
 	VariableDeclaration *variabledeclaration;
+	ArrayDeclaration *arraydeclaration;
 	ArrayIndex *arrayindex;
 	std::vector<shared_ptr<VariableDeclaration>>* variabledeclarationlist;
 	std::vector<shared_ptr<Expression>>* expressionlist;
@@ -34,9 +35,10 @@
 %token <token> IF ELSE WHILE FOR RETURN
 
 %type <arrayindex> array_index
-%type <identifier> ident primary_typename array_typename struct_typename typename
+%type <identifier> ident primary_type
 %type <expression> numeric expr assign
 %type <variabledeclarationlist> func_dec_args struct_members
+%type <arraydeclaration> array_dec array_initialization
 %type <expressionlist> call_args
 %type <block> program statements block
 %type <statement> statement var_dec func_dec struct_dec if_stmt for_stmt while_stmt
@@ -85,7 +87,14 @@ statement
 	{
 		$$ = $1;
 	}
-
+	| array_dec SEMICOLON
+	{
+		$$ = $1;
+	}
+	| array_initialization SEMICOLON
+	{
+		$$ = $1;
+	}
 	| struct_dec SEMICOLON
 	{
 		$$ = $1;
@@ -123,7 +132,7 @@ block
 	}
 	;
 
-primary_typename 
+primary_type
 	: INT
 	{	
 		$$ = new Identifier(*$1);
@@ -162,60 +171,40 @@ primary_typename
 	}
 	;
 	
-array_typename 
-	: primary_typename LBRACKET CONSTANT_INT RBRACKET
+array_dec
+	: primary_type ident LBRACKET CONSTANT_INT RBRACKET
 	{
-		$1->isArray = true;
-		$1->arraySize->push_back(make_shared<Integer>(atol($3->c_str())));
-		$$ = $1;
+		$$ = new ArrayDeclaration(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2));
+		$$->arraySize->push_back(make_shared<Integer>(atol($4->c_str())));
 	}
-	| array_typename LBRACKET CONSTANT_INT RBRACKET
+	| array_dec LBRACKET CONSTANT_INT RBRACKET
 	{
-		$1->arraySize->push_back(make_shared<Integer>(atol($3->c_str())));
-		$$ = $1;
+		$$->arraySize->push_back(make_shared<Integer>(atol($3->c_str())));
 	}
 	;
-	
-struct_typename 
-	: STRUCT ident
+
+array_initialization
+	:
+	array_dec EQUAL LBRACE call_args RBRACE
 	{
-		$2->isType = true;
-		$$ = $2;
-	}
-	;
-	
-typename 
-	: primary_typename
-	{
-		$$ = $1;
-	}
-	| array_typename
-	{
-		$$ = $1;
-	}
-	| struct_typename
-	{
+		shared_ptr<ArrayDeclaration>($1)->inits = shared_ptr<ExpressionList>($4);
 		$$ = $1;
 	}
 	;
 	
 var_dec
-	: typename ident
+	: primary_type ident
 	{
 		$$ = new VariableDeclaration(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2), NULL);
 	}
-	| typename ident EQUAL expr
+	| primary_type ident EQUAL expr
 	{
 		$$ = new VariableDeclaration(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2), shared_ptr<Expression>($4));
-	}
-	| typename ident EQUAL LBRACE call_args RBRACE
-	{
-		$$ = new ArrStructInitialization(make_shared<VariableDeclaration>(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2), nullptr), shared_ptr<ExpressionList>($5));
 	}
 	;
 
 func_dec
-	: typename ident LPAREN func_dec_args RPAREN block
+	: primary_type ident LPAREN func_dec_args RPAREN block
 	{
 		$$ = new FunctionDeclaration(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2), shared_ptr<VariableDeclarationList>($4), shared_ptr<Block>($6));
 	}
@@ -394,6 +383,7 @@ call_args
 	| call_args COMMA expr
 	{
 		$1->push_back(shared_ptr<Expression>($3));
+		$$ = $1;
 	}
 	;
 	
@@ -436,13 +426,11 @@ struct_dec
 	}
 	| STRUCT ident LBRACE struct_members RBRACE ident
 	{
-		shared_ptr<StructDeclaration>declaration = make_shared<shared_ptr>(shared_ptr<Identifier>($2), shared_ptr<VariableDeclarationList>($4));
-		$$ = new VariableDeclaration(declaration, shared_ptr<Identifier>($6), NULL);
+		$$ = new StructDeclaration(shared_ptr<Identifier>($2), shared_ptr<VariableDeclarationList>($4), shared_ptr<Identifier>($6));
 	}
 	| STRUCT ident LBRACE struct_members RBRACE ident EQUAL LBRACE call_args RBRACE
 	{
-		shared_ptr<StructDeclaration>declaration = make_shared<shared_ptr>(shared_ptr<Identifier>($2), shared_ptr<VariableDeclarationList>($4));
-		$$ = new ArrStructInitialization(make_shared<VariableDeclaration>(declaration, shared_ptr<Identifier>($6), nullptr), shared_ptr<ExpressionList>($9));
+		$$ = new StructDeclaration(shared_ptr<Identifier>($2), shared_ptr<VariableDeclarationList>($4), shared_ptr<Identifier>($6), shared_ptr<ExpressionList>($9));
 	}
 	;
 

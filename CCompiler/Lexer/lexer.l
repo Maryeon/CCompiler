@@ -25,7 +25,7 @@ IS			((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 /*Regular Expressions and Actions: */
 %%
 "/*"H"*/"			{ cout << "comments" << endl;}
-"//"[^\n]*              { /* consume //-comment */ }
+"//"[^\n]*              { cout << "comments" << endl; }
 
 
 "bool"			{ count(); yylval.stringg = new string(yytext); return BOOL; }
@@ -45,7 +45,7 @@ IS			((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 
 [1-9]{D}*{IS}?|0		{ count(); yylval.stringg = new string(yytext); return CONSTANT_INT;}
 
-{D}+"."{D}*{E}?{FS}?		{ count(); yylval.stringg = new string(yytext); return CONSTANT_DOUBLE; /*������*/}
+{D}+"."{D}*{E}?{FS}?		{ count(); yylval.stringg = new string(yytext); return CONSTANT_DOUBLE;}
 
 
 L?\"(\\.|[^\\"\n])*\"	{ count(); yylval.stringg = new string(yytext); return STRING_LITERAL; }
