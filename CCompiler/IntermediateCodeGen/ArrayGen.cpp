@@ -46,7 +46,7 @@ llvm::Value *ArrayIndex::codeGen(CodeGenContext &context) {
     auto type = context.getSymbolType(this->arrayName->name);
     string typeStr = type->name;
 
-    assert(type->isArray);
+    //assert(type->isArray);
 
     auto value = calcArrayIndex(make_shared<ArrayIndex>(*this), context);
     ArrayRef<Value*> indices;
@@ -69,7 +69,8 @@ llvm::Value *Literal::codeGen(CodeGenContext &context) {
     return context.builder.CreateGlobalString(this->value, "string");
 }
 
-llvm::Value *ArrayInitialization::codeGen(CodeGenContext &context) {
+///////////////////////////old///////////////////////////////////////////////////
+/*llvm::Value *ArrayInitialization::codeGen(CodeGenContext &context) {
     cout << "Generating array initialization of " << this->declaration->name->name << endl;
     auto arrayPtr = this->declaration->codeGen(context);
     auto sizeVec = context.getArraySize(this->declaration->name->name);
@@ -83,5 +84,55 @@ llvm::Value *ArrayInitialization::codeGen(CodeGenContext &context) {
         ArrayAssignment assignment(arrayIndex, this->expressions->at(index));
         assignment.codeGen(context);
     }
+    return nullptr;
+}
+*/
+/////////////////////////////////oldend//////////////////////////////////////////////////
+
+llvm::Value *ArrayDeclaration::codeGen(CodeGenContext &context) {
+    cout << "Generating array  declaration of " << this->name->name << endl;
+    Value* inst = nullptr;
+    //Type* type = TypeOf(*this->type, context);
+    //inst = context.builder.CreateAlloca(type);
+
+    ////////////////////////////////////////////
+    //Dec
+    uint64_t arraySize = 1;
+    std::vector<uint64_t> arraySizes;
+    for(auto it=this->arraySize->begin(); it!=this->arraySize->end(); it++){
+        Integer* integer = dynamic_cast<Integer*>(it->get());
+        arraySize *= integer->value;
+        arraySizes.push_back(integer->value);
+    }
+
+    context.setArraySize(this->name->name, arraySizes);
+    Value* arraySizeValue = Integer(arraySize).codeGen(context);
+    auto arrayType = ArrayType::get(context.typeSystem.getVarType(this->type->name), arraySize);
+    inst = context.builder.CreateAlloca(arrayType, arraySizeValue, "arraytmp");
+
+    context.setSymbolType(this->name->name, this->type);
+    context.setSymbolValue(this->name->name, inst);
+
+    context.PrintSymTable();
+
+    ////////////////////////////////////////////////
+    //Assignment
+    if(this->inits!=nullptr){
+
+        //auto arrayPtr = this->declaration->codeGen(context);
+        auto sizeVec = context.getArraySize(this->name->name);
+
+        assert(sizeVec.size() == 1);
+
+        for(int index=0; index < this->inits->size(); index++){
+            shared_ptr<Integer> indexValue = make_shared<Integer>(index);
+
+            shared_ptr<ArrayIndex> arrayIndex = make_shared<ArrayIndex>(this->name, indexValue);
+            ArrayAssignment assignment(arrayIndex, this->inits->at(index));
+            assignment.codeGen(context);
+        }
+
+    }
+
     return nullptr;
 }

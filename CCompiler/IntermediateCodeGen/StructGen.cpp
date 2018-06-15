@@ -1,7 +1,10 @@
 #include "CodeGen.h"
+static Type* TypeOf(const Identifier & type, CodeGenContext& context){        
+    return context.typeSystem.getVarType(type);
+}
 
 llvm::Value* StructAssignment::codeGen(CodeGenContext &context) {
-    cout << "Generating struct assignment of " << this->loperand->name->name << "." << this->loperand->name->name << endl;
+    cout << "Generating struct assignment of " << this->loperand->name->name << "." << this->loperand->member->name << endl;
     auto varPtr = context.getSymbolValue(this->loperand->name->name);
     auto structPtr = context.builder.CreateLoad(varPtr, "structPtr");
 
@@ -28,21 +31,56 @@ llvm::Value* StructAssignment::codeGen(CodeGenContext &context) {
 
 
 llvm::Value* StructDeclaration::codeGen(CodeGenContext& context) {
-    cout << "Generating struct declaration of " << this->name->name << endl;
+    cout << "Generating struct declaration of " << this->typeName->name << endl;
 
     std::vector<Type*> memberTypes;
+    Value* inst = nullptr;
 
 
-    auto structType = StructType::create(context.llvmContext, this->name->name);
-    context.typeSystem.addStructType(this->name->name, structType);
+    auto structType = StructType::create(context.llvmContext, this->typeName->name);
+    context.typeSystem.addStructType(this->typeName->name, structType);
 
     for(auto& member: *this->members){
-        context.typeSystem.addStructMember(this->name->name, member->type->name, member->name->name);
+        context.typeSystem.addStructMember(this->typeName->name, member->type->name, member->name->name);
         //memberTypes.push_back(TypeOf(*member->type, context));
         memberTypes.push_back(context.typeSystem.getVarType(*member->type));
     }
 
     structType->setBody(memberTypes);
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    if(this->instName!=nullptr){
+        //Type* type = context.typeSystem.getVarType(*this->typeName);
+        Value* inst = nullptr;
+        Type* type = TypeOf(*this->typeName, context);
+        inst = context.builder.CreateAlloca(type);
+
+        context.setSymbolType(this->instName->name, this->typeName);
+        context.setSymbolValue(this->instName->name, inst);
+
+        context.PrintSymTable();
+
+        if( this->inits != nullptr ){
+            //Assignment assignment(this->instName, this->inits);
+            //assignment.codeGen(context);
+
+           /* for(int index=0; index < this->inits->size(); index++){
+                //shared_ptr<Integer> indexValue = make_shared<Integer>(index);
+
+                //shared_ptr<ArrayIndex> arrayIndex = make_shared<ArrayIndex>(this->declaration->name, indexValue);
+                ArrayAssignment assignment(arrayIndex, this->expressions->at(index));
+                assignment.codeGen(context);
+            }*/
+            
+        }
+
+    }
+
+     
+
+
+    
 
     return nullptr;
 }

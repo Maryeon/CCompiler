@@ -66,9 +66,10 @@ void TypeSystem::addStructType(string name, llvm::StructType *type) {
 
 Type *TypeSystem::getVarType(const Identifier& type) {
     assert(type.isType);
-    if( type.isArray ){     
-        return PointerType::get(getVarType(type.name), 0);
-    }
+
+    //if( type.isArray ){     
+    //    return PointerType::get(getVarType(type.name), 0);
+    //}
 
     return getVarType(type.name);
 

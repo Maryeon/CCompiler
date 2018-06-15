@@ -6,10 +6,11 @@ int main(){
 	{
 		int c;
 	};
-		int j=1;
+
+	int j=1;
 	
-	struct A a;
-	a.c = a + b;
+	struct A nnn;
+	//nnn.c = a + b;
 	return  0;
 }
 

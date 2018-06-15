@@ -257,7 +257,7 @@ public:
 	shared_ptr<StatementList> statements = make_shared<StatementList>();
 	
 	Block(){
-		cout<<"BLOCKhdsa"<<endl;
+		//cout<<"BLOCKhdsa"<<endl;
 	}
 	
 	Block(shared_ptr<StatementList> statements): statements(statements){}
@@ -307,7 +307,7 @@ public:
 	const shared_ptr<Identifier> type;
 	shared_ptr<Identifier> name;
 	shared_ptr<ExpressionList> arraySize = make_shared<ExpressionList>();
-	shared_ptr<ExpressionList> inits = nullptr;
+	shared_ptr<ExpressionList> inits = nullptr;//
 
 	ArrayDeclaration(){}
 
@@ -409,9 +409,7 @@ public:
 	llvm::Value *codeGen(CodeGenContext &context) override ;
 };
 
-
-
-struct WhileStatement: public Statement{
+class WhileStatement: public Statement{
 public:
 	shared_ptr<Expression> condition;
 	shared_ptr<Block> block;
@@ -431,28 +429,3 @@ std::unique_ptr<Expression> LogError(const char* srt);
 
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

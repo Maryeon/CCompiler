@@ -34,10 +34,13 @@ llvm::Value* Integer::codeGen(CodeGenContext &context) {
 
 llvm::Value* Identifier::codeGen(CodeGenContext &context) {
     cout << "Generating identifier " << this->name << endl;
+
     Value* value = context.getSymbolValue(this->name);
+
     if( !value ){
         return LogErrorV("Unknown variable name " + this->name);
     }
+    
     if( value->getType()->isPointerTy() ){
         auto arrayPtr = context.builder.CreateLoad(value, "arrayPtr");
         if( arrayPtr->getType()->isArrayTy() ){
