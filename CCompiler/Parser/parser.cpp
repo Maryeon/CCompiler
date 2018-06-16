@@ -494,12 +494,12 @@ static const yytype_uint16 yyrline[] =
 {
        0,    62,    62,    69,    74,    82,    86,    90,    94,    98,
      102,   106,   110,   114,   118,   125,   129,   136,   142,   148,
-     154,   160,   166,   175,   180,   188,   196,   200,   207,   215,
-     218,   223,   231,   239,   243,   250,   254,   258,   262,   266,
-     270,   274,   278,   282,   286,   290,   294,   298,   302,   306,
-     310,   314,   318,   322,   326,   330,   334,   338,   346,   350,
-     358,   362,   366,   375,   378,   383,   392,   396,   400,   409,
-     416,   423,   427,   431,   439,   442,   447
+     154,   160,   166,   175,   180,   189,   197,   201,   208,   216,
+     219,   224,   232,   240,   244,   251,   255,   259,   263,   267,
+     271,   275,   279,   283,   287,   291,   295,   299,   303,   307,
+     311,   315,   319,   323,   327,   331,   335,   339,   347,   351,
+     359,   363,   367,   376,   379,   384,   393,   397,   401,   410,
+     417,   424,   428,   432,   440,   443,   448
 };
 #endif
 
@@ -1620,7 +1620,7 @@ yyreduce:
 #line 176 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.arraydeclaration) = new ArrayDeclaration(shared_ptr<Identifier>((yyvsp[-4].identifier)), shared_ptr<Identifier>((yyvsp[-3].identifier)));
-		(yyval.arraydeclaration)->arraySize->push_back(make_shared<Integer>(atol((yyvsp[-1].stringg)->c_str())));
+		(yyval.arraydeclaration)->arraySize->push_back(make_shared<Integer>(atoi((yyvsp[-1].stringg)->c_str())));
 	}
 #line 1626 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
@@ -1628,442 +1628,443 @@ yyreduce:
   case 24:
 #line 181 "Parser/parser.y" /* yacc.c:1646  */
     {
-		(yyval.arraydeclaration)->arraySize->push_back(make_shared<Integer>(atol((yyvsp[-1].stringg)->c_str())));
+		(yyvsp[-3].arraydeclaration)->arraySize->push_back(make_shared<Integer>(atoi((yyvsp[-1].stringg)->c_str())));
+		(yyval.arraydeclaration) = (yyvsp[-3].arraydeclaration);
 	}
-#line 1634 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1635 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 189 "Parser/parser.y" /* yacc.c:1646  */
+#line 190 "Parser/parser.y" /* yacc.c:1646  */
     {
-		shared_ptr<ArrayDeclaration>((yyvsp[-4].arraydeclaration))->inits = shared_ptr<ExpressionList>((yyvsp[-1].expressionlist));
+		(yyvsp[-4].arraydeclaration)->inits = shared_ptr<ExpressionList>((yyvsp[-1].expressionlist));
 		(yyval.arraydeclaration) = (yyvsp[-4].arraydeclaration);
 	}
-#line 1643 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1644 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 197 "Parser/parser.y" /* yacc.c:1646  */
+#line 198 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.statement) = new VariableDeclaration(shared_ptr<Identifier>((yyvsp[-1].identifier)), shared_ptr<Identifier>((yyvsp[0].identifier)), NULL);
 	}
-#line 1651 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1652 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 201 "Parser/parser.y" /* yacc.c:1646  */
+#line 202 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.statement) = new VariableDeclaration(shared_ptr<Identifier>((yyvsp[-3].identifier)), shared_ptr<Identifier>((yyvsp[-2].identifier)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1659 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1660 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 208 "Parser/parser.y" /* yacc.c:1646  */
+#line 209 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.statement) = new FunctionDeclaration(shared_ptr<Identifier>((yyvsp[-5].identifier)), shared_ptr<Identifier>((yyvsp[-4].identifier)), shared_ptr<VariableDeclarationList>((yyvsp[-2].variabledeclarationlist)), shared_ptr<Block>((yyvsp[0].block)));
 	}
-#line 1667 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1668 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 215 "Parser/parser.y" /* yacc.c:1646  */
+#line 216 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.variabledeclarationlist) = new VariableDeclarationList();
 	}
-#line 1675 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1676 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 219 "Parser/parser.y" /* yacc.c:1646  */
+#line 220 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.variabledeclarationlist) = new VariableDeclarationList();
 		(yyval.variabledeclarationlist)->push_back(shared_ptr<VariableDeclaration>((yyvsp[0].variabledeclaration)));
 	}
-#line 1684 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1685 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 224 "Parser/parser.y" /* yacc.c:1646  */
+#line 225 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyvsp[-2].variabledeclarationlist)->push_back(shared_ptr<VariableDeclaration>((yyvsp[0].variabledeclaration)));
 		(yyval.variabledeclarationlist) = (yyvsp[-2].variabledeclarationlist);
 	}
-#line 1693 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1694 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 232 "Parser/parser.y" /* yacc.c:1646  */
+#line 233 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.identifier) = new Identifier(*(yyvsp[0].stringg));
 		delete (yyvsp[0].stringg);
 	}
-#line 1702 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1703 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 240 "Parser/parser.y" /* yacc.c:1646  */
+#line 241 "Parser/parser.y" /* yacc.c:1646  */
     {
-		(yyval.expression) = new Integer(atol((yyvsp[0].stringg)->c_str()));
+		(yyval.expression) = new Integer(atoi((yyvsp[0].stringg)->c_str()));
 	}
-#line 1710 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1711 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 244 "Parser/parser.y" /* yacc.c:1646  */
+#line 245 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new Double(atof((yyvsp[0].stringg)->c_str()));
 	}
-#line 1718 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1719 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 251 "Parser/parser.y" /* yacc.c:1646  */
+#line 252 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = (yyvsp[0].expression);
 	}
-#line 1726 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1727 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 255 "Parser/parser.y" /* yacc.c:1646  */
+#line 256 "Parser/parser.y" /* yacc.c:1646  */
     {
-		(yyval.expression) = new FuntionCall(shared_ptr<Identifier>((yyvsp[-3].identifier)), shared_ptr<ExpressionList>((yyvsp[-1].expressionlist)));
+		(yyval.expression) = new FunctionCall(shared_ptr<Identifier>((yyvsp[-3].identifier)), shared_ptr<ExpressionList>((yyvsp[-1].expressionlist)));
 	}
-#line 1734 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1735 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 259 "Parser/parser.y" /* yacc.c:1646  */
+#line 260 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = (yyvsp[0].identifier);
 	}
-#line 1742 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1743 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 263 "Parser/parser.y" /* yacc.c:1646  */
+#line 264 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new StructMember(shared_ptr<Identifier>((yyvsp[-2].identifier)), shared_ptr<Identifier>((yyvsp[0].identifier)));
 	}
-#line 1750 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1751 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 267 "Parser/parser.y" /* yacc.c:1646  */
+#line 268 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = (yyvsp[0].expression);
 	}
-#line 1758 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1759 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 271 "Parser/parser.y" /* yacc.c:1646  */
+#line 272 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1766 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1767 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 275 "Parser/parser.y" /* yacc.c:1646  */
+#line 276 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1774 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1775 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 279 "Parser/parser.y" /* yacc.c:1646  */
+#line 280 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1782 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1783 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 283 "Parser/parser.y" /* yacc.c:1646  */
+#line 284 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1790 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1791 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 287 "Parser/parser.y" /* yacc.c:1646  */
+#line 288 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1798 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1799 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 291 "Parser/parser.y" /* yacc.c:1646  */
+#line 292 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1806 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1807 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 295 "Parser/parser.y" /* yacc.c:1646  */
+#line 296 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1814 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1815 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 299 "Parser/parser.y" /* yacc.c:1646  */
+#line 300 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1822 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1823 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 303 "Parser/parser.y" /* yacc.c:1646  */
+#line 304 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1830 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1831 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 307 "Parser/parser.y" /* yacc.c:1646  */
+#line 308 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1838 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1839 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 311 "Parser/parser.y" /* yacc.c:1646  */
+#line 312 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1846 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1847 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 315 "Parser/parser.y" /* yacc.c:1646  */
+#line 316 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1854 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1855 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 319 "Parser/parser.y" /* yacc.c:1646  */
+#line 320 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1862 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1863 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 323 "Parser/parser.y" /* yacc.c:1646  */
+#line 324 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new BinaryOperation((yyvsp[-1].token), shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1870 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1871 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 327 "Parser/parser.y" /* yacc.c:1646  */
+#line 328 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = (yyvsp[-1].expression);
 	}
-#line 1878 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1879 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 331 "Parser/parser.y" /* yacc.c:1646  */
+#line 332 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = NULL;
 	}
-#line 1886 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1887 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 335 "Parser/parser.y" /* yacc.c:1646  */
+#line 336 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = (yyvsp[0].arrayindex);
 	}
-#line 1894 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1895 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 339 "Parser/parser.y" /* yacc.c:1646  */
+#line 340 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new Literal(*(yyvsp[0].stringg)); 
 		delete (yyvsp[0].stringg);
 	}
-#line 1903 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1904 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 347 "Parser/parser.y" /* yacc.c:1646  */
+#line 348 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.arrayindex) = new ArrayIndex(shared_ptr<Identifier>((yyvsp[-3].identifier)), shared_ptr<Expression>((yyvsp[-1].expression)));
 	}
-#line 1911 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1912 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 351 "Parser/parser.y" /* yacc.c:1646  */
+#line 352 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyvsp[-3].arrayindex)->expressions->push_back(shared_ptr<Expression>((yyvsp[-1].expression)));
 		(yyval.arrayindex) = (yyvsp[-3].arrayindex);
 	}
-#line 1920 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1921 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 359 "Parser/parser.y" /* yacc.c:1646  */
+#line 360 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new Assignment(shared_ptr<Identifier>((yyvsp[-2].identifier)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1928 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1929 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 363 "Parser/parser.y" /* yacc.c:1646  */
+#line 364 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expression) = new ArrayAssignment(shared_ptr<ArrayIndex>((yyvsp[-2].arrayindex)), shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1936 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1937 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 367 "Parser/parser.y" /* yacc.c:1646  */
+#line 368 "Parser/parser.y" /* yacc.c:1646  */
     {
 		shared_ptr<StructMember>member = make_shared<StructMember>(shared_ptr<Identifier>((yyvsp[-4].identifier)), shared_ptr<Identifier>((yyvsp[-2].identifier)));
 		(yyval.expression) = new StructAssignment(member, shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1945 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1946 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 375 "Parser/parser.y" /* yacc.c:1646  */
+#line 376 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expressionlist) = new ExpressionList();
 	}
-#line 1953 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1954 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 379 "Parser/parser.y" /* yacc.c:1646  */
+#line 380 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.expressionlist) = new ExpressionList();
 		(yyval.expressionlist)->push_back(shared_ptr<Expression>((yyvsp[0].expression)));
 	}
-#line 1962 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1963 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 384 "Parser/parser.y" /* yacc.c:1646  */
+#line 385 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyvsp[-2].expressionlist)->push_back(shared_ptr<Expression>((yyvsp[0].expression)));
 		(yyval.expressionlist) = (yyvsp[-2].expressionlist);
 	}
-#line 1971 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1972 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 393 "Parser/parser.y" /* yacc.c:1646  */
+#line 394 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.statement) = new IfStatement(shared_ptr<Expression>((yyvsp[-1].expression)), shared_ptr<Block>((yyvsp[0].block)));
 	}
-#line 1979 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1980 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 397 "Parser/parser.y" /* yacc.c:1646  */
+#line 398 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.statement) = new IfStatement(shared_ptr<Expression>((yyvsp[-3].expression)), shared_ptr<Block>((yyvsp[-2].block)), shared_ptr<Block>((yyvsp[0].block)));
 	}
-#line 1987 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1988 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 401 "Parser/parser.y" /* yacc.c:1646  */
+#line 402 "Parser/parser.y" /* yacc.c:1646  */
     {
 		Block *block = new Block();
 		block->statements->push_back(shared_ptr<Statement>((yyvsp[0].statement)));
 		(yyval.statement) = new IfStatement(shared_ptr<Expression>((yyvsp[-3].expression)), shared_ptr<Block>((yyvsp[-2].block)), shared_ptr<Block>(block));
 	}
-#line 1997 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 1998 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 410 "Parser/parser.y" /* yacc.c:1646  */
+#line 411 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.statement) = new ForStatement(shared_ptr<Block>((yyvsp[0].block)), shared_ptr<Expression>((yyvsp[-6].expression)), shared_ptr<Expression>((yyvsp[-4].expression)), shared_ptr<Expression>((yyvsp[-2].expression)));
 	}
-#line 2005 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 2006 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 417 "Parser/parser.y" /* yacc.c:1646  */
+#line 418 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.statement) = new WhileStatement(shared_ptr<Expression>((yyvsp[-2].expression)), shared_ptr<Block>((yyvsp[0].block)));
 	}
-#line 2013 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 2014 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 424 "Parser/parser.y" /* yacc.c:1646  */
+#line 425 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.statement) = new StructDeclaration(shared_ptr<Identifier>((yyvsp[-3].identifier)), shared_ptr<VariableDeclarationList>((yyvsp[-1].variabledeclarationlist)));
 	}
-#line 2021 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 2022 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 428 "Parser/parser.y" /* yacc.c:1646  */
+#line 429 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.statement) = new StructDeclaration(shared_ptr<Identifier>((yyvsp[-4].identifier)), shared_ptr<VariableDeclarationList>((yyvsp[-2].variabledeclarationlist)), shared_ptr<Identifier>((yyvsp[0].identifier)));
 	}
-#line 2029 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 2030 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 432 "Parser/parser.y" /* yacc.c:1646  */
+#line 433 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.statement) = new StructDeclaration(shared_ptr<Identifier>((yyvsp[-8].identifier)), shared_ptr<VariableDeclarationList>((yyvsp[-6].variabledeclarationlist)), shared_ptr<Identifier>((yyvsp[-4].identifier)), shared_ptr<ExpressionList>((yyvsp[-1].expressionlist)));
 	}
-#line 2037 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 2038 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 439 "Parser/parser.y" /* yacc.c:1646  */
+#line 440 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.variabledeclarationlist) = new VariableDeclarationList();
 	}
-#line 2045 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 2046 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 443 "Parser/parser.y" /* yacc.c:1646  */
+#line 444 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyval.variabledeclarationlist) = new VariableDeclarationList();
 		(yyval.variabledeclarationlist)->push_back(shared_ptr<VariableDeclaration>((yyvsp[-1].variabledeclaration)));
 	}
-#line 2054 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 2055 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 448 "Parser/parser.y" /* yacc.c:1646  */
+#line 449 "Parser/parser.y" /* yacc.c:1646  */
     {
 		(yyvsp[-2].variabledeclarationlist)->push_back(shared_ptr<VariableDeclaration>((yyvsp[-1].variabledeclaration)));
 		(yyval.variabledeclarationlist) = (yyvsp[-2].variabledeclarationlist);
 	}
-#line 2063 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 2064 "Parser/parser.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 2067 "Parser/parser.cpp" /* yacc.c:1646  */
+#line 2068 "Parser/parser.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2291,7 +2292,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 454 "Parser/parser.y" /* yacc.c:1906  */
+#line 455 "Parser/parser.y" /* yacc.c:1906  */
 
 void yyerror(const char * errormsg)
 {

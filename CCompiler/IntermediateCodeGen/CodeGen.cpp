@@ -57,7 +57,7 @@ llvm::Value* Identifier::codeGen(CodeGenContext &context) {
 
 }
 
-llvm::Value* FuntionCall::codeGen(CodeGenContext &context) {
+llvm::Value* FunctionCall::codeGen(CodeGenContext &context) {
     cout << "Generating method call of " << this->name->name << endl;
     Function * calleeF = context.theModule->getFunction(this->name->name);
     if( !calleeF ){

@@ -175,11 +175,12 @@ array_dec
 	: primary_type ident LBRACKET CONSTANT_INT RBRACKET
 	{
 		$$ = new ArrayDeclaration(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2));
-		$$->arraySize->push_back(make_shared<Integer>(atol($4->c_str())));
+		$$->arraySize->push_back(make_shared<Integer>(atoi($4->c_str())));
 	}
 	| array_dec LBRACKET CONSTANT_INT RBRACKET
 	{
-		$$->arraySize->push_back(make_shared<Integer>(atol($3->c_str())));
+		$1->arraySize->push_back(make_shared<Integer>(atoi($3->c_str())));
+		$$ = $1;
 	}
 	;
 
@@ -187,7 +188,7 @@ array_initialization
 	:
 	array_dec EQUAL LBRACE call_args RBRACE
 	{
-		shared_ptr<ArrayDeclaration>($1)->inits = shared_ptr<ExpressionList>($4);
+		$1->inits = shared_ptr<ExpressionList>($4);
 		$$ = $1;
 	}
 	;
@@ -238,7 +239,7 @@ ident
 numeric 
 	: CONSTANT_INT
 	{
-		$$ = new Integer(atol($1->c_str()));
+		$$ = new Integer(atoi($1->c_str()));
 	}
 	| CONSTANT_DOUBLE
 	{
@@ -253,7 +254,7 @@ expr
 	}
 	| ident LPAREN call_args RPAREN
 	{
-		$$ = new FuntionCall(shared_ptr<Identifier>($1), shared_ptr<ExpressionList>($3));
+		$$ = new FunctionCall(shared_ptr<Identifier>($1), shared_ptr<ExpressionList>($3));
 	}
 	| ident
 	{

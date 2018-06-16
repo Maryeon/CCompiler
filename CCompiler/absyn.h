@@ -105,17 +105,17 @@ public:
 	
 };
 
-class FuntionCall: public Expression{
+class FunctionCall: public Expression{
 public:
 	const shared_ptr<Identifier> name;
 	shared_ptr<ExpressionList> arguments = make_shared<ExpressionList>();
 
-	FuntionCall(){}
+	FunctionCall(){}
 	
-	FuntionCall(const shared_ptr<Identifier> name, shared_ptr<ExpressionList> arguments)
+	FunctionCall(const shared_ptr<Identifier> name, shared_ptr<ExpressionList> arguments)
 		:name(name), arguments(arguments){}
 		
-	FuntionCall(const shared_ptr<Identifier> name)
+	FunctionCall(const shared_ptr<Identifier> name)
 		:name(name){}
 		
 	string getType()const override{
@@ -307,7 +307,7 @@ public:
 	const shared_ptr<Identifier> type;
 	shared_ptr<Identifier> name;
 	shared_ptr<ExpressionList> arraySize = make_shared<ExpressionList>();
-	shared_ptr<ExpressionList> inits = nullptr;//
+	shared_ptr<ExpressionList> inits = nullptr;
 
 	ArrayDeclaration(){}
 
@@ -427,5 +427,6 @@ public:
 
 std::unique_ptr<Expression> LogError(const char* srt);
 
+extern void treeDisplay(Block* programBlock);
 
 #endif

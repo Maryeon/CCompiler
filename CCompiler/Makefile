@@ -10,6 +10,7 @@ OBJS = Parser/parser.o \
 		 	 main.o	 \
 			 ObjGen/ObjGen.o \
 			 TypeSystem/TypeSystem.o \
+			 TreeDisplay/treeDisplay.o\
 
 LLVMCONFIG = llvm-config
 CPPFLAGS = `$(LLVMCONFIG) --cppflags` -std=c++11
@@ -53,6 +54,9 @@ IntermediateCodeGen/DecGen.o: IntermediateCodeGen/DecGen.cpp
 	g++  -c $(CPPFLAGS) -o $@ $<
 
 TypeSystem/TypeSystem.o: TypeSystem/TypeSystem.cpp
+	g++ -c $(CPPFLAGS) -o $@ $<
+
+TreeDisplay/treeDisplay.o: TreeDisplay/treeDisplay.cpp
 	g++ -c $(CPPFLAGS) -o $@ $<
 
 #%.o: %.cpp
