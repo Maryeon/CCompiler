@@ -52,6 +52,7 @@ llvm::Value* StructDeclaration::codeGen(CodeGenContext& context) {
 
     if(this->instName!=nullptr){
         //Type* type = context.typeSystem.getVarType(*this->typeName);
+       this->typeName->isType=true;
         Value* inst = nullptr;
         Type* type = TypeOf(*this->typeName, context);
         inst = context.builder.CreateAlloca(type);
@@ -61,26 +62,7 @@ llvm::Value* StructDeclaration::codeGen(CodeGenContext& context) {
 
         context.PrintSymTable();
 
-        if( this->inits != nullptr ){
-            //Assignment assignment(this->instName, this->inits);
-            //assignment.codeGen(context);
-
-           /* for(int index=0; index < this->inits->size(); index++){
-                //shared_ptr<Integer> indexValue = make_shared<Integer>(index);
-
-                //shared_ptr<ArrayIndex> arrayIndex = make_shared<ArrayIndex>(this->declaration->name, indexValue);
-                ArrayAssignment assignment(arrayIndex, this->expressions->at(index));
-                assignment.codeGen(context);
-            }*/
-            
-        }
-
-    }
-
-     
-
-
-    
+    }    
 
     return nullptr;
 }
