@@ -1,10 +1,9 @@
 #include "CodeGen.h"
-static Type* TypeOf(const Identifier & type, CodeGenContext& context){        
-    return context.typeSystem.getVarType(type);
-}
+
+//Resolve Struct 
 
 llvm::Value* StructAssignment::codeGen(CodeGenContext &context) {
-    cout << "Generating struct assignment of " << this->loperand->name->name << "." << this->loperand->member->name << endl;
+    cout << "Generate Struct Assignment of: " << this->loperand->name->name << "." << this->loperand->member->name << endl;
     auto varPtr = context.getSymbolValue(this->loperand->name->name);
     auto structPtr = context.builder.CreateLoad(varPtr, "structPtr");
 
@@ -31,18 +30,16 @@ llvm::Value* StructAssignment::codeGen(CodeGenContext &context) {
 
 
 llvm::Value* StructDeclaration::codeGen(CodeGenContext& context) {
-    cout << "Generating struct declaration of " << this->typeName->name << endl;
+    cout << "Generate Struct Declaration of: " << this->typeName->name << endl;
 
     std::vector<Type*> memberTypes;
     Value* inst = nullptr;
-
 
     auto structType = StructType::create(context.llvmContext, this->typeName->name);
     context.typeSystem.addStructType(this->typeName->name, structType);
 
     for(auto& member: *this->members){
         context.typeSystem.addStructMember(this->typeName->name, member->type->name, member->name->name);
-        //memberTypes.push_back(TypeOf(*member->type, context));
         memberTypes.push_back(context.typeSystem.getVarType(*member->type));
     }
 
@@ -51,10 +48,10 @@ llvm::Value* StructDeclaration::codeGen(CodeGenContext& context) {
     ////////////////////////////////////////////////////////////////////////////
 
     if(this->instName!=nullptr){
-        //Type* type = context.typeSystem.getVarType(*this->typeName);
+        
        this->typeName->isType=true;
         Value* inst = nullptr;
-        Type* type = TypeOf(*this->typeName, context);
+        Type* type = context.typeSystem.getVarType(*this->typeName);
         inst = context.builder.CreateAlloca(type);
 
         context.setSymbolType(this->instName->name, this->typeName);
@@ -68,7 +65,7 @@ llvm::Value* StructDeclaration::codeGen(CodeGenContext& context) {
 }
 
 llvm::Value *StructMember::codeGen(CodeGenContext &context) {
-    cout << "Generating struct member expression of " << this->name->name << "." << this->member->name << endl;
+    cout << "Generate Struct Member of: " << this->name->name << "." << this->member->name << endl;
 
     auto varPtr = context.getSymbolValue(this->name->name);
     auto structPtr = context.builder.CreateLoad(varPtr, "structPtr");

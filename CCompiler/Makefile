@@ -18,7 +18,7 @@ LDFLAGS = `$(LLVMCONFIG) --ldflags` -lpthread -ldl -lz -lncurses -rdynamic -L/us
 LIBS = `$(LLVMCONFIG) --libs`
 
 clean:
-	$(RM) -rf compiler Parser/parser.cpp Parser/parser.hpp  Lexer/lexer.cpp  $(OBJS)
+	$(RM) -rf compiler output Parser/parser.cpp Parser/parser.hpp  Lexer/lexer.cpp  $(OBJS)
 
 #ObjGen.cpp: ObjGen.h
 

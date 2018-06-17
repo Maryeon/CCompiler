@@ -9,6 +9,9 @@ int main(){
 	
 	int j=1;
 	int arr[2] = {1, 2};
+
+	double dou=1.0;
+
 	return  0;
 }
 

@@ -5,30 +5,13 @@ static Type* TypeOf(const Identifier & type, CodeGenContext& context){
 }
 
 llvm::Value* VariableDeclaration::codeGen(CodeGenContext &context) {
-    cout << "Generating variable declaration of " << this->type->name << " " << this->name->name << endl;
+    cout << "Generate Variable declaration of " << this->type->name << " " << this->name->name << endl;
     Type* type = TypeOf(*this->type, context);
     Value* initial = nullptr;
 
     Value* inst = nullptr;
-
-    /*if( this->type->isArray ){
-        uint64_t arraySize = 1;
-        std::vector<uint64_t> arraySizes;
-        for(auto it=this->type->arraySize->begin(); it!=this->type->arraySize->end(); it++){
-            Integer* integer = dynamic_cast<Integer*>(it->get());
-            arraySize *= integer->value;
-            arraySizes.push_back(integer->value);
-        }
-
-        context.setArraySize(this->name->name, arraySizes);
-        Value* arraySizeValue = Integer(arraySize).codeGen(context);
-        auto arrayType = ArrayType::get(context.typeSystem.getVarType(this->type->name), arraySize);
-        inst = context.builder.CreateAlloca(arrayType, arraySizeValue, "arraytmp");
-    }*/
     
-    //else{
-        inst = context.builder.CreateAlloca(type);
-    //}
+    inst = context.builder.CreateAlloca(type);
 
     context.setSymbolType(this->name->name, this->type);
     context.setSymbolValue(this->name->name, inst);
@@ -43,21 +26,17 @@ llvm::Value* VariableDeclaration::codeGen(CodeGenContext &context) {
 }
 
 llvm::Value* FunctionDeclaration::codeGen(CodeGenContext &context) {
-    cout << "Generating function declaration of " << this->name->name << endl;
+    cout << "Generate Function Declaration of " << this->name->name << endl;
     std::vector<Type*> argTypes;
 
     for(auto &arg: *this->arguments){
-        //if( arg->type->isArray ){
-        //    argTypes.push_back(PointerType::get(context.typeSystem.getVarType(arg->type->name), 0));
-        //} else{
+
             argTypes.push_back(TypeOf(*arg->type, context));
-        //}
+
     }
     Type* retType = nullptr;
-    //if( this->retType->isArray )
-    //    retType = PointerType::get(context.typeSystem.getVarType(this->retType->name), 0);
-    //else
-        retType = TypeOf(*this->retType, context);
+
+    retType = TypeOf(*this->retType, context);
 
     FunctionType* functionType = FunctionType::get(retType, argTypes, false);
     Function* function = Function::Create(functionType, GlobalValue::ExternalLinkage, this->name->name.c_str(), context.theModule.get());
@@ -73,10 +52,8 @@ llvm::Value* FunctionDeclaration::codeGen(CodeGenContext &context) {
         for(auto &ir_arg_it: function->args()){
             ir_arg_it.setName((*origin_arg)->name->name);
             Value* argAlloc;
-            //if( (*origin_arg)->type->isArray )
-               // argAlloc = context.builder.CreateAlloca(PointerType::get(context.typeSystem.getVarType((*origin_arg)->type->name), 0));
-            //else
-                argAlloc = (*origin_arg)->codeGen(context);
+
+            argAlloc = (*origin_arg)->codeGen(context);
 
             context.builder.CreateStore(&ir_arg_it, argAlloc, false);
             context.setSymbolValue((*origin_arg)->name->name, argAlloc);

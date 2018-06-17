@@ -1,7 +1,7 @@
 #include "CodeGen.h"
 
 void CodeGenContext::generateCode(Block& root) {
-    cout << "Generating IR code" << endl;
+    cout << "Now Generate IR code" << endl;
 
     std::vector<Type*> sysArgs;
     FunctionType* mainFuncType = FunctionType::get(Type::getVoidTy(this->llvmContext), makeArrayRef(sysArgs), false);
@@ -12,7 +12,7 @@ void CodeGenContext::generateCode(Block& root) {
     Value* retValue = root.codeGen(*this);
     popBlock();
 
-    cout << "Code generate finished" << endl;
+    cout << "Code Generate Succeed!" << endl;
 
     legacy::PassManager passManager;
     passManager.add(createPrintModulePass(outs()));
@@ -21,19 +21,19 @@ void CodeGenContext::generateCode(Block& root) {
 }
 
 llvm::Value* Double::codeGen(CodeGenContext &context) {
-    cout << "Generating Double: " << this->value << endl;
+    cout << "Generate Double: " << this->value << endl;
     return ConstantFP::get(Type::getDoubleTy(context.llvmContext), this->value);
 
 }
 
 llvm::Value* Integer::codeGen(CodeGenContext &context) {
-    cout << "Generating Integer: " << this->value << endl;
+    cout << "Generate Integer: " << this->value << endl;
     return ConstantInt::get(Type::getInt32Ty(context.llvmContext), this->value, true);
 
 }
 
 llvm::Value* Identifier::codeGen(CodeGenContext &context) {
-    cout << "Generating identifier " << this->name << endl;
+    cout << "Generate Identifier: " << this->name << endl;
 
     Value* value = context.getSymbolValue(this->name);
 
@@ -58,7 +58,7 @@ llvm::Value* Identifier::codeGen(CodeGenContext &context) {
 }
 
 llvm::Value* FunctionCall::codeGen(CodeGenContext &context) {
-    cout << "Generating method call of " << this->name->name << endl;
+    cout << "Generate Function Call: " << this->name->name << endl;
     Function * calleeF = context.theModule->getFunction(this->name->name);
     if( !calleeF ){
         LogErrorV("Function name not found");
@@ -77,63 +77,63 @@ llvm::Value* FunctionCall::codeGen(CodeGenContext &context) {
 }
 
 llvm::Value* BinaryOperation::codeGen(CodeGenContext &context) {
-    cout << "Generating binary operator" << endl;
+    cout << "Generate Binary Operation: " << endl;
 
-    Value* L = this->loperand->codeGen(context);
-    Value* R = this->roperand->codeGen(context);
+    Value* Left = this->loperand->codeGen(context);
+    Value* Right = this->roperand->codeGen(context);
     bool fp = false;
 
-    if( (L->getType()->getTypeID() == Type::DoubleTyID) || (R->getType()->getTypeID() == Type::DoubleTyID) ){  
+    if( (Left->getType()->getTypeID() == Type::DoubleTyID) || (Right->getType()->getTypeID() == Type::DoubleTyID) ){  
         fp = true;
-        if( (R->getType()->getTypeID() != Type::DoubleTyID) ){
-            R = context.builder.CreateUIToFP(R, Type::getDoubleTy(context.llvmContext), "ftmp");
+        if( (Right->getType()->getTypeID() != Type::DoubleTyID) ){
+            Right = context.builder.CreateUIToFP(Right, Type::getDoubleTy(context.llvmContext), "ftmp");
         }
-        if( (L->getType()->getTypeID() != Type::DoubleTyID) ){
-            L = context.builder.CreateUIToFP(L, Type::getDoubleTy(context.llvmContext), "ftmp");
+        if( (Left->getType()->getTypeID() != Type::DoubleTyID) ){
+            Left = context.builder.CreateUIToFP(Left, Type::getDoubleTy(context.llvmContext), "ftmp");
         }
     }
 
-    if( !L || !R ){
+    if( !Left || !Right ){
         return nullptr;
     }
     cout << "fp = " << ( fp ? "true" : "false" ) << endl;
-    cout << "L is " << TypeSystem::llvmTypeToStr(L) << endl;
-    cout << "R is " << TypeSystem::llvmTypeToStr(R) << endl;
+    cout << "Left is " << TypeSystem::llvmTypeToStr(Left) << endl;
+    cout << "Right is " << TypeSystem::llvmTypeToStr(Right) << endl;
 
     switch (this->op){
         case PLUS_OP:
-            return fp ? context.builder.CreateFAdd(L, R, "addftmp") : context.builder.CreateAdd(L, R, "addtmp");
+            return fp ? context.builder.CreateFAdd(Left, Right, "addftmp") : context.builder.CreateAdd(Left, Right, "addtmp");
         case MINUS_OP:
-            return fp ? context.builder.CreateFSub(L, R, "subftmp") : context.builder.CreateSub(L, R, "subtmp");
+            return fp ? context.builder.CreateFSub(Left, Right, "subftmp") : context.builder.CreateSub(Left, Right, "subtmp");
         case MUL_OP:
-            return fp ? context.builder.CreateFMul(L, R, "mulftmp") : context.builder.CreateMul(L, R, "multmp");
+            return fp ? context.builder.CreateFMul(Left, Right, "mulftmp") : context.builder.CreateMul(Left, Right, "multmp");
         case DIV_OP:
-            return fp ? context.builder.CreateFDiv(L, R, "divftmp") : context.builder.CreateSDiv(L, R, "divtmp");
+            return fp ? context.builder.CreateFDiv(Left, Right, "divftmp") : context.builder.CreateSDiv(Left, Right, "divtmp");
         case AND_OP:
-            return fp ? LogErrorV("Double type has no AND operation") : context.builder.CreateAnd(L, R, "andtmp");
+            return fp ? LogErrorV("Double cannot excute AND") : context.builder.CreateAnd(Left, Right, "andtmp");
         case OR_OP:
-            return fp ? LogErrorV("Double type has no OR operation") : context.builder.CreateOr(L, R, "ortmp");
+            return fp ? LogErrorV("Double cannot excute OR") : context.builder.CreateOr(Left, Right, "ortmp");
         case XOR_OP:
-            return fp ? LogErrorV("Double type has no XOR operation") : context.builder.CreateXor(L, R, "xortmp");
+            return fp ? LogErrorV("Double cannot excute XOR") : context.builder.CreateXor(Left, Right, "xortmp");
         case LT_OP:
-            return fp ? context.builder.CreateFCmpULT(L, R, "cmpftmp") : context.builder.CreateICmpULT(L, R, "cmptmp");
+            return fp ? context.builder.CreateFCmpULT(Left, Right, "cmpftmp") : context.builder.CreateICmpULT(Left, Right, "cmptmp");
         case LE_OP:
-            return fp ? context.builder.CreateFCmpOLE(L, R, "cmpftmp") : context.builder.CreateICmpSLE(L, R, "cmptmp");
+            return fp ? context.builder.CreateFCmpOLE(Left, Right, "cmpftmp") : context.builder.CreateICmpSLE(Left, Right, "cmptmp");
         case GE_OP:
-            return fp ? context.builder.CreateFCmpOGE(L, R, "cmpftmp") : context.builder.CreateICmpSGE(L, R, "cmptmp");
+            return fp ? context.builder.CreateFCmpOGE(Left, Right, "cmpftmp") : context.builder.CreateICmpSGE(Left, Right, "cmptmp");
         case GT_OP:
-            return fp ? context.builder.CreateFCmpOGT(L, R, "cmpftmp") : context.builder.CreateICmpSGT(L, R, "cmptmp");
+            return fp ? context.builder.CreateFCmpOGT(Left, Right, "cmpftmp") : context.builder.CreateICmpSGT(Left, Right, "cmptmp");
         case EQ_OP:
-            return fp ? context.builder.CreateFCmpOEQ(L, R, "cmpftmp") : context.builder.CreateICmpEQ(L, R, "cmptmp");
+            return fp ? context.builder.CreateFCmpOEQ(Left, Right, "cmpftmp") : context.builder.CreateICmpEQ(Left, Right, "cmptmp");
         case NE_OP:
-            return fp ? context.builder.CreateFCmpONE(L, R, "cmpftmp") : context.builder.CreateICmpNE(L, R, "cmptmp");
+            return fp ? context.builder.CreateFCmpONE(Left, Right, "cmpftmp") : context.builder.CreateICmpNE(Left, Right, "cmptmp");
         default:
             return LogErrorV("This operator cannot be identified!!!");
     }
 }
 
 llvm::Value* Assignment::codeGen(CodeGenContext &context) {
-    cout << "Generating assignment of " << this->loperand->name << " = " << endl;
+    cout << "Generate Assignment of " << this->loperand->name << " = " << endl;
     Value* dst = context.getSymbolValue(this->loperand->name);
     auto dstType = context.getSymbolType(this->loperand->name);
     string dstTypeStr = dstType->name;
@@ -151,7 +151,7 @@ llvm::Value* Assignment::codeGen(CodeGenContext &context) {
 }
 
 llvm::Value* Block::codeGen(CodeGenContext &context) {
-    cout << "Generating block" << endl;
+    cout << "Generate Block" << endl;
     Value* last = nullptr;
     for(auto it=this->statements->begin(); it!=this->statements->end(); it++){
         last = (*it)->codeGen(context);
