@@ -41,7 +41,9 @@ llvm::Value* FunctionDeclaration::codeGen(CodeGenContext &context) {
     FunctionType* functionType = FunctionType::get(retType, argTypes, false);
     Function* function = Function::Create(functionType, GlobalValue::ExternalLinkage, this->name->name.c_str(), context.theModule.get());
 
-    BasicBlock* basicBlock = BasicBlock::Create(context.llvmContext, "entry", function, nullptr);
+    if( !this->isExternal ){
+
+        BasicBlock* basicBlock = BasicBlock::Create(context.llvmContext, "entry", function, nullptr);
 
         context.builder.SetInsertPoint(basicBlock);
         context.pushBlock(basicBlock);
@@ -69,6 +71,8 @@ llvm::Value* FunctionDeclaration::codeGen(CodeGenContext &context) {
             return LogErrorV("Function block return value not founded");
         }
         context.popBlock();
+    
+    }
 
     return function;
 }

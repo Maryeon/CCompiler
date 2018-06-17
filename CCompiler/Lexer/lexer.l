@@ -39,6 +39,7 @@ IS			((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 "return"		{ count(); yylval.token = RETURN; return RETURN; }
 "struct"		{ count(); yylval.token = STRUCT; return STRUCT; }
 "void"			{ count(); yylval.stringg = new string(yytext); return VOID ; }
+"extern"			{ count(); yylval.stringg = new string(yytext); return EXTERN ; }
 "while"			{ count(); yylval.token = WHILE; return WHILE; }
 
 {L}({L}|{D})*		{ count(); yylval.stringg = new string(yytext); return IDENTIFIER;}

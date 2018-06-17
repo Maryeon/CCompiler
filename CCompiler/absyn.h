@@ -327,11 +327,12 @@ public:
 	shared_ptr<Identifier> name;
 	shared_ptr<VariableDeclarationList> arguments = make_shared<VariableDeclarationList>();
 	shared_ptr<Block> block;
+	bool isExternal = false;
 
 	FunctionDeclaration(){}
 	
-	FunctionDeclaration(shared_ptr<Identifier> retType, shared_ptr<Identifier> name, shared_ptr<VariableDeclarationList> arguments, shared_ptr<Block> block)
-		:retType(retType), name(name), arguments(arguments), block(block){}
+	FunctionDeclaration(shared_ptr<Identifier> retType, shared_ptr<Identifier> name, shared_ptr<VariableDeclarationList> arguments, shared_ptr<Block> block, bool isExt = false)
+		:retType(retType), name(name), arguments(arguments), block(block), isExternal(isExt) {}
 		
 	string getType()const override{
 		return "FunctionDeclaration";

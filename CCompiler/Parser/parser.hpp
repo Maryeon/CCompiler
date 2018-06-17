@@ -80,12 +80,13 @@ extern int yydebug;
     DOUBLE = 290,
     VOID = 291,
     BOOL = 292,
-    STRUCT = 293,
-    IF = 294,
-    ELSE = 295,
-    WHILE = 296,
-    FOR = 297,
-    RETURN = 298
+    EXTERN = 293,
+    STRUCT = 294,
+    IF = 295,
+    ELSE = 296,
+    WHILE = 297,
+    FOR = 298,
+    RETURN = 299
   };
 #endif
 
@@ -109,7 +110,7 @@ union YYSTYPE
 	std::vector<shared_ptr<VariableDeclaration>>* variabledeclarationlist;
 	std::vector<shared_ptr<Expression>>* expressionlist;
 
-#line 113 "Parser/parser.hpp" /* yacc.c:1909  */
+#line 114 "Parser/parser.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

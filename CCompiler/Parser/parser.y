@@ -25,12 +25,12 @@
 	std::vector<shared_ptr<Expression>>* expressionlist;
 }
 
-%token <stringg> IDENTIFIER STRING_LITERAL CONSTANT_INT CONSTANT_DOUBLE UMINUS
+%token <stringg> IDENTIFIER STRING_LITERAL CONSTANT_INT CONSTANT_DOUBLE UMINUS 
 %token <token> LE_OP GE_OP EQ_OP NE_OP LT_OP GT_OP
 %token <token> SEMICOLON LBRACE RBRACE COMMA EQUAL RPAREN LPAREN LBRACKET RBRACKET
 %token <token> DOT AND_OP MINUS_OP PLUS_OP MUL_OP DIV_OP MOD_OP XOR_OP OR_OP
 
-%token <stringg> CHAR INT FLOAT DOUBLE VOID BOOL
+%token <stringg> CHAR INT FLOAT DOUBLE VOID BOOL EXTERN
 %token <token> STRUCT
 %token <token> IF ELSE WHILE FOR RETURN
 
@@ -208,6 +208,10 @@ func_dec
 	: primary_type ident LPAREN func_dec_args RPAREN block
 	{
 		$$ = new FunctionDeclaration(shared_ptr<Identifier>($1), shared_ptr<Identifier>($2), shared_ptr<VariableDeclarationList>($4), shared_ptr<Block>($6));
+	}
+	| EXTERN primary_type ident LPAREN func_dec_args RPAREN SEMICOLON
+	{
+		$$ = new FunctionDeclaration(shared_ptr<Identifier>($2), shared_ptr<Identifier>($3), shared_ptr<VariableDeclarationList>($5), nullptr, true);
 	}
 	;
 
