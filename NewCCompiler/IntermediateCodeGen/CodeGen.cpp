@@ -6,14 +6,14 @@
 #include <llvm/IR/IRPrintingPasses.h>
 #include <llvm/Support/raw_ostream.h>
 
-#include "absyn.h"
+#include "../absyn.h"
 #include "CodeGen.h"
-#include "TypeSystem.h"
+#include "../TypeSystem/TypeSystem.h"
 using legacy::PassManager;
 #define ISTYPE(value, id) (value->getType()->getTypeID() == id)
 
 
-static Type* TypeOf(const Identifier & type, CodeGenContext& context){        // get llvm::type of variable base on its identifier
+static Type* TypeOf(const Identifier & type, CodeGenContext& context){        
     return context.typeSystem.getVarType(type);
 }
 
@@ -159,8 +159,6 @@ llvm::Value* BinaryOperation::codeGen(CodeGenContext &context) {
             return fp ? LogErrorV("Double type has no OR operation") : context.builder.CreateOr(L, R, "ortmp");
         case XOR_OP:
             return fp ? LogErrorV("Double type has no XOR operation") : context.builder.CreateXor(L, R, "xortmp");
-        
-
         case LT_OP:
             return fp ? context.builder.CreateFCmpULT(L, R, "cmpftmp") : context.builder.CreateICmpULT(L, R, "cmptmp");
         case LE_OP:
@@ -174,7 +172,7 @@ llvm::Value* BinaryOperation::codeGen(CodeGenContext &context) {
         case NE_OP:
             return fp ? context.builder.CreateFCmpONE(L, R, "cmpftmp") : context.builder.CreateICmpNE(L, R, "cmptmp");
         default:
-            return LogErrorV("Unknown binary operator");
+            return LogErrorV("This operator cannot be identified!!!");
     }
 }
 
@@ -406,7 +404,7 @@ llvm::Value* StructDeclaration::codeGen(CodeGenContext& context) {
 
     std::vector<Type*> memberTypes;
 
-//    context.builder.createstr
+
     auto structType = StructType::create(context.llvmContext, this->name->name);
     context.typeSystem.addStructType(this->name->name, structType);
 
@@ -548,9 +546,10 @@ llvm::Value *StructMember::codeGen(CodeGenContext &context) {
     return context.builder.CreateLoad(ptr);
 }
 
-llvm::Value* WhileStatement::codeGen(CodeGenContext &context) 
-{
+llvm::Value* WhileStatement::codeGen(CodeGenContext &context) {
+
     Function* theFunction = context.builder.GetInsertBlock()->getParent();
+
     BasicBlock *block = BasicBlock::Create(context.llvmContext, "whileloop", theFunction);
     BasicBlock *after = BasicBlock::Create(context.llvmContext, "whilecont");
 
@@ -558,13 +557,18 @@ llvm::Value* WhileStatement::codeGen(CodeGenContext &context)
     Value* condValue = this->condition->codeGen(context);
     if( !condValue )
         return nullptr;
+
     condValue = CastToBoolean(context, condValue);
 
     // fall to the block
     context.builder.CreateCondBr(condValue, block, after);
+
     context.builder.SetInsertPoint(block);
+
     context.pushBlock(block);
+
     this->block->codeGen(context);
+
     context.popBlock();
 
     // execute the again or stop
@@ -574,7 +578,9 @@ llvm::Value* WhileStatement::codeGen(CodeGenContext &context)
 
     // insert the after block
     theFunction->getBasicBlockList().push_back(after);
+	
     context.builder.SetInsertPoint(after);
+
     return nullptr;
 }
 
