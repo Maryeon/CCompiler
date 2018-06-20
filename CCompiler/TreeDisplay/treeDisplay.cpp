@@ -31,6 +31,7 @@ int nVariableDeclaration = 0;
 int nArrayDeclaration = 0;
 int nFunctionDeclaration = 0;
 int nStructDeclaration = 0;
+int nNULL = 0;
 
 string getOpName(int op)
 {
@@ -77,7 +78,12 @@ string displayChild(FILE* fp, Node* node)
 {
 	if(node == nullptr)
 	{
-		return string("NULL");
+		char buf[100];
+		nNULL++;
+		fprintf(fp, "	NULL%d [label = \"NULL\"];\n", nNULL);
+		sprintf(buf, "NULL%d",nNULL);
+		string ret(buf);
+		return ret;
 	}
 	else if(node->getType().compare("Double") == 0)
 	{
@@ -327,7 +333,7 @@ string displayChild(FILE* fp, Node* node)
 
 		int mySeq = nConst;
 		Literal* obj = dynamic_cast<Literal*>(node);
-		fprintf(fp, "	Const%d [label = \"\"%s\"\"];\n", mySeq, obj->value.c_str());
+		fprintf(fp, "	Const%d [label = %s];\n", mySeq, obj->value.c_str());
 		
 		char buf[100];
 		

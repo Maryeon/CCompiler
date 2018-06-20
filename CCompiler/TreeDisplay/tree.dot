@@ -8,10 +8,13 @@ digraph absynTree{
 	Const3 [label = "char"];
 	Identifier2 [label = "id"];
 	Const4 [label = "format"];
+	NULL1 [label = "NULL"];
 	VariableDeclaration2 [label = "VarDec"];
 	Const5 [label = "char"];
 	Identifier3 [label = "id"];
 	Const6 [label = "format2"];
+	NULL2 [label = "NULL"];
+	NULL3 [label = "NULL"];
 	FunctionDeclaration2 [label = "FunDec"];
 	Const7 [label = "int"];
 	Identifier4 [label = "id"];
@@ -39,6 +42,7 @@ digraph absynTree{
 	Const17 [label = "int"];
 	Identifier8 [label = "id"];
 	Const18 [label = "c"];
+	NULL4 [label = "NULL"];
 	Identifier9 [label = "id"];
 	Const19 [label = "nnn"];
 	VariableDeclaration6 [label = "VarDec"];
@@ -76,7 +80,7 @@ digraph absynTree{
 	FunctionCall1 [label = "call"];
 	Identifier15 [label = "id"];
 	Const34 [label = "printf"];
-	Const35 [label = """%d"""];
+	Const35 [label = "%d"];
 	StructMember2 [label = "."];
 	Identifier16 [label = "id"];
 	Const36 [label = "nnn"];
@@ -91,14 +95,14 @@ digraph absynTree{
 	VariableDeclaration1 -> Const3;
 	Identifier2 -> Const4;
 	VariableDeclaration1 -> Identifier2;
-	VariableDeclaration1 -> NULL;
+	VariableDeclaration1 -> NULL1;
 	FunctionDeclaration1 -> VariableDeclaration1;
 	VariableDeclaration2 -> Const5;
 	Identifier3 -> Const6;
 	VariableDeclaration2 -> Identifier3;
-	VariableDeclaration2 -> NULL;
+	VariableDeclaration2 -> NULL2;
 	FunctionDeclaration1 -> VariableDeclaration2;
-	FunctionDeclaration1 -> NULL;
+	FunctionDeclaration1 -> NULL3;
 	Block1 -> FunctionDeclaration1;
 	FunctionDeclaration2 -> Const7;
 	Identifier4 -> Const8;
@@ -123,7 +127,7 @@ digraph absynTree{
 	VariableDeclaration5 -> Const17;
 	Identifier8 -> Const18;
 	VariableDeclaration5 -> Identifier8;
-	VariableDeclaration5 -> NULL;
+	VariableDeclaration5 -> NULL4;
 	StructDeclaration1 -> VariableDeclaration5;
 	Identifier9 -> Const19;
 	StructDeclaration1 -> Identifier9;
