@@ -15,14 +15,14 @@ static Value* CastToBoolean(CodeGenContext& context, Value* condValue){
 }
 
 llvm::Value* ReturnStatement::codeGen(CodeGenContext &context) {
-    cout << "Generating return statement" << endl;
+    cout << "Generate Return Statement" << endl;
     Value* returnValue = this->expression->codeGen(context);
     context.setCurrentReturnValue(returnValue);
     return returnValue;
 }
 
 llvm::Value* IfStatement::codeGen(CodeGenContext &context) {
-    cout << "Generating if statement" << endl;
+    cout << "Generate If statement" << endl;
     Value* condValue = this->condition->codeGen(context);
     if( !condValue )
         return nullptr;
@@ -51,13 +51,13 @@ llvm::Value* IfStatement::codeGen(CodeGenContext &context) {
 
     thenBB = context.builder.GetInsertBlock();
 
-    if( thenBB->getTerminator() == nullptr ){       //
+    if( thenBB->getTerminator() == nullptr ){       
         context.builder.CreateBr(mergeBB);
     }
 
     if( this->falseBlock ){
-        theFunction->getBasicBlockList().push_back(falseBB);    //
-        context.builder.SetInsertPoint(falseBB);            //
+        theFunction->getBasicBlockList().push_back(falseBB);    
+        context.builder.SetInsertPoint(falseBB);            
 
         context.pushBlock(thenBB);
 
@@ -68,13 +68,14 @@ llvm::Value* IfStatement::codeGen(CodeGenContext &context) {
         context.builder.CreateBr(mergeBB);
     }
 
-    theFunction->getBasicBlockList().push_back(mergeBB);        //
-    context.builder.SetInsertPoint(mergeBB);        //
+    theFunction->getBasicBlockList().push_back(mergeBB);        
+    context.builder.SetInsertPoint(mergeBB);        
 
     return nullptr;
 }
 
 llvm::Value* ForStatement::codeGen(CodeGenContext &context) {
+    cout << "Generate For statement" << endl;
 
     Function* theFunction = context.builder.GetInsertBlock()->getParent();
 
@@ -120,6 +121,7 @@ llvm::Value* ForStatement::codeGen(CodeGenContext &context) {
 }
 
 llvm::Value* WhileStatement::codeGen(CodeGenContext &context) {
+    cout << "Generate While statement" << endl;
 
     Function* theFunction = context.builder.GetInsertBlock()->getParent();
 

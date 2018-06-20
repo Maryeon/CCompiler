@@ -1,7 +1,6 @@
 #include "CodeGen.h"
 
 //Resolve Array
-
 static llvm::Value* calcArrayIndex(shared_ptr<ArrayIndex> index, CodeGenContext &context){
     auto sizeVec = context.getArraySize(index->arrayName->name);
     cout << "sizeVec:" << sizeVec.size() << ", expressions: " << index->expressions->size() << endl;
@@ -19,7 +18,7 @@ static llvm::Value* calcArrayIndex(shared_ptr<ArrayIndex> index, CodeGenContext 
 }
 
 llvm::Value *ArrayAssignment::codeGen(CodeGenContext &context) {
-    cout << "Generating array index assignment of " << this->loperand->arrayName->name << endl;
+    cout << "Generate Array Index Assignment of: " << this->loperand->arrayName->name << endl;
     auto varPtr = context.getSymbolValue(this->loperand->arrayName->name);
 
     if( varPtr == nullptr ){
@@ -41,7 +40,7 @@ llvm::Value *ArrayAssignment::codeGen(CodeGenContext &context) {
 }
 
 llvm::Value *ArrayIndex::codeGen(CodeGenContext &context) {
-    cout << "Generating array index expression of " << this->arrayName->name << endl;
+    cout << "Generate Array Index Expression of: " << this->arrayName->name << endl;
     auto varPtr = context.getSymbolValue(this->arrayName->name);
     auto type = context.getSymbolType(this->arrayName->name);
     string typeStr = type->name;
@@ -69,31 +68,9 @@ llvm::Value *Literal::codeGen(CodeGenContext &context) {
     return context.builder.CreateGlobalString(this->value, "string");
 }
 
-///////////////////////////old///////////////////////////////////////////////////
-/*llvm::Value *ArrayInitialization::codeGen(CodeGenContext &context) {
-    cout << "Generating array initialization of " << this->declaration->name->name << endl;
-    auto arrayPtr = this->declaration->codeGen(context);
-    auto sizeVec = context.getArraySize(this->declaration->name->name);
-    // TODO: multi-dimension array initialization
-    assert(sizeVec.size() == 1);
-
-    for(int index=0; index < this->expressions->size(); index++){
-        shared_ptr<Integer> indexValue = make_shared<Integer>(index);
-
-        shared_ptr<ArrayIndex> arrayIndex = make_shared<ArrayIndex>(this->declaration->name, indexValue);
-        ArrayAssignment assignment(arrayIndex, this->expressions->at(index));
-        assignment.codeGen(context);
-    }
-    return nullptr;
-}
-*/
-/////////////////////////////////oldend//////////////////////////////////////////////////
-
 llvm::Value *ArrayDeclaration::codeGen(CodeGenContext &context) {
-    cout << "Generating array  declaration of " << this->name->name << endl;
+    cout << "Generate Array  Declaration of: " << this->name->name << endl;
     Value* inst = nullptr;
-    //Type* type = TypeOf(*this->type, context);
-    //inst = context.builder.CreateAlloca(type);
 
     ////////////////////////////////////////////
     //Dec
