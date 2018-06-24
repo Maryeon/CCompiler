@@ -7,7 +7,7 @@
 
 	Block *programBlock;
 	extern int yylineno;
-	extern void yyerror(const char *);
+	void yyerror(const char *);
 	int yylex(void);
 %}
 %union{

@@ -1,22 +1,22 @@
 //int d=1+1;
 
-extern int printf(char  format,char  format2);
-
-int main(){
-	int a=1;
-	int b = 2-1;
-	struct A
+int f(int n)
+{
+	if(n == 1)
 	{
-		int c;
-	}nnn;
-	
-	int j=1;
-	int arr[2] = {1, 2};
-	nnn.c=10;
-
-	double dou=1.0;
-	//printf("%lf",dou);
-	printf("%d",nnn.c);
+		return 1;
+	}
+	else if(n == 2)
+	{
+		return 1;
+	}	
+	else
+	{
+		return f(n - 1) + f(n - 2);
+	}
+}
+int main(){
+	int a = f(5);
 	return  0;
 }
 

@@ -28,13 +28,14 @@ int main()
 	getcwd(path, sizeof(path));
 	strcat(path, "/TreeDisplay/transfer.sh");
 	strcat(command, path);
+	system(command);
 	
 
     	CodeGenContext context;
 	//    createCoreFunctions(context);
     	context.generateCode(*programBlock);
    		ObjGen(context);
-	   system(command);
+	  // system(command);
 
 	return 0;
 }
